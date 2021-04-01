@@ -31,7 +31,7 @@ namespace Game {
             get => mapCursorPositionY;
             set {
                 // Экранируем отрицательные числа; движение зацикленное.
-               mapCursorPositionY = value % map.LengthY;
+                mapCursorPositionY = value % map.LengthY;
                 if (mapCursorPositionY < 0) {
                     mapCursorPositionY += map.LengthY;
                 }
@@ -46,8 +46,11 @@ namespace Game {
         }
         private static Map map;
 
+
+
         internal static void Main(string[] args) {
             Console.CursorVisible = false;
+            Console.BufferHeight = 50;
 
             int mainMenuPointer = 0;
             PrintMainMenu(mainMenuPointer);
@@ -121,7 +124,7 @@ namespace Game {
         private static void PrintMap(Map map) {
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
-                    WriteColored(map[c, r], defaultColor);
+                    WriteColored(map[c, r].ToString(), map[c, r].Color);
                 }
                 Console.WriteLine();
             }
@@ -131,29 +134,15 @@ namespace Game {
             Console.WriteLine(buttonsInstruction);
         }
         private static void HightlightCurrentMapTile() {
-            char tile = map[MapCursorPosition.X, MapCursorPosition.Y];
+            char tile = map[MapCursorPosition.X, MapCursorPosition.Y].ToChar();
             Point currentCursorPosition = new Point(Console.CursorLeft, Console.CursorTop);
             Console.SetCursorPosition(MapCursorPosition.X, MapCursorPosition.Y);
             WriteColored(tile, hightlitedMapTileColor);
             Console.SetCursorPosition(currentCursorPosition.X, currentCursorPosition.Y);
         }
         private static void PrintTileInformation(Point tileCoord) {
-            char tile = map[tileCoord.X, tileCoord.Y];
-            string message;
-            switch (tile) {
-                case '~':
-                    message = "[~] Вода";
-                    break;
-                case '"':
-                    message = "[\"] Земля";
-                    break;
-                case '^':
-                    message = "[^] Скалы";
-                    break;
-                default:
-                    throw new Exception();
-            }
-            message += $" ({mapCursorPositionX}; {mapCursorPositionY})";
+            MapTile tile = map[tileCoord.X, tileCoord.Y];
+            string message = tile.Name + $" ({mapCursorPositionX}; {mapCursorPositionY})";
             Console.WriteLine(message);
         }
 

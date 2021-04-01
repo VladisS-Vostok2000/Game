@@ -8,7 +8,7 @@ namespace Game {
     internal class Map {
         internal int LengthX { get; }
         internal int LengthY { get; }
-        private string MapArray { get; }
+        private MapTile[] MapArray { get; }
 
 
 
@@ -16,13 +16,17 @@ namespace Game {
             using (var streamReader = new StreamReader(mapPath)) {
                 LengthX = int.Parse(streamReader.ReadLine());
                 LengthY = int.Parse(streamReader.ReadLine());
-                MapArray = ExistionMethods.ClearEmptySpaces(streamReader.ReadToEnd());
+                string charMap = ExistionMethods.ClearEmptySpaces(streamReader.ReadToEnd());
+                MapArray = new MapTile[charMap.Length];
+                for (int i = 0; i < charMap.Length; i++) {
+                    MapArray[i] = new MapTile(charMap[i]);
+                }
             }
         }
 
 
 
-        internal char this[int x, int y] => MapArray[y * LengthX + x];
+        internal MapTile this[int x, int y] => MapArray[y * LengthX + x];
 
     }
 }
