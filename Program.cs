@@ -11,39 +11,9 @@ namespace Game {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
         private static ConsoleColor hightlitedMenuOptionColor = ConsoleColor.Red;
-        private static ConsoleColor hightlitedMapTileColor = ConsoleColor.Yellow;
         private static string mapPath = @"map.txt";
         private static string buttonsInstruction = @"[→] [←] [↑] [↓]";
 
-        private static int mapCursorPositionX;
-        private static int mapCursorPositionY;
-        private static int MapCursorPositionX {
-            get => mapCursorPositionX;
-            set {
-                // Экранируем отрицательные числа; движение зацикленное.
-                mapCursorPositionX = value % map.LengthX;
-                if (mapCursorPositionX < 0) {
-                    mapCursorPositionX += map.LengthX;
-                }
-            }
-        }
-        private static int MapCursorPositionY {
-            get => mapCursorPositionY;
-            set {
-                // Экранируем отрицательные числа; движение зацикленное.
-                mapCursorPositionY = value % map.LengthY;
-                if (mapCursorPositionY < 0) {
-                    mapCursorPositionY += map.LengthY;
-                }
-            }
-        }
-        private static Point MapCursorPosition {
-            get => new Point(MapCursorPositionX, MapCursorPositionY);
-            set {
-                MapCursorPositionX = value.X;
-                MapCursorPositionY = value.Y;
-            }
-        }
         private static Map map;
 
 
@@ -93,38 +63,41 @@ namespace Game {
         }
         private static void WriteColored(char chr, ConsoleColor color) => WriteColored(chr.ToString(), color);
         private static void WriteLineColored(char chr, ConsoleColor color) => WriteColored(chr.ToString(), color);
+        private static void WriteColored(ConsoleImage charImage) => WriteColored(charImage.Char, charImage.Color);
+        private static void WriteLineColored(ConsoleImage charImage) => WriteLineColored(charImage.Char, charImage.Color);
+
+
         private static void StartGame() {
             map = new Map(mapPath);
-            MapCursorPosition = default;
 
             do {
                 Console.Clear();
-                PrintMap(map);
+                PrintMapScreen();
                 PrintGameMenu();
-                HightlightCurrentMapTile();
-                PrintTileInformation(MapCursorPosition);
+                PrintSelectedTileInformation();
                 ConsoleKeyInfo input = Console.ReadKey(true);
                 if (input.Key == ConsoleKey.DownArrow) {
-                    ++MapCursorPositionY;
+                    ++map.SelectedTileY;
                 }
                 else
                 if (input.Key == ConsoleKey.UpArrow) {
-                    --MapCursorPositionY;
+                    --map.SelectedTileY;
                 }
                 else
                 if (input.Key == ConsoleKey.LeftArrow) {
-                    --MapCursorPositionX;
+                    --map.SelectedTileX;
                 }
                 else
                 if (input.Key == ConsoleKey.RightArrow) {
-                    ++MapCursorPositionX;
+                    ++map.SelectedTileX;
                 }
             } while (true);
         }
-        private static void PrintMap(Map map) {
+        private static void PrintMapScreen() {
+            ConsoleImage[,] images = map.ToConsoleImages();
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
-                    WriteColored(map[c, r].ToString(), map[c, r].Color);
+                    WriteColored(images[c, r]);
                 }
                 Console.WriteLine();
             }
@@ -133,17 +106,15 @@ namespace Game {
             Console.WriteLine(new string('-', Console.BufferWidth - 1));
             Console.WriteLine(buttonsInstruction);
         }
-        private static void HightlightCurrentMapTile() {
-            char tile = map[MapCursorPosition.X, MapCursorPosition.Y].ToChar();
-            Point currentCursorPosition = new Point(Console.CursorLeft, Console.CursorTop);
-            Console.SetCursorPosition(MapCursorPosition.X, MapCursorPosition.Y);
-            WriteColored(tile, hightlitedMapTileColor);
-            Console.SetCursorPosition(currentCursorPosition.X, currentCursorPosition.Y);
-        }
-        private static void PrintTileInformation(Point tileCoord) {
-            MapTile tile = map[tileCoord.X, tileCoord.Y];
-            string message = tile.Name + $" ({mapCursorPositionX}; {mapCursorPositionY})";
-            Console.WriteLine(message);
+        private static void PrintSelectedTileInformation() {
+            ConsoleImage selectedTileImage = map.GetConsoleImage(map.SelectedTileLocation);
+            Console.Write("[");
+            WriteColored(selectedTileImage);
+            Console.Write("] ");
+
+            MapTileInfo selectedTileInfo = map.SelectedTile;
+            string name = selectedTileInfo.Unit?.Name ?? selectedTileInfo.Land.Name;
+            Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
 
     }

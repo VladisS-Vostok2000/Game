@@ -46,9 +46,13 @@
   <ItemGroup>
     <Compile Include="ExistionMethods.cs" />
     <Compile Include="Map.cs" />
-    <Compile Include="MapTile.cs" />
+    <Compile Include="LandTile.cs" />
+    <Compile Include="IConsoleDrawable.cs" />
+    <Compile Include="MapTileInfo.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ConsoleImage.cs" />
+    <Compile Include="Unit.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
