@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ExistionMethods.cs" />
+    <Compile Include="Parcer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="LandTile.cs" />
     <Compile Include="IConsoleDrawable.cs" />

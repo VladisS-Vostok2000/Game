@@ -5,13 +5,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
+using IniParcer;
+using Undefinded;
+
 namespace Game {
-    internal class Map {
-        internal int LengthX { get; }
-        internal int LengthY { get; }
-        internal int Length => LengthX * LengthY;
-        
-        internal Point SelectedTileLocation {
+    public class Map {
+        public int LengthX { get; }
+        public int LengthY { get; }
+        public int Length => LengthX * LengthY;
+
+        public Point SelectedTileLocation {
             get => new Point(SelectedTileX, SelectedTileY);
             set {
                 SelectedTileX = value.X;
@@ -20,51 +23,87 @@ namespace Game {
         }
         private int selectedTileX;
         private int selectedTileY;
-        internal int SelectedTileX {
+        public int SelectedTileX {
             get => selectedTileX;
             set => selectedTileX = value.InRange(0, LengthX);
         }
-        internal int SelectedTileY {
+        public int SelectedTileY {
             get => selectedTileY;
             set => selectedTileY = value.InRange(0, LengthY);
         }
         private static readonly ConsoleColor selectedTileColor = ConsoleColor.Yellow;
 
-        internal MapTileInfo SelectedTile => this[SelectedTileX, SelectedTileY];
+        public MapTileInfo SelectedTile => this[SelectedTileX, SelectedTileY];
 
-        internal LandTile[,] LandTiles { get; }
-        internal Unit[,] Units { get; }
+        public LandTile[,] LandTiles { get; }
+        public Unit[,] Units { get; }
+
+        private const string iniSectionMap = "Map";
+        private const string iniKeyMap = "Map";
+        private const string iniKeyMapLengthX = "LengthX";
+        private const string iniKeyMapLengthY = "LengthY";
+        private const string iniKeyUnitName = "Name";
+        private const string iniKeyUnitX = "X";
+        private const string iniKeyUnitY = "Y";
+        private const string iniKeyUnitImageChar = "CharImage";
 
 
 
-        internal Map(string mapPath) {
+        public Map(string mapPath) {
             using (var streamReader = new StreamReader(mapPath)) {
-                LengthX = int.Parse(streamReader.ReadLine());
-                LengthY = int.Parse(streamReader.ReadLine());
-                string charMap = streamReader.ReadToEnd().ClearEmptySpaces();
-                LandTiles = new LandTile[LengthX, LengthY];
-                int i = 0;
-                for (int r = 0; r < LengthY; r++) {
-                    for (int c = 0; c < LengthX; c++) {
-                        LandTile.LandTileTypes landTileType = LandTile.CharToLandTileType(charMap[i++]);
-                        if (landTileType == LandTile.LandTileTypes.None) {
-                            throw new Exception();
-                        }
+                Dictionary<string, Dictionary<string, string>> ini = Parcer.Parse(mapPath);
+                LengthX = int.Parse(ini[iniSectionMap][iniKeyMapLengthX]);
+                LengthY = int.Parse(ini[iniSectionMap][iniKeyMapLengthY]);
 
-                        LandTiles[c, r] = new LandTile(landTileType);
-                    }
-                }
-                Units = new Unit[LengthX, LengthY];
+                LandTiles = ParceLandTiles(ini[iniSectionMap][iniKeyMap]);
+                Units = ParceUnits(ini);
             }
         }
 
 
 
-        internal MapTileInfo this[int x, int y] => new MapTileInfo(LandTiles[x, y], Units[x, y]);
+        public MapTileInfo this[int x, int y] => new MapTileInfo(LandTiles[x, y], Units[x, y]);
 
 
 
-        internal ConsoleImage[,] ToConsoleImages() {
+        private LandTile[,] ParceLandTiles(string chars) {
+            var outTiles = new LandTile[LengthX, LengthY];
+            int i = 0;
+            for (int r = 0; r < LengthY; r++) {
+                for (int c = 0; c < LengthX; c++) {
+                    LandTile.LandTileTypes landTileType = LandTile.CharToLandTileType(chars[i++]);
+                    outTiles[c, r] = landTileType != LandTile.LandTileTypes.None? new LandTile(landTileType) : throw new Exception();
+                }
+            }
+            return outTiles;
+        }
+        private Unit[,] ParceUnits(Dictionary<string, Dictionary<string, string>> ini) {
+            Unit[,] units = new Unit[LengthX, LengthY];
+            for (int r = 0; r < LengthY; r++) {
+                for (int c = 0; c < LengthX; c++) {
+                    units[c, r] = null;
+                }
+            }
+
+            foreach (var pair in ini) {
+                string section = pair.Key;
+                if (section == iniSectionMap) {
+                    continue;
+                }
+
+                string name = pair.Value[iniKeyUnitName];
+                bool isOk = int.TryParse(pair.Value[iniKeyUnitX], out int unitX);
+                isOk &= int.TryParse(pair.Value[iniKeyUnitY], out int unitY);
+                isOk &= char.TryParse(pair.Value[iniKeyUnitImageChar], out char unitChar);
+                if (!isOk) {
+                    continue;
+                }
+
+                var unit = new Unit(name, new Point(unitX, unitY), new ConsoleImage(unitChar, ConsoleColor.Green));
+            }
+            return units;
+        }
+        public ConsoleImage[,] ToConsoleImages() {
             ConsoleImage[,] outArray = new ConsoleImage[LengthX, LengthY];
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
@@ -74,10 +113,10 @@ namespace Game {
             outArray[SelectedTileLocation.X, SelectedTileLocation.Y].Color = selectedTileColor;
             return outArray;
         }
-        internal Unit GetUnit(int x, int y) => Units[x, y];
-        internal LandTile GetLandTile(int x, int y) => LandTiles[x, y];
-        internal ConsoleImage GetConsoleImage(int x, int y) => Units[x, y]?.ConsoleImage ?? LandTiles[x, y].ConsoleImage;
-        internal ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
+        public Unit GetUnit(int x, int y) => Units[x, y];
+        public LandTile GetLandTile(int x, int y) => LandTiles[x, y];
+        public ConsoleImage GetConsoleImage(int x, int y) => Units[x, y]?.ConsoleImage ?? LandTiles[x, y].ConsoleImage;
+        public ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
 
     }
 }

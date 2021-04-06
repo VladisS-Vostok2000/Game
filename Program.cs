@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
+using Undefinded;
 
 namespace Game {
-    internal static class Program {
+    public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
         private static ConsoleColor hightlitedMenuOptionColor = ConsoleColor.Red;
@@ -18,7 +19,7 @@ namespace Game {
 
 
 
-        internal static void Main(string[] args) {
+        public static void Main(string[] args) {
             Console.CursorVisible = false;
             Console.BufferHeight = 50;
 
