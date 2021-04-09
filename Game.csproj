@@ -44,16 +44,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExistionMethods.cs" />
+    <Compile Include="Body.cs" />
+    <Compile Include="Chassis.cs" />
+    <Compile Include="Dumb.cs" />
+    <Compile Include="ExistingMethods.cs" />
+    <Compile Include="IParseable.cs" />
+    <Compile Include="IParser.cs" />
     <Compile Include="Parcer.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="LandTile.cs" />
     <Compile Include="IConsoleDrawable.cs" />
     <Compile Include="MapTileInfo.cs" />
+    <Compile Include="Part.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsoleImage.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="UnitConfigurator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

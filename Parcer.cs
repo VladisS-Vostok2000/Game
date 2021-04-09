@@ -21,6 +21,7 @@ namespace IniParcer {
             }
 
             for (int i = 0; i < parcedLines.Length; i++) {
+                // Парсинг секции.
                 if (!IsIniSection(parcedLines[i])) {
                     continue;
                 }
@@ -30,12 +31,14 @@ namespace IniParcer {
                     outIniData.Add(section, new Dictionary<string, string>());
                 }
 
+                // Парсинг ключа.
                 for (; i < parcedLines.Length; i++) {
                     if (IsIniSection(parcedLines[i])) {
                         i--;
                         break;
                     }
 
+                    // Строка некорректна.
                     if (!IsIniKey(parcedLines[i])) {
                         continue;
                     }
@@ -48,7 +51,7 @@ namespace IniParcer {
                     string key = keyValuePair[0];
                     string value = keyValuePair[1];
 
-                    // value разрещается разбивать на строки
+                    // value разрешается разбивать на строки
                     for (; i < parcedLines.Length; i++) {
                         if (IsIniValue(parcedLines[i])) {
                             value += parcedLines[i];
@@ -59,12 +62,16 @@ namespace IniParcer {
                         }
                     }
 
-                    outIniData[section].Add(key, value);
+                    if (!outIniData.ContainsKey(key)) {
+                        outIniData[section].Add(key, value);
+                    }
+                    else {
+                        outIniData[section][key] = value;
+                    }
                 }
             }
 
             return outIniData;
-            
         }
         private static string RemoveComment(string line) {
             string outString = "";
@@ -77,10 +84,10 @@ namespace IniParcer {
             }
             return outString;
         }
-        private static bool IsIniSection(string line) => line[0] == '[' && line[line.Length - 1] == ']';
         private static string ExtractIniSectionName(string _parcedLine) => _parcedLine.Extract(1, _parcedLine.Length - 2);
-        private static bool IsIniKey(string line) => line.Contains("=");
-        private static bool IsIniValue(string line) => !(IsIniSection(line) || IsIniKey(line));
+        private static bool IsIniSection(string line) => line[0] == '[' && line.Count((char chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((char chr) => chr == ']') == 1 && !line.Contains('=');
+        private static bool IsIniKey(string line) => line.Count((char chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
+        private static bool IsIniValue(string line) => !line.Contains('=') && !line.Contains('[') && !line.Contains(']');
 
     }
 }

@@ -37,28 +37,33 @@ namespace Game {
 
         public LandTile[,] LandTiles { get; }
         public Unit[,] Units { get; }
+        public UnitConfigurator GlobalUnitConfigurator { get; }
 
+
+        // Map
         private const string iniSectionMap = "Map";
         private const string iniKeyMap = "Map";
         private const string iniKeyMapLengthX = "LengthX";
         private const string iniKeyMapLengthY = "LengthY";
+        // General
+        private const string iniKeyType = "Type";
+        // Unit
         private const string iniKeyUnitName = "Name";
         private const string iniKeyUnitX = "X";
         private const string iniKeyUnitY = "Y";
         private const string iniKeyUnitImageChar = "CharImage";
-
-
-
-        public Map(string mapPath) {
-            using (var streamReader = new StreamReader(mapPath)) {
-                Dictionary<string, Dictionary<string, string>> ini = Parcer.Parse(mapPath);
-                LengthX = int.Parse(ini[iniSectionMap][iniKeyMapLengthX]);
-                LengthY = int.Parse(ini[iniSectionMap][iniKeyMapLengthY]);
-
-                LandTiles = ParceLandTiles(ini[iniSectionMap][iniKeyMap]);
-                Units = ParceUnits(ini);
-            }
-        }
+        private const string iniValueTypeUnit = "Unit";
+        private const string iniKeyUnitBody = "Body";
+        private const string iniKeyUnitChassis = "Chassis";
+        // Part
+        private const string iniKeyPartMaxHP = "MaxHP";
+        private const string iniKeyPartDisplayedName = "Name";
+        private const string iniKeyPartMasse = "Masse";
+        // Body
+        private const string iniValueTypeBody = "Body";
+        // Chassis
+        private const string iniValueTypeChassis = "Chassis";
+        private const string iniKeyChassisPassability = "Passability";
 
 
 
@@ -66,43 +71,132 @@ namespace Game {
 
 
 
-        private LandTile[,] ParceLandTiles(string chars) {
+        public Map(string mapPath) {
+            Dictionary<string, Dictionary<string, string>> ini;
+            using (var streamReader = new StreamReader(mapPath)) {
+                ini = Parcer.Parse(mapPath);
+            }
+
+            LengthX = int.Parse(ini[iniSectionMap][iniKeyMapLengthX]);
+            LengthY = int.Parse(ini[iniSectionMap][iniKeyMapLengthY]);
+
+            LandTiles = ParseLandTiles(ini[iniSectionMap][iniKeyMap]);
+            List<Body> bodies = ParseBodies(ini);
+            List<Chassis> chasses = ParseChassis(ini);
+            GlobalUnitConfigurator = new UnitConfigurator(bodies, chasses);
+            Units = ParseUnits(ini);
+        }
+
+
+
+        private LandTile[,] ParseLandTiles(string chars) {
             var outTiles = new LandTile[LengthX, LengthY];
             int i = 0;
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
                     LandTile.LandTileTypes landTileType = LandTile.CharToLandTileType(chars[i++]);
-                    outTiles[c, r] = landTileType != LandTile.LandTileTypes.None? new LandTile(landTileType) : throw new Exception();
+                    outTiles[c, r] = landTileType != LandTile.LandTileTypes.None ? new LandTile(landTileType) : throw new Exception();
                 }
             }
             return outTiles;
         }
-        private Unit[,] ParceUnits(Dictionary<string, Dictionary<string, string>> ini) {
-            Unit[,] units = new Unit[LengthX, LengthY];
-            for (int r = 0; r < LengthY; r++) {
-                for (int c = 0; c < LengthX; c++) {
-                    units[c, r] = null;
+        private List<Body> ParseBodies(Dictionary<string, Dictionary<string, string>> ini) {
+            var outList = new List<Body>();
+            foreach (var pair in ini) {
+                Dictionary<string, string> section = pair.Value;
+                string sectionName = pair.Key;
+                if (!section.ContainsKeyValuePair(iniKeyType, iniValueTypeBody)) {
+                    continue;
                 }
+
+                var body = new Body() { Name = sectionName };
+                InitializePart(section, body);
+
+                outList.Add(body);
             }
+
+            if (outList.Count == 0) {
+                outList.Add(new Body() { Name = "Default", DisplayedName = "Default" });
+            }
+            return outList;
+        }
+        private List<Chassis> ParseChassis(Dictionary<string, Dictionary<string, string>> ini) {
+            var outList = new List<Chassis>();
 
             foreach (var pair in ini) {
-                string section = pair.Key;
-                if (section == iniSectionMap) {
+                var sectionName = pair.Key;
+                var section = pair.Value;
+                if (!section.ContainsKeyValuePair(iniKeyType, iniValueTypeChassis)) {
                     continue;
                 }
 
-                string name = pair.Value[iniKeyUnitName];
-                bool isOk = int.TryParse(pair.Value[iniKeyUnitX], out int unitX);
-                isOk &= int.TryParse(pair.Value[iniKeyUnitY], out int unitY);
-                isOk &= char.TryParse(pair.Value[iniKeyUnitImageChar], out char unitChar);
-                if (!isOk) {
-                    continue;
+                var chassis = new Chassis() { Name = sectionName };
+                InitializePart(section, chassis);
+                // Необязательные параметры.
+                if (section.TryParseValue(iniKeyChassisPassability, out int passability)) {
+                    chassis.Passability = passability;
                 }
 
-                var unit = new Unit(name, new Point(unitX, unitY), new ConsoleImage(unitChar, ConsoleColor.Green));
+                outList.Add(chassis);
             }
+
+            if (outList.Count == 0) {
+                outList.Add(new Chassis() { Name = "Default", DisplayedName = "Default" });
+            }
+
+            return outList;
+        }
+        private Part InitializePart(Dictionary<string, string> section, Part part) {
+            // Необязательные параметры.
+            if (section.TryParseValue(iniKeyPartDisplayedName, out string name)) {
+                part.DisplayedName = name;
+            }
+            if (section.TryParseValue(iniKeyPartMaxHP, out int maxHP)) {
+                part.MaxHP = maxHP;
+            }
+            part.CurrentHP = part.MaxHP;
+            if (section.TryParseValue(iniKeyPartMasse, out int masse)) {
+                part.Masse = masse;
+            }
+            return part;
+        }
+        private Unit[,] ParseUnits(Dictionary<string, Dictionary<string, string>> ini) {
+            var units = new Unit[LengthX, LengthY];
+
+            foreach (var pairs in ini) {
+                Dictionary<string, string> section = pairs.Value;
+                if (!section.ContainsKeyValuePair(iniKeyType, iniValueTypeUnit)) {
+                    continue;
+                }
+                string sectionName = pairs.Key;
+
+                var unit = new Unit();
+                // Не обязательные параметры.
+                if (section.TryParseValue(iniKeyUnitName, out string name)) {
+                    unit.Name = name;
+                }
+
+                // Обязательные параметры.
+                try {
+                    unit.Location = new Point(int.Parse(section[iniKeyUnitX]), int.Parse(section[iniKeyUnitY]));
+                    unit.ConsoleImage = new ConsoleImage(char.Parse(section[iniKeyUnitImageChar]), ConsoleColor.Black);
+                    unit.SetBody(section[iniKeyUnitBody], GlobalUnitConfigurator);
+                    unit.SetChassis(section[iniKeyUnitChassis], GlobalUnitConfigurator);
+                }
+                catch (FormatException) {
+                    continue;
+                }
+                catch (KeyNotFoundException) {
+                    continue;
+                }
+
+                units[unit.Location.X, unit.Location.Y] = unit;
+            }
+
             return units;
         }
+
+
         public ConsoleImage[,] ToConsoleImages() {
             ConsoleImage[,] outArray = new ConsoleImage[LengthX, LengthY];
             for (int r = 0; r < LengthY; r++) {
