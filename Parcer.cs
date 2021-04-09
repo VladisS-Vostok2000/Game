@@ -22,7 +22,7 @@ namespace IniParcer {
 
             for (int i = 0; i < parcedLines.Length; i++) {
                 // Парсинг секции.
-                if (!IsIniSection(parcedLines[i])) {
+                if (parcedLines[i].Length == 0 || !IsIniSection(parcedLines[i])) {
                     continue;
                 }
 
