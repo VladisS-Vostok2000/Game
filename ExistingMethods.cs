@@ -46,19 +46,19 @@ namespace Undefinded {
             dic.ContainsKey(key) && dic[key].Equals(value);
 
 
-        public static bool TryParseValue<T>(this Dictionary<T, string> pairs, T key, out int result) {
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out int result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && int.TryParse(strResult, out result);
         }
-        public static bool TryParseValue<T>(this Dictionary<T, string> pairs, T key, out long result) {
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out long result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && long.TryParse(strResult, out result);
         }
-        public static bool TryParseValue<T>(this Dictionary<T, string> pairs, T key, out char result) {
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out char result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && char.TryParse(strResult, out result);
         }
-        public static bool TryParseValue<T>(this Dictionary<T, string> pairs, T key, out string result) {
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out string result) {
             result = default;
             return pairs.TryGetValue(key, out result);
         }

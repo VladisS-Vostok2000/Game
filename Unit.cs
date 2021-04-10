@@ -9,6 +9,8 @@ namespace Game {
     public sealed class Unit : IConsoleDrawable {
         public ConsoleImage ConsoleImage { get; set; }
         public string Name { get; set; } = "Default";
+        public int MaxHP { get; set; }
+        public int CurrentHP { get; set; }
 
         public Point Location { get; set; }
 

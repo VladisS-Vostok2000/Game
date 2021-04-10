@@ -5,15 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
+    // TODO: определить в структуру?
     public sealed class LandTile : IConsoleDrawable, ICloneable {
-        public string Name { get; set; } = "Default";
+        public string Name { get; set; }
+        public string DisplayedName { get; set; } = "Default";
         public ConsoleImage ConsoleImage { get; set; }
 
 
 
         public LandTile() { }
         public LandTile(string name, ConsoleImage consoleImage) {
-            Name = name;
+            DisplayedName = name;
             ConsoleImage = consoleImage;
         }
 

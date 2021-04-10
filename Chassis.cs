@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game {
     public sealed class Chassis : Part {
-        public int Passability { get; set; }
+        public Passability Passability { get; set; }
 
     }
 }

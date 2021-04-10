@@ -40,7 +40,7 @@ namespace Game {
                     return (Chassis)chassis.Clone();
                 }
             }
-            throw new Exception();
+            throw new KeyNotFoundException();
         }
 
     }

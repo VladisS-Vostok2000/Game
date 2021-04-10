@@ -20,6 +20,7 @@ namespace Game {
 
 
         public static void Main(string[] args) {
+            //Console.ReadKey(true);
             Console.CursorVisible = false;
             Console.BufferHeight = 50;
 
@@ -114,7 +115,7 @@ namespace Game {
             Console.Write("] ");
 
             MapTileInfo selectedTileInfo = map.SelectedTile;
-            string name = selectedTileInfo.Unit?.Name ?? selectedTileInfo.Land.Name;
+            string name = selectedTileInfo.Unit?.Name ?? selectedTileInfo.Land.DisplayedName;
             Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
 

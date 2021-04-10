@@ -56,6 +56,7 @@
     <Compile Include="IConsoleDrawable.cs" />
     <Compile Include="MapTileInfo.cs" />
     <Compile Include="Part.cs" />
+    <Compile Include="Passability.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsoleImage.cs" />

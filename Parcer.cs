@@ -88,6 +88,6 @@ namespace IniParcer {
         private static bool IsIniSection(string line) => line[0] == '[' && line.Count((char chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((char chr) => chr == ']') == 1 && !line.Contains('=');
         private static bool IsIniKey(string line) => line.Count((char chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
         private static bool IsIniValue(string line) => !line.Contains('=') && !line.Contains('[') && !line.Contains(']');
-
+        
     }
 }
