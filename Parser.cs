@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using Undefinded;
 
-namespace IniParcer {
-    public static class Parcer {
+namespace IniParser {
+    public static class Parser {
         public static Dictionary<string, Dictionary<string, string>> Parse(string filePath) {
             var outIniData = new Dictionary<string, Dictionary<string, string>>();
             string parcedText;

@@ -12,11 +12,12 @@ namespace Game {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
         private static ConsoleColor hightlitedMenuOptionColor = ConsoleColor.Red;
+        private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.txt";
         private static string buttonsInstruction = @"[→] [←] [↑] [↓]";
 
         private static Map map;
-
+        private static Rules rules;
 
 
         public static void Main(string[] args) {
@@ -70,6 +71,7 @@ namespace Game {
 
 
         private static void StartGame() {
+            rules = new Rules(rulesPath);
             map = new Map(mapPath);
 
             do {
@@ -115,7 +117,7 @@ namespace Game {
             Console.Write("] ");
 
             MapTileInfo selectedTileInfo = map.SelectedTile;
-            string name = selectedTileInfo.Unit?.Name ?? selectedTileInfo.Land.DisplayedName;
+            string name = selectedTileInfo.Unit?.DisplayedName ?? selectedTileInfo.Land.DisplayedName;
             Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
 

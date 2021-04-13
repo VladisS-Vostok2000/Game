@@ -5,32 +5,19 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
-    // TODO: определить в структуру?
-    public sealed class LandTile : IConsoleDrawable, ICloneable {
+    public struct Landtile : IConsoleDrawable {
+        // TODO: рассмотреть возможность удалить Name.
         public string Name { get; set; }
-        public string DisplayedName { get; set; } = "Default";
+        public string DisplayedName { get; set; }
         public ConsoleImage ConsoleImage { get; set; }
 
 
 
-        public LandTile() { }
-        public LandTile(string name, ConsoleImage consoleImage) {
+        public Landtile(string name, string displayedName, ConsoleImage consoleImage) {
+            Name = name;
             DisplayedName = name;
             ConsoleImage = consoleImage;
         }
-
-
-
-        public static LandTile Parse(char chr, ICollection<LandTile> landTiles) {
-            foreach (var landTile in landTiles) {
-                if (landTile.ConsoleImage.Char == chr) {
-                    return (LandTile)landTile.Clone();
-                }
-            }
-            throw new Exception();
-        }
-
-        public object Clone() => MemberwiseClone();
 
     }
 }

@@ -8,23 +8,21 @@ using System.Threading.Tasks;
 namespace Game {
     public sealed class Unit : IConsoleDrawable {
         public ConsoleImage ConsoleImage { get; set; }
-        public string Name { get; set; } = "Default";
+        public string DisplayedName { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
 
         public Point Location { get; set; }
 
-        public Body Body { get; private set; }
-        public Chassis Chassis { get; private set; }
+        public Body Body { get; set; }
+        public Chassis Chassis { get; set; }
 
 
 
-        public Unit() { }
-
-
-
-        public void SetBody(string bodyName, UnitConfigurator configurator) => Body = configurator.GetBody(bodyName);
-        public void SetChassis(string chassisName, UnitConfigurator configurator) => Chassis = configurator.GetChassis(chassisName);
+        public Unit(Body body, Chassis chassis) {
+            Body = body;
+            Chassis = chassis;
+        }
 
     }
 }

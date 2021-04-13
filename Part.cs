@@ -14,7 +14,17 @@ namespace Game {
 
 
 
-        public object Clone() => this.MemberwiseClone();
+        // TODO: выбрать тип конструктора.
+        protected Part(string name) { }
+        protected Part(string name, string displayedName, int maxHP, int masse) {
+            Name = name;
+            DisplayedName = DisplayedName;
+            MaxHP = maxHP;
+            Masse = masse;
+        }
+
+
+        public object Clone() => MemberwiseClone();
 
     }
 }

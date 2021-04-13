@@ -90,3 +90,19 @@
 //        }
 //    }
 //}
+using System.Collections.Generic;
+
+namespace Dumb {
+    class Dumb {
+        Dictionary<MyClass, MyClass> dictionary = new Dictionary<MyClass, MyClass>();
+        void Method() {
+            foreach (var pair in dictionary) {
+                pair.Key.Field = 5;
+            };
+        }
+    }
+    class MyClass {
+        public int Field;
+    }
+}
+

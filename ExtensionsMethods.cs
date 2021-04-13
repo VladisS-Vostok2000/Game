@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Undefinded {
-    public static class ExistingMethods {
+    public static class ExtensionsMethods {
         /// <summary>
         /// Отчистит строку от символов, относящихся к категории пробелов.
         /// </summary>
@@ -62,10 +62,58 @@ namespace Undefinded {
             result = default;
             return pairs.TryGetValue(key, out result);
         }
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, out int result) => result = int.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, out long result) => result = long.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, out char result) => result = char.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, out string result) => result = pairs[key];
+        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref int result) => result = int.Parse(pairs[key]);
+        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref long result) => result = long.Parse(pairs[key]);
+        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref char result) => result = char.Parse(pairs[key]);
+        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref string result) => result = pairs[key];
+
+
+        //public static bool TryFindAndRemove<T>(this ICollection<T> collection, T target) where T: IComparable<T> {
+        //    foreach (var item in collection) {
+        //        if (target.Equals(item)) {
+        //            collection.Remove(item);
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
+        ///// <exception cref="KeyNotFoundException"></exception>
+        //public static bool FindAndRemove<T>(this ICollection<T> collection, T target) where T : IComparable<T> {
+        //    foreach (var item in collection) {
+        //        if (target.Equals(item)) {
+        //            collection.Remove(item);
+        //            return true;
+        //        }
+        //    }
+        //    throw new KeyNotFoundException();
+        //}
+        
+        /// <summary>
+        /// Производит модификацию секций, атрибутов и значений в соответствии с заданным словарём. 
+        /// </summary>
+        public static void Merge<T1, T2, T3>(this Dictionary<T1, Dictionary<T2, T3>> ini1, Dictionary<T1, Dictionary<T2, T3>> ini2) {
+            foreach (var section2 in ini2) {
+                T1 section2Name = section2.Key;
+                // Если секция уже существует.
+                if (ini1.TryGetValue(section2Name, out Dictionary<T2, T3> pairs1)) {
+                    T1 sectionName = section2Name;
+                    Dictionary<T2, T3> section2Pairs = section2.Value;
+                    foreach (var section2Pair in section2Pairs) {
+                        // Если ключ существует.
+                        try {
+                            pairs1[section2Pair.Key] = section2Pair.Value;
+                        }
+                        catch (KeyNotFoundException) {
+                            pairs1.Add(section2Pair.Key, section2Pair.Value);
+                        }
+                    }
+
+                }
+                else {
+                    ini1.Add(section2Name, section2.Value);
+                }
+            }
+        }
 
     }
 }

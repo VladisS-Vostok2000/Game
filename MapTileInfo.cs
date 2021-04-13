@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace Game {
     public sealed class MapTileInfo {
         public Unit Unit;
-        public LandTile Land;
+        public Landtile Land;
 
         public bool ContainsUnit => Unit != null;
 
 
 
-        public MapTileInfo(LandTile landTile, Unit unit) {
+        public MapTileInfo(Landtile landtile, Unit unit) {
             Unit = unit;
-            Land = landTile;
+            Land = landtile;
         }
 
     }
