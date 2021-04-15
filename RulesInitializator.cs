@@ -18,6 +18,14 @@ namespace Game {
         private const string iniKeyDisplayedName = "Name";
         private const string iniKeyImageChar = "CharImage";
         private const string iniDefaultDisplayedName = "Default";
+        /// Tile
+        private const string iniKeyTileColor = "Color";
+        private const string iniValueTypeLandtile = "Tile";
+        /// Map
+        private const string iniSectionMap = "Map";
+        private const string iniKeyMap = "Map";
+        private const string iniKeyMapLengthX = "LengthX";
+        private const string iniKeyMapLengthY = "LengthY";
         /// Part
         private const string iniKeyPartMaxHP = "MaxHP";
         private const string iniKeyPartMasse = "Masse";
@@ -30,14 +38,6 @@ namespace Game {
         private const string iniKeyChassisPassability = "Passability";
         /// Passability
         private const string iniValueTypePassability = "Passability";
-        /// Tile
-        private const string iniKeyTileColor = "Color";
-        private const string iniValueTypeLandtile = "Tile";
-        /// Map
-        private const string iniSectionMap = "Map";
-        private const string iniKeyMap = "Map";
-        private const string iniKeyMapLengthX = "LengthX";
-        private const string iniKeyMapLengthY = "LengthY";
         /// Unit
         private const string iniKeyUnitDisplayedName = "Name";
         private const string iniKeyUnitX = "X";

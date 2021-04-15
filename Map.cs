@@ -18,7 +18,6 @@ namespace Game {
 
         public Landtile[,] LandtilesMap { get; }
         public Rules Rules { get; }
-        public Rules MapRules { get; }
 
 
         public Point SelectedTileLocation {
