@@ -17,7 +17,7 @@ namespace Game {
         private static string buttonsInstruction = @"[→] [←] [↑] [↓]";
 
         private static Map map;
-        private static Rules rules;
+
 
 
         public static void Main(string[] args) {
@@ -32,7 +32,7 @@ namespace Game {
                 ConsoleKeyInfo input = Console.ReadKey(true);
                 if (input.Key == ConsoleKey.Enter) {
                     Console.Clear();
-                    StartGame();
+                    StartGame(rulesPath, mapPath);
                 }
                 else {
                     if (input.Key == ConsoleKey.DownArrow) {
@@ -54,6 +54,8 @@ namespace Game {
                 WriteLineColored(menuOptions[i], defaultColor);
             }
         }
+
+
         private static void WriteColored(string str, ConsoleColor color) {
             ConsoleColor currentColor = Console.ForegroundColor;
             Console.ForegroundColor = color;
@@ -70,10 +72,9 @@ namespace Game {
         private static void WriteLineColored(ConsoleImage charImage) => WriteLineColored(charImage.Char, charImage.Color);
 
 
-        private static void StartGame() {
-            rules = new Rules(rulesPath);
-            map = new Map(mapPath);
-
+        private static void StartGame(string rulesPath, string mapPath) {
+            map = InitializeMap(rulesPath, mapPath);
+            
             do {
                 Console.Clear();
                 PrintMapScreen();
@@ -96,6 +97,11 @@ namespace Game {
                     ++map.SelectedTileX;
                 }
             } while (true);
+        }
+        private static Map InitializeMap(string rulesPath, string mapPath) {
+            IDictionary<string, IDictionary<string, string>> rulesIni = IniParser.Parser.Parse(rulesPath);
+            IDictionary<string, IDictionary<string, string>> mapIni = IniParser.Parser.Parse(mapPath);
+            return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
             ConsoleImage[,] images = map.ToConsoleImages();

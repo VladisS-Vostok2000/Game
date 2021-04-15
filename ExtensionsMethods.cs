@@ -91,15 +91,16 @@ namespace Undefinded {
         /// <summary>
         /// Производит модификацию секций, атрибутов и значений в соответствии с заданным словарём. 
         /// </summary>
-        public static void Merge<T1, T2, T3>(this Dictionary<T1, Dictionary<T2, T3>> ini1, Dictionary<T1, Dictionary<T2, T3>> ini2) {
+        public static void Merge<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> ini1, IDictionary<T1, IDictionary<T2, T3>> ini2) {
             foreach (var section2 in ini2) {
                 T1 section2Name = section2.Key;
                 // Если секция уже существует.
-                if (ini1.TryGetValue(section2Name, out Dictionary<T2, T3> pairs1)) {
+                if (ini1.TryGetValue(section2Name, out IDictionary<T2, T3> pairs1)) {
                     T1 sectionName = section2Name;
-                    Dictionary<T2, T3> section2Pairs = section2.Value;
+                    IDictionary<T2, T3> section2Pairs = section2.Value;
                     foreach (var section2Pair in section2Pairs) {
                         // Если ключ существует.
+                        // TODO: рассмотреть вариант без exception.
                         try {
                             pairs1[section2Pair.Key] = section2Pair.Value;
                         }
@@ -113,6 +114,36 @@ namespace Undefinded {
                     ini1.Add(section2Name, section2.Value);
                 }
             }
+        }
+
+        public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
+            foreach (var item in colletion) {
+                if (predicate(item)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Возвращает первое с начала вхождение элемента в коллекции, соответствующего заданному предикату.
+        /// </summary>
+        public static bool TryGet<T1>(this ICollection<T1> collection, Predicate<T1> predicate, out T1 outItem) {
+            foreach (var item in collection) {
+                if (predicate(item)) {
+                    outItem = item;
+                    return true;
+                }
+            }
+            outItem = default;
+            return false;
+        }
+        public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2,T3>> predicate) {
+            foreach (var pairs in dictionary) {
+                if (predicate(pairs.Value)) {
+                    return dictionary.Remove(pairs);
+                }
+            }
+            return false;
         }
 
     }

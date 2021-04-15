@@ -8,8 +8,8 @@ using Undefinded;
 
 namespace IniParser {
     public static class Parser {
-        public static Dictionary<string, Dictionary<string, string>> Parse(string filePath) {
-            var outIniData = new Dictionary<string, Dictionary<string, string>>();
+        public static IDictionary<string, IDictionary<string, string>> Parse(string filePath) {
+            var outIniData = new Dictionary<string, IDictionary<string, string>>();
             string parcedText;
             using (var str = new StreamReader(filePath)) {
                 parcedText = str.ReadToEnd();

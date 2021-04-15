@@ -8,9 +8,9 @@ namespace Game {
     public abstract class Part : ICloneable {
         public string Name { get; set; }
         public string DisplayedName { get; set; }
-        public int MaxHP { get; set; } = 1;
-        public int CurrentHP { get; set; } = 1;
-        public int Masse { get; set; } = 1;
+        public int MaxHP { get; set; }
+        public int CurrentHP { get; set; }
+        public int Masse { get; set; }
 
 
 
@@ -22,6 +22,7 @@ namespace Game {
             MaxHP = maxHP;
             Masse = masse;
         }
+
 
 
         public object Clone() => MemberwiseClone();

@@ -19,10 +19,7 @@ namespace Game {
 
 
 
-        public Unit(Body body, Chassis chassis) {
-            Body = body;
-            Chassis = chassis;
-        }
+        public Unit() { }
 
     }
 }
