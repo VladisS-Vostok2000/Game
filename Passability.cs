@@ -6,8 +6,6 @@ using System.Threading.Tasks;
 
 namespace Game {
     public sealed class Passability : ICloneable {
-        // TODO: рассмотреть возможность создания PassabilityConstructor,
-        // инкапсулирующего ini-секцию.
         public string Name { get; set; }
 
         public const int MinValue = 0;

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace Game {
     public struct Landtile : IConsoleDrawable {
-        // TODO: рассмотреть возможность удалить Name.
         public string Name { get; set; }
         public string DisplayedName { get; set; }
         public ConsoleImage ConsoleImage { get; set; }
@@ -15,7 +14,7 @@ namespace Game {
 
         public Landtile(string name, string displayedName, ConsoleImage consoleImage) {
             Name = name;
-            DisplayedName = name;
+            DisplayedName = displayedName;
             ConsoleImage = consoleImage;
         }
 

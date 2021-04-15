@@ -18,8 +18,5 @@ namespace Game {
         public Chassis Chassis { get; set; }
 
 
-
-        public Unit() { }
-
     }
 }

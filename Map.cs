@@ -43,6 +43,7 @@ namespace Game {
 
 
         public MapTileInfo this[int x, int y] => new MapTileInfo(LandtilesMap[x, y], Units[x, y]);
+        public MapTileInfo this[Point point] => this[point.X, point.Y];
 
 
 
@@ -54,14 +55,15 @@ namespace Game {
 
 
 
-        public ConsoleImage[,] ToConsoleImages() {
-            ConsoleImage[,] outArray = new ConsoleImage[LengthX, LengthY];
+        public ConsoleImage[,] ToConsoleImage() {
+            var outArray = new ConsoleImage[LengthX, LengthY];
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
-                    outArray[c, r] = Units[c, r]?.ConsoleImage ?? LandtilesMap[c, r].ConsoleImage;
+                    var tile = (IConsoleDrawable)Units[c, r] ?? LandtilesMap[c, r];
+                    outArray[c, r] = tile.ConsoleImage; 
                 }
             }
-            outArray[SelectedTileLocation.X, SelectedTileLocation.Y].Color = selectedTileColor;
+            outArray[SelectedTileLocation.X, SelectedTileLocation.Y] = new ConsoleImage(GetConsoleImage(SelectedTileLocation).Char, selectedTileColor);
             return outArray;
         }
         public Unit GetUnit(int x, int y) => Units[x, y];

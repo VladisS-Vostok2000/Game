@@ -45,7 +45,11 @@ namespace Game {
         private const string iniValueTypeUnit = "Unit";
         private const string iniKeyUnitBody = "Body";
         private const string iniKeyUnitChassis = "Chassis";
+        private const string iniKeyUnitMaxHP = "MaxHP";
+        private const string iniKeyUnitCurrentHP = "CurrentHP";
         private const string iniDefaultUnitDisplayedName = "Default";
+        private const int iniDefaultUnitMaxHP = 100;
+        private const int iniDefaultUnitCurrentHP = 100;
 
 
 
@@ -69,7 +73,6 @@ namespace Game {
 
             foreach (var section in sections) {
                 IDictionary<string, string> sectionPairs = section.Value;
-                // TODO: рассмотреть возможность заключить в метод IsValidSection(SectionType)
                 if (!IsSectionTypeOf(sectionPairs, iniValueTypeLandtile)) {
                     continue;
                 }
@@ -243,7 +246,9 @@ namespace Game {
                 // Необязательные параметры.
                 string unitDisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName;
                 Unit unit = new Unit() { DisplayedName = unitDisplayedName };
-
+                unit.MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string unitMaxHPTemp) && int.TryParse(unitMaxHPTemp, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP;
+                unit.CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string unitCurrentHPTemp) && int.TryParse(unitCurrentHPTemp, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
+                
                 // Обязательные параметры.
                 try {
                     unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));

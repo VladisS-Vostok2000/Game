@@ -15,7 +15,8 @@ namespace Game {
         private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.txt";
         private static string buttonsInstruction = @"[→] [←] [↑] [↓]";
-
+        private const int padConst = 15;
+        private const string Name = "Имя";
         private static Map map;
 
 
@@ -74,7 +75,7 @@ namespace Game {
 
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
-            
+
             do {
                 Console.Clear();
                 PrintMapScreen();
@@ -104,7 +105,7 @@ namespace Game {
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            ConsoleImage[,] images = map.ToConsoleImages();
+            ConsoleImage[,] images = map.ToConsoleImage();
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
                     WriteColored(images[c, r]);
@@ -117,14 +118,45 @@ namespace Game {
             Console.WriteLine(buttonsInstruction);
         }
         private static void PrintSelectedTileInformation() {
-            ConsoleImage selectedTileImage = map.GetConsoleImage(map.SelectedTileLocation);
+            var tileInfo = map[map.SelectedTileLocation];
+            if (tileInfo.ContainsUnit) {
+                PrintSelectedLandtileAndUnitTitle(tileInfo);
+            }
+            else {
+                PrintSelectedLandtileTitle(tileInfo);
+            }
+
+            if (tileInfo.ContainsUnit) {
+                PrintUnitInfo(tileInfo.Unit);
+            }
+        }
+        private static void PrintSelectedLandtileTitle(MapTileInfo tileInfo) {
+            Landtile landtile = tileInfo.Land;
             Console.Write("[");
-            WriteColored(selectedTileImage);
+            WriteColored(landtile.ConsoleImage);
             Console.Write("] ");
 
-            MapTileInfo selectedTileInfo = map.SelectedTile;
-            string name = selectedTileInfo.Unit?.DisplayedName ?? selectedTileInfo.Land.DisplayedName;
+            string name = tileInfo.Land.DisplayedName;
             Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
+        }
+        private static void PrintSelectedLandtileAndUnitTitle(MapTileInfo tileInfo) {
+            Landtile landtile = tileInfo.Land;
+            Console.Write("[");
+            WriteColored(landtile.ConsoleImage);
+            Console.Write("]");
+            Unit unit = tileInfo.Unit;
+            Console.Write("[");
+            WriteColored(tileInfo.Unit.ConsoleImage);
+            Console.Write("]");
+            string landtileName = tileInfo.Land.DisplayedName;
+            string unitName = tileInfo.Unit.DisplayedName;
+            Console.WriteLine(" " + landtileName + "/" + unitName + $"({map.SelectedTileX}; {map.SelectedTileY})");
+        }
+        private static void PrintUnitInfo(Unit unit) {
+            Console.WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
+            Console.WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);
+            Console.WriteLine("Тип кузова:".PadRight(padConst) + unit.Body.DisplayedName);
+            Console.WriteLine("Тип ходовой:".PadRight(padConst) + unit.Chassis.DisplayedName);
         }
 
     }

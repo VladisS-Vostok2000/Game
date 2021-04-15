@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace Game {
     public sealed class MapTileInfo {
-        public Unit Unit;
-        public Landtile Land;
+        public Unit Unit { get; set; }
+        public Landtile Land { get; set; }
 
         public bool ContainsUnit => Unit != null;
 
@@ -17,6 +17,10 @@ namespace Game {
             Unit = unit;
             Land = landtile;
         }
+
+
+
+        public ConsoleImage ToConsoleImage() => ContainsUnit ? Unit.ConsoleImage : Land.ConsoleImage;
 
     }
 }
