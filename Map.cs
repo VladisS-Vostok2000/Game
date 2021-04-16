@@ -10,6 +10,8 @@ using Undefinded;
 
 namespace Game {
     public class Map {
+        private const int maxTileMovements = 5;
+
         public int LengthX => LandtilesMap.GetUpperBound(0);
         public int LengthY => LandtilesMap.GetUpperBound(1);
         public int Square => LengthX * LengthY;
@@ -39,7 +41,20 @@ namespace Game {
         }
         private static readonly ConsoleColor selectedTileColor = ConsoleColor.Yellow;
         public MapTileInfo SelectedTile => this[SelectedTileX, SelectedTileY];
+        public bool SelectedTileContainsUnit => this[SelectedTileX, SelectedTileY].ContainsUnit;
 
+
+        private int SelectedUnitX;
+        private int SelectedUnitY;
+        public Point SelectedUnitLocation {
+            get => new Point(SelectedUnitX, SelectedUnitY);
+            set {
+                SelectedUnitX = value.X;
+                SelectedUnitY = value.Y;
+            }
+        }
+        public bool UnitSelected { get; private set; }
+        public Point[] SelectedUnitRoadmap { get; private set; }
 
 
         public MapTileInfo this[int x, int y] => new MapTileInfo(LandtilesMap[x, y], Units[x, y]);
@@ -63,13 +78,26 @@ namespace Game {
                     outArray[c, r] = tile.ConsoleImage; 
                 }
             }
-            outArray[SelectedTileLocation.X, SelectedTileLocation.Y] = new ConsoleImage(GetConsoleImage(SelectedTileLocation).Char, selectedTileColor);
+            outArray[SelectedTileX, SelectedTileY] = new ConsoleImage(SelectedTile.ToConsoleImage().Char, selectedTileColor);
             return outArray;
         }
-        public Unit GetUnit(int x, int y) => Units[x, y];
-        public Landtile Getlandtile(int x, int y) => LandtilesMap[x, y];
-        public ConsoleImage GetConsoleImage(int x, int y) => Units[x, y]?.ConsoleImage ?? LandtilesMap[x, y].ConsoleImage;
-        public ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
+        //public Unit GetUnit(int x, int y) => Units[x, y];
+        //public Landtile Getlandtile(int x, int y) => LandtilesMap[x, y];
+        //public ConsoleImage GetConsoleImage(int x, int y) => Units[x, y]?.ConsoleImage ?? LandtilesMap[x, y].ConsoleImage;
+        //public ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
+
+
+        public void SelectUnit() {
+            if (!SelectedTileContainsUnit) {
+                return;
+            }
+
+            UnitSelected = true;
+            BuildSelectedUnitRoadmap();
+        }
+        private void BuildSelectedUnitRoadmap() {
+            
+        }
 
     }
 }

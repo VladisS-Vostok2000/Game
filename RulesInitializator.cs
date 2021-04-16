@@ -47,9 +47,13 @@ namespace Game {
         private const string iniKeyUnitChassis = "Chassis";
         private const string iniKeyUnitMaxHP = "MaxHP";
         private const string iniKeyUnitCurrentHP = "CurrentHP";
+        private const string iniKeyUnitEngine = "Engine";
         private const string iniDefaultUnitDisplayedName = "Default";
         private const int iniDefaultUnitMaxHP = 100;
         private const int iniDefaultUnitCurrentHP = 100;
+        /// Engine
+        private const string iniValueTypeEngine = "Engine";
+        private const string iniKeyEnginePower = "Power";
 
 
 
@@ -65,9 +69,12 @@ namespace Game {
             List<Body> bodies = ParseBodies(rulesIni);
             List<Passability> passabilities = ParsePassabilities(rulesIni, landTiles);
             List<Chassis> chassis = ParseChassis(rulesIni, passabilities);
-            var rules = new Rules(landTiles, passabilities, bodies, chassis);
+            List<Engine> engines = ParseEngines(rulesIni);
+            var rules = new Rules(landTiles, passabilities, bodies, chassis, engines);
             return InitializeMap(rulesIni, rules);
         }
+
+
         private static List<Landtile> ParseLandtiles(IDictionary<string, IDictionary<string, string>> sections) {
             var outList = new List<Landtile>();
 
@@ -196,6 +203,39 @@ namespace Game {
 
             return outChassis;
         }
+        private static List<Engine> ParseEngines(IDictionary<string, IDictionary<string, string>> sections) {
+            var engines = new List<Engine>();
+
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeEngine)) {
+                    continue;
+                }
+                IDictionary<string, string> engineSectionPairs = sectionPairs;
+                string engineSectionName = section.Key;
+
+                var engine = new Engine(engineSectionName);
+                ParsePart(engineSectionPairs, engine);
+
+                // Обязательные параметры.
+                try {
+                    engine.Power = int.Parse(engineSectionPairs[iniKeyEnginePower]);
+                }
+                catch (KeyNotFoundException) {
+                    continue;
+                }
+                catch (FormatException) {
+                    continue;
+                }
+                catch (InvalidOperationException) {
+                    continue;
+                }
+
+                engines.Add(engine);
+            }
+
+            return engines;
+        }
         private static Map InitializeMap(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
             foreach (var section in ini) {
                 string sectionName = section.Key;
@@ -255,6 +295,7 @@ namespace Game {
                     unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
                     unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
                     unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
+                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
                 }
                 catch (FormatException) {
                     continue;

@@ -16,6 +16,7 @@ namespace Game {
 
         public Body Body { get; set; }
         public Chassis Chassis { get; set; }
+        public Engine Engine { get; set; }
 
 
     }
