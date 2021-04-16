@@ -9,11 +9,16 @@ using IniParser;
 using Undefinded;
 
 namespace Game {
-    public class Map {
-        private const int maxTileMovements = 5;
+    public sealed class Map {
+        private const int speedPerTile = 20;
+        private const int timePerTurn = 5;
 
-        public int LengthX => LandtilesMap.GetUpperBound(0);
-        public int LengthY => LandtilesMap.GetUpperBound(1);
+
+        private const ConsoleColor unitRoadmapColor = ConsoleColor.Cyan;
+
+
+        public int LengthX => LandtilesMap.GetUpperBound(0) + 1;
+        public int LengthY => LandtilesMap.GetUpperBound(1) + 1;
         public int Square => LengthX * LengthY;
         public Unit[,] Units { get; }
 
@@ -41,9 +46,9 @@ namespace Game {
         }
         private static readonly ConsoleColor selectedTileColor = ConsoleColor.Yellow;
         public MapTileInfo SelectedTile => this[SelectedTileX, SelectedTileY];
-        public bool SelectedTileContainsUnit => this[SelectedTileX, SelectedTileY].ContainsUnit;
 
 
+        public Unit SelectedUnit { get; private set; }
         private int SelectedUnitX;
         private int SelectedUnitY;
         public Point SelectedUnitLocation {
@@ -54,7 +59,7 @@ namespace Game {
             }
         }
         public bool UnitSelected { get; private set; }
-        public Point[] SelectedUnitRoadmap { get; private set; }
+        public bool[,] SelectedUnitRoadmap { get; private set; }
 
 
         public MapTileInfo this[int x, int y] => new MapTileInfo(LandtilesMap[x, y], Units[x, y]);
@@ -70,15 +75,25 @@ namespace Game {
 
 
 
-        public ConsoleImage[,] ToConsoleImage() {
+        public ConsoleImage[,] ToConsoleImages() {
+            if (UnitSelected) {
+                BuildSelectedUnitRoadmap();
+            }
+
             var outArray = new ConsoleImage[LengthX, LengthY];
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
-                    var tile = (IConsoleDrawable)Units[c, r] ?? LandtilesMap[c, r];
-                    outArray[c, r] = tile.ConsoleImage; 
+                    IConsoleDrawable tile = (IConsoleDrawable)Units[c, r] ?? LandtilesMap[c, r];
+                    char tileChar = tile.ConsoleImage.Char;
+                    ConsoleImage outTile = UnitSelected && SelectedUnitRoadmap[c, r] ?
+                        new ConsoleImage(tileChar, unitRoadmapColor) : tile.ConsoleImage;
+                    outArray[c, r] = outTile;
                 }
             }
+
+            // Подсвеченный тайл.
             outArray[SelectedTileX, SelectedTileY] = new ConsoleImage(SelectedTile.ToConsoleImage().Char, selectedTileColor);
+
             return outArray;
         }
         //public Unit GetUnit(int x, int y) => Units[x, y];
@@ -87,17 +102,53 @@ namespace Game {
         //public ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
 
 
-        public void SelectUnit() {
-            if (!SelectedTileContainsUnit) {
+        public void SelectUnit(Point location) {
+            var selectedTile = this[location];
+            if (!selectedTile.ContainsUnit) {
                 return;
             }
 
+            SelectedUnit = selectedTile.Unit;
+            SelectedUnitLocation = location;
             UnitSelected = true;
             BuildSelectedUnitRoadmap();
         }
         private void BuildSelectedUnitRoadmap() {
-            
+            SelectedUnitRoadmap = new bool[LengthX, LengthY];
+            Unit unit = SelectedUnit;
+            // TODO: подключить многопоточность?
+            SelectRoadmapTiles(SelectedUnitX + 1, SelectedUnitY, timePerTurn);
+            SelectRoadmapTiles(SelectedUnitX - 1, SelectedUnitY, timePerTurn);
+            SelectRoadmapTiles(SelectedUnitX, SelectedUnitY + 1, timePerTurn);
+            SelectRoadmapTiles(SelectedUnitX, SelectedUnitY - 1, timePerTurn);
         }
+        private void SelectRoadmapTiles(int x, int y, double timeReserve) {
+            bool tileExists = TryGetTile(x, y, out MapTileInfo landtileInfo);
+            if (!tileExists) {
+                return;
+            }
+
+            Landtile landtile = landtileInfo.Land;
+            string landtileName = landtile.Name;
+            float unitSpeed = SelectedUnit.CalculateSpeed(landtileName);
+            float timeSpent = 1 / (unitSpeed / speedPerTile);
+            if (timeSpent > timeReserve) {
+                return;
+            }
+
+            SelectedUnitRoadmap[x, y] = true;
+            timeReserve -= timeSpent;
+            // TODO: подключить многопоточность?
+            SelectRoadmapTiles(x + 1, y, timeReserve);
+            SelectRoadmapTiles(x - 1, y, timeReserve);
+            SelectRoadmapTiles(x, y + 1, timeReserve);
+            SelectRoadmapTiles(x, y - 1, timeReserve);
+        }
+        private bool TryGetTile(int landtileX, int landtileY, out MapTileInfo landtile) {
+            landtile = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1) ? this[landtileX, landtileY] : default;
+            return landtile != null;
+        }
+        public void UnselectUnit() => UnitSelected = false;
 
     }
 }

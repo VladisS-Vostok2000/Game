@@ -313,6 +313,7 @@ namespace Game {
             return units;
         }
 
+        private static bool IsSectionTypeOf(IDictionary<string, string> section, string type) => section.TryGetValue(iniKeyType, out string sectionType) && sectionType == type;
         private static List<string> GetLandtilesNames(ICollection<Landtile> landtiles) {
             var outlandtilesNames = new List<string>();
             foreach (var landtile in landtiles) {
@@ -320,7 +321,6 @@ namespace Game {
             }
             return outlandtilesNames;
         }
-        private static bool IsSectionTypeOf(IDictionary<string, string> section, string type) => section.TryGetValue(iniKeyType, out string sectionType) && sectionType == type;
 
     }
 }

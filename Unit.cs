@@ -11,6 +11,8 @@ namespace Game {
         public string DisplayedName { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
+        // TODO: создать вычисление массы согласно броне и запчастей.
+        public int Masse { get; set; } = 500;
 
         public Point Location { get; set; }
 
@@ -18,6 +20,9 @@ namespace Game {
         public Chassis Chassis { get; set; }
         public Engine Engine { get; set; }
 
+
+
+        public float CalculateSpeed(string landtileName) => Engine.Power * Chassis.Passability[landtileName] * Engine.PowerCoeff / Passability.PassabilityCoeff / Masse;
 
     }
 }

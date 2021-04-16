@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# CS0168: Переменная объявлена, но не используется
+dotnet_diagnostic.CS0168.severity = silent

@@ -40,6 +40,11 @@ namespace Undefinded {
         }
 
         /// <summary>
+        /// True, если число лежит в заданном диапазоне.
+        /// </summary>
+        public static bool IsInRange(in this int target, in int lowerBound, in int upperBound) => target >= lowerBound && target <= upperBound;
+
+        /// <summary>
         /// True, если пара из заданных ключа-значения содержится в заданном словаре.
         /// </summary>
         public static bool ContainsKeyValuePair<T1, T2>(this Dictionary<T1, T2> dic, T1 key, T2 value) where T1 : IEquatable<T1> where T2 : IEquatable<T1> =>

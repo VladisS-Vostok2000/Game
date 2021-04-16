@@ -100,9 +100,7 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Enter) {
-                    if(map.SelectedTileContainsUnit) {
-                        map.SelectUnit();
-                    }
+                    map.SelectUnit(map.SelectedTileLocation);
                 }
             } while (true);
         }
@@ -112,7 +110,7 @@ namespace Game {
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            ConsoleImage[,] images = map.ToConsoleImage();
+            ConsoleImage[,] images = map.ToConsoleImages();
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
                     WriteColored(images[c, r]);
@@ -171,9 +169,10 @@ namespace Game {
             Console.WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);
             Console.WriteLine("Тип кузова:".PadRight(padConst) + unit.Body.DisplayedName);
             Console.WriteLine("Тип ходовой:".PadRight(padConst) + unit.Chassis.DisplayedName);
+            Console.WriteLine("Масса:".PadRight(padConst) + unit.Masse);
             Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.Engine.DisplayedName);
+            Console.WriteLine("Мощность:".PadRight(padConst) + unit.Engine.Power);
         }
-
 
     }
 }

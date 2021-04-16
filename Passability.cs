@@ -8,6 +8,7 @@ namespace Game {
     public sealed class Passability : ICloneable {
         public string Name { get; set; }
 
+        public const float PassabilityCoeff = 100; // %
         public const int MinValue = 0;
         public const int MaxValue = 100;
 

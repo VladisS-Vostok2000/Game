@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace Game {
     public sealed class Chassis : Part {
+        // TODO: добавить ограничение максимальной скорости на участке.
         public Passability Passability { get; set; }
 
 
