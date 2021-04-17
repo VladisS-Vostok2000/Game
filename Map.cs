@@ -10,11 +10,8 @@ using Undefinded;
 
 namespace Game {
     public sealed class Map {
-        private const int speedPerTile = 20;
-        private const int timePerTurn = 5;
-
-
-        private const ConsoleColor unitRoadmapColor = ConsoleColor.Cyan;
+        private const float speedPerTile = 20;
+        private const float timePerTurn = 5;
 
 
         public int LengthX => LandtilesMap.GetUpperBound(0) + 1;
@@ -59,7 +56,10 @@ namespace Game {
             }
         }
         public bool UnitSelected { get; private set; }
-        public bool[,] SelectedUnitRoadmap { get; private set; }
+        public IList<Point> SelectedUnitAvailableWays { get; private set; }
+        public bool SelectedTileAvailableForSelectedUnit => UnitSelected && SelectedUnitAvailableWays.Contains(SelectedTileLocation);
+        private const ConsoleColor unitRoadmapColor = ConsoleColor.Cyan;
+        private const ConsoleColor unitRoadmapPathColor = ConsoleColor.Red;
 
 
         public MapTileInfo this[int x, int y] => new MapTileInfo(LandtilesMap[x, y], Units[x, y]);
@@ -75,21 +75,35 @@ namespace Game {
 
 
 
-        public ConsoleImage[,] ToConsoleImages() {
+        public ConsoleImage[,] Visualize() {
             if (UnitSelected) {
                 BuildSelectedUnitRoadmap();
             }
 
             var outArray = new ConsoleImage[LengthX, LengthY];
+
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
-                    IConsoleDrawable tile = (IConsoleDrawable)Units[c, r] ?? LandtilesMap[c, r];
-                    char tileChar = tile.ConsoleImage.Char;
-                    ConsoleImage outTile = UnitSelected && SelectedUnitRoadmap[c, r] ?
-                        new ConsoleImage(tileChar, unitRoadmapColor) : tile.ConsoleImage;
-                    outArray[c, r] = outTile;
+                    outArray[c, r] = this[c, r].ToConsoleImage();
                 }
             }
+
+            // TODO: можно выделить функции ниже в локальные.
+            if (UnitSelected) {
+                Unit unit = SelectedUnit;
+                IList<Point> unitPathPoints = unit.UnitPath;
+                // Подсветка доступных для передвижения тайлов выделенного юнита.
+                foreach (var unitWay in SelectedUnitAvailableWays) {
+                    outArray[unitWay.X, unitWay.Y] = new ConsoleImage(this[unitWay].ToConsoleImage().Char, unitRoadmapColor);
+                }
+
+                // Подсветка намеченного пути.
+                foreach (var unitPathPoint in unitPathPoints) {
+                    var tileImage = this[unitPathPoint].ToConsoleImage();
+                    outArray[unitPathPoint.X, unitPathPoint.Y] = new ConsoleImage(tileImage.Char, unitRoadmapPathColor);
+                }
+            }
+
 
             // Подсвеченный тайл.
             outArray[SelectedTileX, SelectedTileY] = new ConsoleImage(SelectedTile.ToConsoleImage().Char, selectedTileColor);
@@ -103,7 +117,7 @@ namespace Game {
 
 
         public void SelectUnit(Point location) {
-            var selectedTile = this[location];
+            MapTileInfo selectedTile = this[location];
             if (!selectedTile.ContainsUnit) {
                 return;
             }
@@ -111,18 +125,27 @@ namespace Game {
             SelectedUnit = selectedTile.Unit;
             SelectedUnitLocation = location;
             UnitSelected = true;
+            SelectedUnit.UnitPath = new List<Point>() { SelectedUnitLocation };
             BuildSelectedUnitRoadmap();
         }
+        // TODO: добавить разделение времени на выход/вход в тайл.
         private void BuildSelectedUnitRoadmap() {
-            SelectedUnitRoadmap = new bool[LengthX, LengthY];
+            SelectedUnitAvailableWays = new List<Point>();
             Unit unit = SelectedUnit;
+            Point unitLocation = unit.UnitPath.Last();
+            float reservedTime = unit.ReservedTime;
             // TODO: подключить многопоточность?
-            SelectRoadmapTiles(SelectedUnitX + 1, SelectedUnitY, timePerTurn);
-            SelectRoadmapTiles(SelectedUnitX - 1, SelectedUnitY, timePerTurn);
-            SelectRoadmapTiles(SelectedUnitX, SelectedUnitY + 1, timePerTurn);
-            SelectRoadmapTiles(SelectedUnitX, SelectedUnitY - 1, timePerTurn);
+            SelectRoadmapTiles(unitLocation.X + 1, unitLocation.Y, reservedTime);
+            SelectRoadmapTiles(unitLocation.X - 1, unitLocation.Y, reservedTime);
+            SelectRoadmapTiles(unitLocation.X, unitLocation.Y + 1, reservedTime);
+            SelectRoadmapTiles(unitLocation.X, unitLocation.Y - 1, reservedTime);
         }
         private void SelectRoadmapTiles(int x, int y, double timeReserve) {
+            // TODO: теоретически, можно сделать это эффективнее, если
+            // рассчитывать не все тайлы по нескольку раз подряд, а делать
+            // это итеративно и выбирать тайлы с наибольшим запасом времени.
+            // Это довольно сложно реализовать, а также потребует память
+            // и лишит преимущество простого распараллеливания.
             bool tileExists = TryGetTile(x, y, out MapTileInfo landtileInfo);
             if (!tileExists) {
                 return;
@@ -130,13 +153,12 @@ namespace Game {
 
             Landtile landtile = landtileInfo.Land;
             string landtileName = landtile.Name;
-            float unitSpeed = SelectedUnit.CalculateSpeed(landtileName);
-            float timeSpent = 1 / (unitSpeed / speedPerTile);
+            float timeSpent = SelectedUnitTimeSpentOnTile(landtileName);
             if (timeSpent > timeReserve) {
                 return;
             }
 
-            SelectedUnitRoadmap[x, y] = true;
+            SelectedUnitAvailableWays.Add(new Point(x, y));
             timeReserve -= timeSpent;
             // TODO: подключить многопоточность?
             SelectRoadmapTiles(x + 1, y, timeReserve);
@@ -144,11 +166,30 @@ namespace Game {
             SelectRoadmapTiles(x, y + 1, timeReserve);
             SelectRoadmapTiles(x, y - 1, timeReserve);
         }
+        private float SelectedUnitTimeSpentOnTile(string landtileName) => speedPerTile / SelectedUnit.CalculateSpeed(landtileName);
         private bool TryGetTile(int landtileX, int landtileY, out MapTileInfo landtile) {
             landtile = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1) ? this[landtileX, landtileY] : default;
             return landtile != null;
         }
+        
         public void UnselectUnit() => UnitSelected = false;
+
+        public void AddUnitPath() {
+            // TODO: стоит сделать методы статическими? Передоз полей.
+            Point currentUnitPosition = SelectedUnit.UnitPath.Last();
+            Point newUnitPision = SelectedTileLocation;
+            bool availableTile = SelectedTileAvailableForSelectedUnit &&
+                (Math.Abs(newUnitPision.X - currentUnitPosition.X) == 1 && newUnitPision.Y == currentUnitPosition.Y ||
+                Math.Abs(newUnitPision.Y - currentUnitPosition.Y) == 1 && newUnitPision.X == currentUnitPosition.X);
+            if (!availableTile) {
+                return;
+            }
+
+            string newPositionLandtileName = this[newUnitPision].Land.Name;
+            float timeSpent = SelectedUnitTimeSpentOnTile(newPositionLandtileName);
+            SelectedUnit.UnitPath.Add(SelectedTileLocation);
+            SelectedUnit.ReservedTime -= timeSpent;
+        }
 
     }
 }

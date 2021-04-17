@@ -14,11 +14,17 @@ namespace Game {
         // TODO: создать вычисление массы согласно броне и запчастей.
         public int Masse { get; set; } = 500;
 
-        public Point Location { get; set; }
 
         public Body Body { get; set; }
         public Chassis Chassis { get; set; }
         public Engine Engine { get; set; }
+        // TODO: удалить лишнее поле.
+        public Point Location { get; set; }
+
+
+        // Map
+        public float ReservedTime { get; set; } = 5;
+        public IList<Point> UnitPath { get; set; }
 
 
 

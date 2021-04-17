@@ -17,6 +17,7 @@ namespace Game {
 
         private static string buttonsInstruction = @"[→] [←] [↑] [↓] ";
         private static string buttonsEnter = "[Enter]";
+        private static string buttonsSpace = "[Space]";
 
         private const int padConst = 15;
         private static Map map;
@@ -102,6 +103,15 @@ namespace Game {
                 if (input.Key == ConsoleKey.Enter) {
                     map.SelectUnit(map.SelectedTileLocation);
                 }
+                else
+                if (input.Key == ConsoleKey.Spacebar && map.UnitSelected) {
+                    map.AddUnitPath();
+                }
+                else {
+                    if (input.Key == ConsoleKey.Escape && map.UnitSelected) {
+                        map.UnselectUnit();
+                    }
+                }
             } while (true);
         }
         private static Map InitializeMap(string rulesPath, string mapPath) {
@@ -110,7 +120,7 @@ namespace Game {
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            ConsoleImage[,] images = map.ToConsoleImages();
+            ConsoleImage[,] images = map.Visualize();
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
                     WriteColored(images[c, r]);
@@ -121,14 +131,20 @@ namespace Game {
         private static void PrintGameMenu() {
             Console.WriteLine(new string('-', Console.BufferWidth - 1));
             MapTileInfo tileInfo = map.SelectedTile;
-            if (tileInfo.ContainsUnit) {
-                Console.Write(buttonsInstruction);
-                Console.WriteLine(buttonsEnter);
-            }
-            else {
-                Console.WriteLine(buttonsInstruction);
-            }
+            WriteKeys(tileInfo);
+
             PrintTileInformation(tileInfo);
+        }
+        private static void WriteKeys(MapTileInfo tileInfo) {
+            Console.Write(buttonsInstruction);
+            if (tileInfo.ContainsUnit) {
+                Console.Write(buttonsEnter);
+            }
+            if (map.UnitSelected) {
+                // TODO: добавить ограничение только на ближайшие клетки.
+                Console.Write(buttonsSpace);
+            }
+            Console.WriteLine("");
         }
         private static void PrintTileInformation(MapTileInfo tileInfo) {
             if (tileInfo.ContainsUnit) {
