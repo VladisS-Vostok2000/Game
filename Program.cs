@@ -18,6 +18,7 @@ namespace Game {
         private static string buttonsInstruction = @"[→] [←] [↑] [↓] ";
         private static string buttonsEnter = "[Enter]";
         private static string buttonsSpace = "[Space]";
+        private static string buttonsEscape = "[Esc]";
 
         private const int padConst = 15;
         private static Map map;
@@ -101,16 +102,15 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Enter) {
-                    map.SelectUnit(map.SelectedTileLocation);
+                    map.SelectUnit();
                 }
                 else
-                if (input.Key == ConsoleKey.Spacebar && map.UnitSelected) {
+                if (input.Key == ConsoleKey.Spacebar) {
                     map.AddUnitPath();
                 }
-                else {
-                    if (input.Key == ConsoleKey.Escape && map.UnitSelected) {
-                        map.UnselectUnit();
-                    }
+                else
+                if (input.Key == ConsoleKey.Escape) {
+                    map.UnselectUnit();
                 }
             } while (true);
         }
@@ -131,18 +131,19 @@ namespace Game {
         private static void PrintGameMenu() {
             Console.WriteLine(new string('-', Console.BufferWidth - 1));
             MapTileInfo tileInfo = map.SelectedTile;
-            WriteKeys(tileInfo);
-
+            PrintKeys(tileInfo);
             PrintTileInformation(tileInfo);
         }
-        private static void WriteKeys(MapTileInfo tileInfo) {
+        private static void PrintKeys(MapTileInfo tileInfo) {
             Console.Write(buttonsInstruction);
-            if (tileInfo.ContainsUnit) {
+            if (tileInfo.ContainsUnit || map.UnitSelected) {
                 Console.Write(buttonsEnter);
             }
             if (map.UnitSelected) {
-                // TODO: добавить ограничение только на ближайшие клетки.
-                Console.Write(buttonsSpace);
+                if (tileInfo.AvailableForUnitMove) {
+                    Console.Write(buttonsSpace);
+                }
+                Console.Write(buttonsEscape);
             }
             Console.WriteLine("");
         }

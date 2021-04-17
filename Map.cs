@@ -56,13 +56,34 @@ namespace Game {
             }
         }
         public bool UnitSelected { get; private set; }
-        public IList<Point> SelectedUnitAvailableWays { get; private set; }
-        public bool SelectedTileAvailableForSelectedUnit => UnitSelected && SelectedUnitAvailableWays.Contains(SelectedTileLocation);
+        public IList<Point> SelectedUnitAvailableRoutes { get; private set; }
         private const ConsoleColor unitRoadmapColor = ConsoleColor.Cyan;
         private const ConsoleColor unitRoadmapPathColor = ConsoleColor.Red;
 
 
-        public MapTileInfo this[int x, int y] => new MapTileInfo(LandtilesMap[x, y], Units[x, y]);
+
+        public MapTileInfo this[int x, int y] {
+            get {
+                if (UnitSelected) {
+                    return new MapTileInfo(
+                        LandtilesMap[x, y],
+                        Units[x, y],
+                        SelectedTileReachableForSelectedUnit(),
+                        SelectedTileClosestToSelectedUnit(),
+                        SelectedTileIsUnitRoute()
+                    );
+                }
+                else {
+                    return new MapTileInfo(
+                        LandtilesMap[x, y],
+                        Units[x, y],
+                        false,
+                        false,
+                        false
+                    );
+                }
+            }
+        }
         public MapTileInfo this[Point point] => this[point.X, point.Y];
 
 
@@ -91,13 +112,13 @@ namespace Game {
             // TODO: можно выделить функции ниже в локальные.
             if (UnitSelected) {
                 Unit unit = SelectedUnit;
-                IList<Point> unitPathPoints = unit.UnitPath;
                 // Подсветка доступных для передвижения тайлов выделенного юнита.
-                foreach (var unitWay in SelectedUnitAvailableWays) {
+                foreach (var unitWay in SelectedUnitAvailableRoutes) {
                     outArray[unitWay.X, unitWay.Y] = new ConsoleImage(this[unitWay].ToConsoleImage().Char, unitRoadmapColor);
                 }
 
                 // Подсветка намеченного пути.
+                IList<Point> unitPathPoints = unit.UnitPath;
                 foreach (var unitPathPoint in unitPathPoints) {
                     var tileImage = this[unitPathPoint].ToConsoleImage();
                     outArray[unitPathPoint.X, unitPathPoint.Y] = new ConsoleImage(tileImage.Char, unitRoadmapPathColor);
@@ -116,31 +137,33 @@ namespace Game {
         //public ConsoleImage GetConsoleImage(Point location) => GetConsoleImage(location.X, location.Y);
 
 
-        public void SelectUnit(Point location) {
-            MapTileInfo selectedTile = this[location];
-            if (!selectedTile.ContainsUnit) {
+        public void SelectUnit() {
+            Unit unit = Units[SelectedTileX, SelectedTileY];
+            if (unit == null) {
                 return;
             }
 
-            SelectedUnit = selectedTile.Unit;
-            SelectedUnitLocation = location;
+            SelectedUnit = unit;
+            SelectedUnitLocation = SelectedTileLocation;
             UnitSelected = true;
             SelectedUnit.UnitPath = new List<Point>() { SelectedUnitLocation };
             BuildSelectedUnitRoadmap();
         }
+
+
         // TODO: добавить разделение времени на выход/вход в тайл.
         private void BuildSelectedUnitRoadmap() {
-            SelectedUnitAvailableWays = new List<Point>();
+            SelectedUnitAvailableRoutes = new List<Point>();
             Unit unit = SelectedUnit;
             Point unitLocation = unit.UnitPath.Last();
             float reservedTime = unit.ReservedTime;
             // TODO: подключить многопоточность?
-            SelectRoadmapTiles(unitLocation.X + 1, unitLocation.Y, reservedTime);
-            SelectRoadmapTiles(unitLocation.X - 1, unitLocation.Y, reservedTime);
-            SelectRoadmapTiles(unitLocation.X, unitLocation.Y + 1, reservedTime);
-            SelectRoadmapTiles(unitLocation.X, unitLocation.Y - 1, reservedTime);
+            FindAvailableRoutes(unitLocation.X + 1, unitLocation.Y, reservedTime);
+            FindAvailableRoutes(unitLocation.X - 1, unitLocation.Y, reservedTime);
+            FindAvailableRoutes(unitLocation.X, unitLocation.Y + 1, reservedTime);
+            FindAvailableRoutes(unitLocation.X, unitLocation.Y - 1, reservedTime);
         }
-        private void SelectRoadmapTiles(int x, int y, double timeReserve) {
+        private void FindAvailableRoutes(int x, int y, double timeReserve) {
             // TODO: теоретически, можно сделать это эффективнее, если
             // рассчитывать не все тайлы по нескольку раз подряд, а делать
             // это итеративно и выбирать тайлы с наибольшим запасом времени.
@@ -158,38 +181,46 @@ namespace Game {
                 return;
             }
 
-            SelectedUnitAvailableWays.Add(new Point(x, y));
+            SelectedUnitAvailableRoutes.Add(new Point(x, y));
             timeReserve -= timeSpent;
             // TODO: подключить многопоточность?
-            SelectRoadmapTiles(x + 1, y, timeReserve);
-            SelectRoadmapTiles(x - 1, y, timeReserve);
-            SelectRoadmapTiles(x, y + 1, timeReserve);
-            SelectRoadmapTiles(x, y - 1, timeReserve);
+            FindAvailableRoutes(x + 1, y, timeReserve);
+            FindAvailableRoutes(x - 1, y, timeReserve);
+            FindAvailableRoutes(x, y + 1, timeReserve);
+            FindAvailableRoutes(x, y - 1, timeReserve);
         }
         private float SelectedUnitTimeSpentOnTile(string landtileName) => speedPerTile / SelectedUnit.CalculateSpeed(landtileName);
         private bool TryGetTile(int landtileX, int landtileY, out MapTileInfo landtile) {
-            landtile = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1) ? this[landtileX, landtileY] : default;
-            return landtile != null;
+            bool correctIndexation = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1);
+            landtile = correctIndexation ? this[landtileX, landtileY] : default;
+            return correctIndexation;
         }
-        
+
         public void UnselectUnit() => UnitSelected = false;
 
         public void AddUnitPath() {
-            // TODO: стоит сделать методы статическими? Передоз полей.
-            Point currentUnitPosition = SelectedUnit.UnitPath.Last();
-            Point newUnitPision = SelectedTileLocation;
-            bool availableTile = SelectedTileAvailableForSelectedUnit &&
-                (Math.Abs(newUnitPision.X - currentUnitPosition.X) == 1 && newUnitPision.Y == currentUnitPosition.Y ||
-                Math.Abs(newUnitPision.Y - currentUnitPosition.Y) == 1 && newUnitPision.X == currentUnitPosition.X);
-            if (!availableTile) {
+            if (!UnitSelected) {
                 return;
             }
 
-            string newPositionLandtileName = this[newUnitPision].Land.Name;
+            // TODO: стоит сделать методы "статическими"? Передоз полей.
+            Point currentUnitPosition = SelectedUnit.UnitPath.Last();
+            Point newUnitPosition = SelectedTileLocation;
+            bool routeAvailable = SelectedTileReachableForSelectedUnit() && SelectedTileClosestToSelectedUnit();
+            if (!routeAvailable) {
+                return;
+            }
+
+            string newPositionLandtileName = this[newUnitPosition].Land.Name;
             float timeSpent = SelectedUnitTimeSpentOnTile(newPositionLandtileName);
             SelectedUnit.UnitPath.Add(SelectedTileLocation);
             SelectedUnit.ReservedTime -= timeSpent;
         }
+        public bool SelectedTileClosestToSelectedUnit() => (Math.Abs(SelectedTileX - SelectedUnit.UnitPath.Last().X) == 1 && SelectedTileY == SelectedUnit.UnitPath.Last().Y) ||
+                Math.Abs(SelectedTileY - SelectedUnit.UnitPath.Last().Y) == 1 && SelectedTileX == SelectedUnit.UnitPath.Last().X;
+        public bool SelectedTileReachableForSelectedUnit() => SelectedUnitAvailableRoutes.Contains(new Point(SelectedTileX, SelectedTileY));
+        public bool SelectedTileIsUnitRoute() => SelectedUnit.UnitPath.Contains(new Point(SelectedTileX, SelectedTileY));
+        public bool SelectedTileAvailableForUnitMove() => SelectedTileReachableForSelectedUnit() && SelectedTileClosestToSelectedUnit();
 
     }
 }

@@ -268,6 +268,7 @@ namespace Game {
             int i = 0;
             for (int r = 0; r < y; r++) {
                 for (int c = 0; c < x; c++) {
+                    // TODO: пофиксить баг с неверной инициализацией: замена " на # выдаёт исключение здесь.
                     outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
                     i++;
                 }

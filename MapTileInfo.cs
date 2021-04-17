@@ -5,17 +5,28 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
-    public sealed class MapTileInfo {
-        public Unit Unit { get; set; }
-        public Landtile Land { get; set; }
+    public readonly struct MapTileInfo {
+        public Unit Unit { get; }
+        public Landtile Land { get; }
 
         public bool ContainsUnit => Unit != null;
+        public bool ReachableForSelectedUnit { get; }
+        public bool ClosestToSelectedUnit { get; }
+        public bool AvailableForUnitMove => ClosestToSelectedUnit && ReachableForSelectedUnit;
+        public bool SelectedUnitRoute { get; }
 
 
 
-        public MapTileInfo(Landtile landtile, Unit unit) {
+        public MapTileInfo(Landtile landtile,
+                           Unit unit,
+                           bool reachableForSelectedUnit,
+                           bool closestToSelectedUnit,
+                           bool selectedUnitRoute) {
             Unit = unit;
             Land = landtile;
+            ReachableForSelectedUnit = reachableForSelectedUnit;
+            ClosestToSelectedUnit = closestToSelectedUnit;
+            SelectedUnitRoute = selectedUnitRoute;
         }
 
 
