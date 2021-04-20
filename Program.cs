@@ -85,6 +85,7 @@ namespace Game {
                 PrintMapScreen();
                 PrintGameMenu();
                 ConsoleKeyInfo input = Console.ReadKey(true);
+                MapTileInfo selectedTileInfo = map.SelectedTile;
                 if (input.Key == ConsoleKey.DownArrow) {
                     ++map.SelectedTileY;
                 }
@@ -102,15 +103,25 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Enter) {
-                    map.SelectUnit();
+                    if (selectedTileInfo.ContainsUnit && !map.UnitSelected) {
+                        map.SelectUnit();
+                    }
+                    else
+                    if (map.UnitSelected) {
+                        map.InsertSelectedUnitRoute();
+                    }
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
-                    map.AddUnitPath();
+                    if (map.UnitSelected) {
+                        map.AddSelectedUnitRoute();
+                    }
                 }
                 else
                 if (input.Key == ConsoleKey.Escape) {
-                    map.UnselectUnit();
+                    if (map.UnitSelected) {
+                        map.UnselectUnit();
+                    }
                 }
             } while (true);
         }
@@ -140,7 +151,7 @@ namespace Game {
                 Console.Write(buttonsEnter);
             }
             if (map.UnitSelected) {
-                if (tileInfo.AvailableForUnitMove) {
+                if (tileInfo.AvailableForSelectedUnitMove) {
                     Console.Write(buttonsSpace);
                 }
                 Console.Write(buttonsEscape);

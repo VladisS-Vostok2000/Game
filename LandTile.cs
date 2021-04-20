@@ -6,9 +6,11 @@ using System.Threading.Tasks;
 
 namespace Game {
     public struct Landtile : IConsoleDrawable {
+        public ConsoleImage ConsoleImage { get; set; }
+        public ConsoleColor ConsoleColor { get => ConsoleImage.Color; set => new ConsoleImage(ConsoleChar, value); }
+        public char ConsoleChar { get => ConsoleImage.Char; set => new ConsoleImage(value, ConsoleColor); }
         public string Name { get; set; }
         public string DisplayedName { get; set; }
-        public ConsoleImage ConsoleImage { get; set; }
 
 
 

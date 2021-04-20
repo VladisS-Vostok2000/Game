@@ -11,8 +11,7 @@ namespace Game {
 
         public bool ContainsUnit => Unit != null;
         public bool ReachableForSelectedUnit { get; }
-        public bool ClosestToSelectedUnit { get; }
-        public bool AvailableForUnitMove => ClosestToSelectedUnit && ReachableForSelectedUnit;
+        public bool AvailableForSelectedUnitMove { get; }
         public bool SelectedUnitRoute { get; }
 
 
@@ -20,12 +19,12 @@ namespace Game {
         public MapTileInfo(Landtile landtile,
                            Unit unit,
                            bool reachableForSelectedUnit,
-                           bool closestToSelectedUnit,
+                           bool availableForSelectedUnitMove,
                            bool selectedUnitRoute) {
             Unit = unit;
             Land = landtile;
             ReachableForSelectedUnit = reachableForSelectedUnit;
-            ClosestToSelectedUnit = closestToSelectedUnit;
+            AvailableForSelectedUnitMove = availableForSelectedUnitMove;
             SelectedUnitRoute = selectedUnitRoute;
         }
 

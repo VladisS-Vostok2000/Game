@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace Game {
     public sealed class Unit : IConsoleDrawable {
         public ConsoleImage ConsoleImage { get; set; }
+        public ConsoleColor ConsoleColor { get => ConsoleImage.Color; set => new ConsoleImage(ConsoleChar, value); }
+        public char ConsoleChar { get => ConsoleImage.Char; set => new ConsoleImage(value, ConsoleColor); }
         public string DisplayedName { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
@@ -23,8 +25,9 @@ namespace Game {
 
 
         // Map
-        public float ReservedTime { get; set; } = 5;
-        public IList<Point> UnitPath { get; set; }
+        public float TimeReserve { get; set; } = 5;
+        // TODO: это будет происходить во время смены хода.
+        public IList<Point> Route { get; set; } = new List<Point>();
 
 
 

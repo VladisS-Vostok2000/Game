@@ -49,6 +49,7 @@
     <Compile Include="Dumb.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="ExtensionsMethods.cs" />
+    <Compile Include="IListExtensions.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Map.cs" />
     <Compile Include="Landtile.cs" />
