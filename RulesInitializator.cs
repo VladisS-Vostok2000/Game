@@ -61,7 +61,7 @@ namespace Game {
             rulesIni.Remove(iniSectionMap);
             rulesIni.Remove((IDictionary<string, string> _section) => _section.TryGetValue(iniKeyType, out string type) && type == iniValueTypeUnit);
 
-            // TODO: стоит выделить отдельный словарь, ведь дальнейшее
+            // REFACTORING: стоит выделить отдельный словарь, ведь дальнейшее
             // использование rulesIni неожиданно?
             rulesIni.Merge(mapIni);
 
@@ -246,7 +246,7 @@ namespace Game {
                 IDictionary<string, string> mapSectionPairs = section.Value;
 
                 // Обязательные параметры.
-                // TODO: рассмотреть возможность сократить это.
+                // REFACTORING: рассмотреть возможность сократить это.
                 Map map = default;
                 try {
                     int x = int.Parse(mapSectionPairs[iniKeyMapLengthX]);
@@ -263,14 +263,20 @@ namespace Game {
 
             throw new Exception();
         }
+
+        /// <exception cref="Exception"></exception>
         private static Landtile[,] ParseMap(string chars, ICollection<Landtile> landtiles, int x, int y) {
             var outMap = new Landtile[x, y];
             int i = 0;
             for (int r = 0; r < y; r++) {
                 for (int c = 0; c < x; c++) {
-                    // TODO: пофиксить баг с неверной инициализацией: замена " на # выдаёт исключение здесь.
-                    outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
-                    i++;
+                    try {
+                        outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
+                        i++;
+                    }
+                    catch (InvalidOperationException) {
+                        throw new Exception("Неизвестный тайл.");
+                    }
                 }
             }
             return outMap;
@@ -289,10 +295,11 @@ namespace Game {
                 Unit unit = new Unit() { DisplayedName = unitDisplayedName };
                 unit.MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string unitMaxHPTemp) && int.TryParse(unitMaxHPTemp, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP;
                 unit.CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string unitCurrentHPTemp) && int.TryParse(unitCurrentHPTemp, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
-                
+
                 // Обязательные параметры.
+                Point unitLocation;
                 try {
-                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    unitLocation = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
                     unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
                     unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
                     unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
@@ -308,7 +315,7 @@ namespace Game {
                     continue;
                 }
 
-                units[unit.Location.X, unit.Location.Y] = unit;
+                units[unitLocation.X, unitLocation.Y] = unit;
             }
 
             return units;

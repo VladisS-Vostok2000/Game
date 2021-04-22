@@ -7,7 +7,7 @@ using Undefinded;
 
 namespace Game {
     public sealed class Rules {
-        // TODO: рассмотреть возможность превратить в словари (классы?).
+        // REFACTORING: рассмотреть возможность превратить в словари (классы?).
         public ICollection<Landtile> Landtiles { get; set; }
         public ICollection<Passability> Passabilities { get; set; }
         public ICollection<Body> Bodies { get; set; }

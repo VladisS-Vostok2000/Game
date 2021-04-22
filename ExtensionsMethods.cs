@@ -106,7 +106,7 @@ namespace Undefinded {
                     IDictionary<T2, T3> section2Pairs = section2.Value;
                     foreach (var section2Pair in section2Pairs) {
                         // Если ключ существует.
-                        // TODO: рассмотреть вариант без exception.
+                        // REFACTORING: рассмотреть вариант без exception.
                         try {
                             pairs1[section2Pair.Key] = section2Pair.Value;
                         }

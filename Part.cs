@@ -14,7 +14,6 @@ namespace Game {
 
 
 
-        // TODO: выбрать тип конструктора.
         protected Part(string name) => Name = name;
         protected Part(string name, string displayedName, int maxHP, int masse) : this(name) {
             DisplayedName = DisplayedName;

@@ -9,6 +9,7 @@ using IniParser;
 using Undefinded;
 
 namespace Game {
+    // FEATURE: добавить смену хода.
     public sealed class Map {
         private const float speedPerTile = 20;
 
@@ -16,6 +17,7 @@ namespace Game {
         public int LengthX => LandtilesMap.GetUpperBound(0) + 1;
         public int LengthY => LandtilesMap.GetUpperBound(1) + 1;
         public int Square => LengthX * LengthY;
+        // REFACTORING: заменить на лист?
         public Unit[,] Units { get; }
 
 
@@ -109,7 +111,7 @@ namespace Game {
                 }
             }
 
-            // TODO: можно выделить функции ниже в локальные.
+            // REFACTORING: можно выделить функции ниже в локальные.
             if (UnitSelected) {
                 ChangeColors(outArray, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
                 ChangeColors(outArray, SelectedUnit.Route, unitRouteColor);
@@ -136,7 +138,7 @@ namespace Game {
 
             SelectedUnit = unit;
             SelectedUnitLocation = SelectedTileLocation;
-            // TODO: пока не реализован ход, запускаю так
+            // WORKAROUND: пока не реализован ход, запускаю так
             if (SelectedUnit.Route.Count == 0) {
                 SelectedUnit.Route.Add(SelectedUnitLocation);
             }
@@ -147,17 +149,17 @@ namespace Game {
             SelectedUnitAvailableRoutes = GetUnitAvailableRoutesPerTime(SelectedUnit, SelectedUnitTimeReserveTemp);
             UnitSelected = true;
         }
-        // TODO: добавить разделение времени на выход/вход в тайл.
+        // FEATURE: добавить разделение времени на выход/вход в тайл.
         private List<Point> GetUnitAvailableRoutesPerTime(Unit unit, float timeReserve) {
             var availableRoutes = new List<Point>();
             Point unitLocation = unit.Route.Last();
-            // TODO: подключить многопоточность?
+            // REFACTORING: подключить многопоточность?
             var tempList = new List<Point>();
             tempList.AddRange(FindUnitAvailableRoutesPerTime(unitLocation.X + 1, unitLocation.Y, unit, timeReserve));
             tempList.AddRange(FindUnitAvailableRoutesPerTime(unitLocation.X - 1, unitLocation.Y, unit, timeReserve));
             tempList.AddRange(FindUnitAvailableRoutesPerTime(unitLocation.X, unitLocation.Y + 1, unit, timeReserve));
             tempList.AddRange(FindUnitAvailableRoutesPerTime(unitLocation.X, unitLocation.Y - 1, unit, timeReserve));
-            // TODO: такое себе решение.
+            // REFACTORING: такое себе решение.
             var outList = new List<Point>();
             foreach (var location in tempList) {
                 if (!outList.Contains(location)) {
@@ -167,7 +169,7 @@ namespace Game {
             return outList;
         }
         private List<Point> FindUnitAvailableRoutesPerTime(in int x, in int y, in Unit unit, double unitTimeReserve) {
-            // TODO: теоретически, можно сделать это эффективнее, если
+            // FEATURE: теоретически, можно сделать это эффективнее, если
             // рассчитывать не все тайлы по нескольку раз подряд, а делать
             // это итеративно и выбирать тайлы с наибольшим запасом времени.
             // Это довольно сложно реализовать, а также потребует память
@@ -184,12 +186,12 @@ namespace Game {
             if (timeSpent > unitTimeReserve) {
                 return outList;
             }
-            // TODO: такое себе решение.
+            // REFACTORING: такое себе решение.
             if (!outList.Contains(new Point(x, y))) {
                 outList.Add(new Point(x, y));
             }
             unitTimeReserve -= timeSpent;
-            // TODO: подключить многопоточность?
+            // REFACTORING: подключить многопоточность?
             outList.AddRange(FindUnitAvailableRoutesPerTime(x + 1, y, unit, unitTimeReserve));
             outList.AddRange(FindUnitAvailableRoutesPerTime(x - 1, y, unit, unitTimeReserve));
             outList.AddRange(FindUnitAvailableRoutesPerTime(x, y + 1, unit, unitTimeReserve));

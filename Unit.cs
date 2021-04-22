@@ -13,20 +13,18 @@ namespace Game {
         public string DisplayedName { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
-        // TODO: создать вычисление массы согласно броне и запчастей.
+        // FEATURE: создать вычисление массы согласно броне и запчастей.
         public int Masse { get; set; } = 500;
 
 
         public Body Body { get; set; }
         public Chassis Chassis { get; set; }
         public Engine Engine { get; set; }
-        // TODO: удалить лишнее поле.
-        public Point Location { get; set; }
 
 
         // Map
         public float TimeReserve { get; set; } = 5;
-        // TODO: это будет происходить во время смены хода.
+        // WORKAROUND: это будет происходить во время смены хода.
         public IList<Point> Route { get; set; } = new List<Point>();
 
 
