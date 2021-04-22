@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
-    public readonly struct MapTileInfo {
+    public readonly struct MaptileInfo {
         public Unit Unit { get; }
         public Landtile Land { get; }
 
@@ -16,7 +16,7 @@ namespace Game {
 
 
 
-        public MapTileInfo(Landtile landtile,
+        public MaptileInfo(Landtile landtile,
                            Unit unit,
                            bool reachableForSelectedUnit,
                            bool availableForSelectedUnitMove,

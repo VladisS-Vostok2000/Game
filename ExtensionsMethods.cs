@@ -152,6 +152,8 @@ namespace Undefinded {
             return false;
         }
 
+        public static bool Empty<T>(this ICollection<T> collection) => collection.Count == 0;
+
     }
 }
 

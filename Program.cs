@@ -85,7 +85,9 @@ namespace Game {
                 PrintMapScreen();
                 PrintGameMenu();
                 ConsoleKeyInfo input = Console.ReadKey(true);
-                MapTileInfo selectedTileInfo = map.SelectedTile;
+                MaptileInfo selectedTileInfo = map.SelectedTile;
+                // Нет проверок на выделенный тайл,
+                // потому что играю от API.
                 if (input.Key == ConsoleKey.DownArrow) {
                     ++map.SelectedTileY;
                 }
@@ -108,20 +110,16 @@ namespace Game {
                     }
                     else
                     if (map.UnitSelected) {
-                        map.InsertSelectedUnitRoute();
+                        map.ConfirmSelectedUnitRoute();
                     }
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
-                    if (map.UnitSelected) {
-                        map.AddSelectedUnitRoute();
-                    }
+                    map.AddSelectedUnitRoute();
                 }
                 else
                 if (input.Key == ConsoleKey.Escape) {
-                    if (map.UnitSelected) {
-                        map.UnselectUnit();
-                    }
+                    map.UnselectUnit();
                 }
             } while (true);
         }
@@ -141,11 +139,11 @@ namespace Game {
         }
         private static void PrintGameMenu() {
             Console.WriteLine(new string('-', Console.BufferWidth - 1));
-            MapTileInfo tileInfo = map.SelectedTile;
+            MaptileInfo tileInfo = map.SelectedTile;
             PrintKeys(tileInfo);
             PrintTileInformation(tileInfo);
         }
-        private static void PrintKeys(MapTileInfo tileInfo) {
+        private static void PrintKeys(MaptileInfo tileInfo) {
             Console.Write(buttonsInstruction);
             if (tileInfo.ContainsUnit || map.UnitSelected) {
                 Console.Write(buttonsEnter);
@@ -158,7 +156,7 @@ namespace Game {
             }
             Console.WriteLine("");
         }
-        private static void PrintTileInformation(MapTileInfo tileInfo) {
+        private static void PrintTileInformation(MaptileInfo tileInfo) {
             if (tileInfo.ContainsUnit) {
                 PrintLandtileAndUnitTitle(tileInfo);
             }
@@ -170,7 +168,7 @@ namespace Game {
                 PrintUnitInfo(tileInfo.Unit);
             }
         }
-        private static void PrintLandtileTitle(MapTileInfo tileInfo) {
+        private static void PrintLandtileTitle(MaptileInfo tileInfo) {
             Landtile landtile = tileInfo.Land;
             Console.Write("[");
             WriteColored(landtile.ConsoleImage);
@@ -179,7 +177,7 @@ namespace Game {
             string name = tileInfo.Land.DisplayedName;
             Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
-        private static void PrintLandtileAndUnitTitle(MapTileInfo tileInfo) {
+        private static void PrintLandtileAndUnitTitle(MaptileInfo tileInfo) {
             Landtile landtile = tileInfo.Land;
             Console.Write("[");
             WriteColored(landtile.ConsoleImage);

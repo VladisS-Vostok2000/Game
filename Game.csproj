@@ -54,7 +54,7 @@
     <Compile Include="Map.cs" />
     <Compile Include="Landtile.cs" />
     <Compile Include="IConsoleDrawable.cs" />
-    <Compile Include="MapTileInfo.cs" />
+    <Compile Include="MaptileInfo.cs" />
     <Compile Include="Part.cs" />
     <Compile Include="PartsConfigurator.cs" />
     <Compile Include="Passability.cs" />
