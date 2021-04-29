@@ -105,12 +105,12 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Enter) {
-                    if (selectedTileInfo.ContainsUnit && !map.UnitSelected) {
-                        map.SelectUnit();
-                    }
-                    else
                     if (map.UnitSelected) {
                         map.ConfirmSelectedUnitRoute();
+                    }
+                    else
+                    if (map.SelectedTile.ContainsUnit) {
+                        map.SelectUnit();
                     }
                 }
                 else
@@ -120,6 +120,10 @@ namespace Game {
                 else
                 if (input.Key == ConsoleKey.Escape) {
                     map.UnselectUnit();
+                }
+                else
+                if (input.Key == ConsoleKey.T) {
+                    map.MakeTurn();
                 }
             } while (true);
         }

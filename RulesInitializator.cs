@@ -252,7 +252,7 @@ namespace Game {
                     int x = int.Parse(mapSectionPairs[iniKeyMapLengthX]);
                     int y = int.Parse(mapSectionPairs[iniKeyMapLengthY]);
                     Landtile[,] mapLandtiles = ParseMap(mapSectionPairs[iniKeyMap], rules.Landtiles, x, y);
-                    Unit[,] units = ParseUnits(ini, new Unit[x, y], rules);
+                    List<Unit> units = ParseUnits(ini, rules);
                     map = new Map(mapLandtiles, rules, units);
                 }
                 catch (KeyNotFoundException) { }
@@ -281,7 +281,8 @@ namespace Game {
             }
             return outMap;
         }
-        private static Unit[,] ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Unit[,] units, Rules rules) {
+        private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
+            var outList = new List<Unit>();
             foreach (var section in ini) {
                 IDictionary<string, string> sectionPairs = section.Value;
                 if (!IsSectionTypeOf(sectionPairs, iniValueTypeUnit)) {
@@ -297,9 +298,9 @@ namespace Game {
                 unit.CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string unitCurrentHPTemp) && int.TryParse(unitCurrentHPTemp, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
 
                 // Обязательные параметры.
-                Point unitLocation;
                 try {
-                    unitLocation = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    // BUG: теперь можно засунуть два unit на одну локацию.
+                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
                     unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
                     unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
                     unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
@@ -315,10 +316,10 @@ namespace Game {
                     continue;
                 }
 
-                units[unitLocation.X, unitLocation.Y] = unit;
+                outList.Add(unit);
             }
 
-            return units;
+            return outList;
         }
 
         private static bool IsSectionTypeOf(IDictionary<string, string> section, string type) => section.TryGetValue(iniKeyType, out string sectionType) && sectionType == type;

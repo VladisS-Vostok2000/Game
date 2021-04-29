@@ -2,3 +2,6 @@
 
 # CS0168: Переменная объявлена, но не используется
 dotnet_diagnostic.CS0168.severity = silent
+
+# CS0219: Переменная назначена, но ее значение не используется
+dotnet_diagnostic.CS0219.severity = silent

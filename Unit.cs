@@ -23,13 +23,22 @@ namespace Game {
 
 
         // Map
-        public float TimeReserve { get; set; } = 5;
-        // WORKAROUND: это будет происходить во время смены хода.
+        public Point Location {
+            get => new Point(X, Y);
+            set {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+        public int X { get; set; }
+        public int Y { get; set; }
+        public float TimeReserve { get; set; }
+        public Point SecondLocation { get; set; }
         public IList<Point> Route { get; set; } = new List<Point>();
 
 
 
-        public float CalculateSpeed(string landtileName) => Engine.Power * Chassis.Passability[landtileName] * Engine.PowerCoeff / Passability.PassabilityCoeff / Masse;
+        public float CalculateSpeedOnLandtile(string landtileName) => Engine.Power * Chassis.Passability[landtileName] * Engine.PowerCoeff / Passability.PassabilityCoeff / Masse;
 
     }
 }

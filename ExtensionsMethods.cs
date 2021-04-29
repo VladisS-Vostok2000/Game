@@ -153,6 +153,11 @@ namespace Undefinded {
         }
 
         public static bool Empty<T>(this ICollection<T> collection) => collection.Count == 0;
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> input) {
+            foreach (var item in input) {
+                collection.Add(item);
+            }
+        }
 
     }
 }
