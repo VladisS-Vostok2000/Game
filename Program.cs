@@ -123,7 +123,7 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.T) {
-                    map.MakeTurn();
+                    map.PassTurn();
                 }
             } while (true);
         }

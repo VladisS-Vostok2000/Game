@@ -48,12 +48,17 @@ namespace Game {
         private const string iniKeyUnitMaxHP = "MaxHP";
         private const string iniKeyUnitCurrentHP = "CurrentHP";
         private const string iniKeyUnitEngine = "Engine";
+        private const string iniKeyUnitTeam = "Team";
         private const string iniDefaultUnitDisplayedName = "Default";
         private const int iniDefaultUnitMaxHP = 100;
         private const int iniDefaultUnitCurrentHP = 100;
         /// Engine
         private const string iniValueTypeEngine = "Engine";
         private const string iniKeyEnginePower = "Power";
+        /// Team
+        private const string iniValueTypeTeam = "Team";
+        private const string iniKeyTeamDisplayedName = "Name";
+        private const string iniKeyTeamColor = "Color";
 
 
 
@@ -70,7 +75,8 @@ namespace Game {
             List<Passability> passabilities = ParsePassabilities(rulesIni, landTiles);
             List<Chassis> chassis = ParseChassis(rulesIni, passabilities);
             List<Engine> engines = ParseEngines(rulesIni);
-            var rules = new Rules(landTiles, passabilities, bodies, chassis, engines);
+            List<Team> teams = ParseTeams(rulesIni);
+            var rules = new Rules(landTiles, passabilities, bodies, chassis, engines, teams);
             return InitializeMap(rulesIni, rules);
         }
 
@@ -281,6 +287,33 @@ namespace Game {
             }
             return outMap;
         }
+        private static List<Team> ParseTeams(IDictionary<string, IDictionary<string, string>> sections) {
+            var teams = new List<Team>();
+
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeTeam)) continue;
+                
+                IDictionary<string, string> teamSectionPairs = sectionPairs;
+                string teamSectionName = section.Key;
+                var team = new Team(teamSectionName);
+
+                try {
+                    bool parsedSusseffully = Enum.TryParse(teamSectionPairs[iniKeyTeamColor], out ConsoleColor parsedColor);
+                    if (!parsedSusseffully) continue;
+
+                    team.Color = parsedColor;
+                    team.DisplayedName = teamSectionPairs[iniKeyTeamDisplayedName];
+                }
+                catch (KeyNotFoundException) {
+                    throw;
+                }
+
+                teams.Add(team);
+            }
+
+            return teams;
+        }
         private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
             var outList = new List<Unit>();
             foreach (var section in ini) {
@@ -301,10 +334,12 @@ namespace Game {
                 try {
                     // BUG: теперь можно засунуть два unit на одну локацию.
                     unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    // TODO: теперь нужно избавиться от цвета.
                     unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
                     unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
                     unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
                     unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
+                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
                 }
                 catch (FormatException) {
                     continue;

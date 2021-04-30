@@ -13,22 +13,25 @@ namespace Game {
         public ICollection<Body> Bodies { get; set; }
         public ICollection<Chassis> Chassis { get; set; }
         public ICollection<Engine> Engines { get; set; }
+        public ICollection<Team> Teams { get; set; }
 
 
 
-        public Rules(ICollection<Landtile> landtiles, ICollection<Passability> passabilities, ICollection<Body> bodies, ICollection<Chassis> chassis, ICollection<Engine> engines) {
+        public Rules(ICollection<Landtile> landtiles, ICollection<Passability> passabilities, ICollection<Body> bodies, ICollection<Chassis> chassis, ICollection<Engine> engines, ICollection<Team> teams) {
             Landtiles = landtiles;
             Passabilities = passabilities;
             Bodies = bodies;
             Chassis = chassis;
             Engines = engines;
+            Teams = teams;
         }
 
 
 
-        internal Body GetBody(string bodyName) => (Body)Bodies.First((Body _body) => _body.Name == bodyName).Clone();
-        internal Chassis GetChassis(string chassisName) => (Chassis)Chassis.First((Chassis _chassis) => _chassis.Name == chassisName).Clone();
-        internal Engine GetEngine(string engineName) => (Engine)Engines.First((Engine _engine) => _engine.Name == engineName).Clone();
+        internal Body GetBody(string bodyName) => (Body)Bodies.First((Body body) => body.Name == bodyName).Clone();
+        internal Chassis GetChassis(string chassisName) => (Chassis)Chassis.First((Chassis chassis) => chassis.Name == chassisName).Clone();
+        internal Engine GetEngine(string engineName) => (Engine)Engines.First((engine) => engine.Name == engineName).Clone();
+        internal Team GetTeam(string teamName) => Teams.First((team) => team.Name == teamName);
 
     }
 }

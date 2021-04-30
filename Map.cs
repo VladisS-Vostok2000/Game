@@ -114,7 +114,7 @@ namespace Game {
             }
 
             // Подсвеченный тайл.
-            outArray[SelectedTileX, SelectedTileY] = new ConsoleImage(SelectedTile.ToConsoleImage().Char, selectedTileColor);
+            outArray[SelectedTileX, SelectedTileY].Color = selectedTileColor;
 
             return outArray;
             void ChangeColors(ConsoleImage[,] consoleImages, ICollection<Point> coordList, ConsoleColor color) {
@@ -185,6 +185,7 @@ namespace Game {
                 outList.Add(new Point(x, y));
             }
             unitTimeReserve -= timeSpent;
+            // BUG: приложение умирает при тайлах > 10.
             // REFACTORING: подключить многопоточность?
             outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x + 1, y, unit, unitTimeReserve));
             outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x - 1, y, unit, unitTimeReserve));
@@ -247,7 +248,7 @@ namespace Game {
         #endregion
 
 
-        public void MakeTurn() {
+        public void PassTurn() {
             for (float i = 0; i < timePerTurn; i += turnTimeDivision) {
                 MoveUnits();
             }

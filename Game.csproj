@@ -62,6 +62,7 @@
     <Compile Include="ConsoleImage.cs" />
     <Compile Include="Rules.cs" />
     <Compile Include="RulesInitializator.cs" />
+    <Compile Include="Team.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="UnitConfigurator.cs" />
   </ItemGroup>
