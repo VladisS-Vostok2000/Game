@@ -56,6 +56,9 @@ namespace Game {
         private IList<Point> SelectedUnitRouteTemp;
         private float SelectedUnitTimeReserveTemp;
 
+        public Team CurrentTeam { get; private set; }
+        private int currentTeamIndex;
+
 
 
         public MaptileInfo this[int x, int y] {
@@ -89,7 +92,7 @@ namespace Game {
             Landtiles = landtiles;
             Rules = rules;
             Units = units;
-
+            CurrentTeam = rules.Teams[0];
             foreach (var unit in Units) {
                 unit.TimeReserve = timePerTurn;
             }
@@ -126,15 +129,13 @@ namespace Game {
 
 
         #region Unit
-        public Unit GetUnit(Point location) => Units.FirstOrDefault((Unit unit) => unit.Location == location);
-        public Unit GetUnit(int x, int y) => GetUnit(new Point(x, y));
+        public Unit GetUnit(Point location) => Units.FirstOrDefault((unit) => unit.Location == location);
+        public Unit GetUnit(in int x, in int y) => GetUnit(new Point(x, y));
 
 
         public void SelectUnit() {
             Unit unit = GetUnit(SelectedTileLocation);
-            if (unit == null) {
-                return;
-            }
+            if (unit == null || unit.Team != CurrentTeam) return;
 
             SelectedUnit = unit;
             SelectedUnit.Location = SelectedTileLocation;
@@ -249,6 +250,11 @@ namespace Game {
 
 
         public void PassTurn() {
+            UnselectUnit();
+            currentTeamIndex = (currentTeamIndex + 1) % Rules.Teams.Count;
+            CurrentTeam = Rules.Teams[currentTeamIndex];
+        }
+        public void MakeTurn() {
             for (float i = 0; i < timePerTurn; i += turnTimeDivision) {
                 MoveUnits();
             }

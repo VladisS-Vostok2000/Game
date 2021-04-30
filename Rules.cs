@@ -13,11 +13,11 @@ namespace Game {
         public ICollection<Body> Bodies { get; set; }
         public ICollection<Chassis> Chassis { get; set; }
         public ICollection<Engine> Engines { get; set; }
-        public ICollection<Team> Teams { get; set; }
+        public IList<Team> Teams { get; set; }
 
 
 
-        public Rules(ICollection<Landtile> landtiles, ICollection<Passability> passabilities, ICollection<Body> bodies, ICollection<Chassis> chassis, ICollection<Engine> engines, ICollection<Team> teams) {
+        public Rules(ICollection<Landtile> landtiles, ICollection<Passability> passabilities, ICollection<Body> bodies, ICollection<Chassis> chassis, ICollection<Engine> engines, IList<Team> teams) {
             Landtiles = landtiles;
             Passabilities = passabilities;
             Bodies = bodies;
