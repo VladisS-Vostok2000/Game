@@ -206,6 +206,7 @@ namespace Game {
             Console.WriteLine("Масса:".PadRight(padConst) + unit.Masse);
             Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.Engine.DisplayedName);
             Console.WriteLine("Мощность:".PadRight(padConst) + unit.Engine.Power);
+            Console.WriteLine("Орудие:".PadRight(padConst) + unit.Weapon.DisplayedName);
         }
 
     }

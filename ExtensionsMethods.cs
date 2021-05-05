@@ -56,6 +56,10 @@ namespace Undefinded {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && int.TryParse(strResult, out result);
         }
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out float result) {
+            result = default;
+            return pairs.TryGetValue(key, out string strResult) && float.TryParse(strResult, out result);
+        }
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out long result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && long.TryParse(strResult, out result);

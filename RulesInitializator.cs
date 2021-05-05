@@ -18,14 +18,6 @@ namespace Game {
         private const string iniKeyDisplayedName = "Name";
         private const string iniKeyImageChar = "CharImage";
         private const string iniDefaultDisplayedName = "Default";
-        /// Tile
-        private const string iniKeyTileColor = "Color";
-        private const string iniValueTypeLandtile = "Tile";
-        /// Map
-        private const string iniSectionMap = "Map";
-        private const string iniKeyMap = "Map";
-        private const string iniKeyMapLengthX = "LengthX";
-        private const string iniKeyMapLengthY = "LengthY";
         /// Part
         private const string iniKeyPartMaxHP = "MaxHP";
         private const string iniKeyPartMasse = "Masse";
@@ -38,6 +30,21 @@ namespace Game {
         private const string iniKeyChassisPassability = "Passability";
         /// Passability
         private const string iniValueTypePassability = "Passability";
+        /// Engine
+        private const string iniValueTypeEngine = "Engine";
+        private const string iniKeyEnginePower = "Power";
+        /// Warhead
+        private const string iniValueTypeWarhead = "Warhead";
+        private const string iniKeyWarheadDamage = "Damage";
+        /// Projectiles
+        private const string iniValueTypeProjectile = "Projectile";
+        private const string iniKeyProjectileWarhead = "Warhead";
+        /// Weapon
+        private const string iniValueTypeWeapon = "Weapon";
+        private const string iniKeyWeaponCooldown = "Cooldown";
+        private const string iniKeyWeaponName = "Name";
+        private const string iniKeyWeaponPojectile = "Projectile";
+        private const float iniDefaultWeaponCooldown = 5;
         /// Unit
         private const string iniKeyUnitDisplayedName = "Name";
         private const string iniKeyUnitX = "X";
@@ -49,17 +56,22 @@ namespace Game {
         private const string iniKeyUnitCurrentHP = "CurrentHP";
         private const string iniKeyUnitEngine = "Engine";
         private const string iniKeyUnitTeam = "Team";
-        private const string iniDefaultUnitDisplayedName = "Default";
+        private const string iniKeyUnitWeapon = "Weapon";
         private const int iniDefaultUnitMaxHP = 100;
         private const int iniDefaultUnitCurrentHP = 100;
-        /// Engine
-        private const string iniValueTypeEngine = "Engine";
-        private const string iniKeyEnginePower = "Power";
+        private const string iniDefaultUnitDisplayedName = "Default";
         /// Team
         private const string iniValueTypeTeam = "Team";
         private const string iniKeyTeamDisplayedName = "Name";
         private const string iniKeyTeamColor = "Color";
-
+        /// Tile
+        private const string iniKeyTileColor = "Color";
+        private const string iniValueTypeLandtile = "Tile";
+        /// Map
+        private const string iniSectionMap = "Map";
+        private const string iniKeyMap = "Map";
+        private const string iniKeyMapLengthX = "LengthX";
+        private const string iniKeyMapLengthY = "LengthY";
 
 
         public static Map InitializeMap(IDictionary<string, IDictionary<string, string>> rulesIni, IDictionary<string, IDictionary<string, string>> mapIni) {
@@ -70,13 +82,17 @@ namespace Game {
             // использование rulesIni неожиданно?
             rulesIni.Merge(mapIni);
 
-            List<Landtile> landTiles = ParseLandtiles(rulesIni);
-            List<Body> bodies = ParseBodies(rulesIni);
-            List<Passability> passabilities = ParsePassabilities(rulesIni, landTiles);
-            List<Chassis> chassis = ParseChassis(rulesIni, passabilities);
-            List<Engine> engines = ParseEngines(rulesIni);
-            List<Team> teams = ParseTeams(rulesIni);
-            var rules = new Rules(landTiles, passabilities, bodies, chassis, engines, teams);
+            var rules = new Rules();
+            rules.Landtiles = ParseLandtiles(rulesIni);
+            rules.Passabilities = ParsePassabilities(rulesIni, rules);
+            rules.Chassis = ParseChassis(rulesIni, rules);
+            rules.Bodies = ParseBodies(rulesIni);
+            rules.Engines = ParseEngines(rulesIni);
+            rules.Warheads = ParseWarheads(rulesIni);
+            rules.Projectiles = ParseProjectiles(rulesIni, rules);
+            rules.Weapons = ParseWeapons(rulesIni, rules);
+            rules.Teams = ParseTeams(rulesIni);
+
             return InitializeMap(rulesIni, rules);
         }
 
@@ -111,7 +127,7 @@ namespace Game {
             }
             return outList;
         }
-        private static List<Passability> ParsePassabilities(IDictionary<string, IDictionary<string, string>> sections, ICollection<Landtile> landtiles) {
+        private static List<Passability> ParsePassabilities(IDictionary<string, IDictionary<string, string>> sections, Rules rules) {
             var outPassabilities = new List<Passability>();
             foreach (var section in sections) {
                 IDictionary<string, string> sectionPairs = section.Value;
@@ -123,7 +139,7 @@ namespace Game {
 
                 var tilesPassability = new Dictionary<string, int>();
                 // Обработать нужно обязательно каждый тип landtile.
-                List<string> landtilesNames = GetLandtilesNames(landtiles);
+                List<string> landtilesNames = GetLandtilesNames(rules.Landtiles);
                 foreach (var pair in passabilitySectionPairs) {
                     try {
                         string landtileName = pair.Key;
@@ -174,7 +190,7 @@ namespace Game {
 
             return bodies;
         }
-        private static List<Chassis> ParseChassis(IDictionary<string, IDictionary<string, string>> sections, ICollection<Passability> passabilities) {
+        private static List<Chassis> ParseChassis(IDictionary<string, IDictionary<string, string>> sections, Rules rules) {
             var outChassis = new List<Chassis>();
 
             foreach (var section in sections) {
@@ -191,7 +207,7 @@ namespace Game {
                 // Обязательные параметры.
                 try {
                     string passabilityName = chassisSectionPairs[iniKeyChassisPassability];
-                    Passability passability = passabilities.First((Passability _passability) => _passability.Name == passabilityName);
+                    Passability passability = rules.GetPassability(iniKeyChassisPassability);
                     chassis.Passability = (Passability)passability.Clone();
                 }
                 catch (KeyNotFoundException) {
@@ -242,6 +258,147 @@ namespace Game {
 
             return engines;
         }
+        private static List<Team> ParseTeams(IDictionary<string, IDictionary<string, string>> sections) {
+            var teams = new List<Team>();
+
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeTeam)) continue;
+
+                IDictionary<string, string> teamSectionPairs = sectionPairs;
+                string teamSectionName = section.Key;
+                var team = new Team(teamSectionName);
+
+                try {
+                    bool parsedSusseffully = Enum.TryParse(teamSectionPairs[iniKeyTeamColor], out ConsoleColor parsedColor);
+                    if (!parsedSusseffully) continue;
+
+                    team.Color = parsedColor;
+                    team.DisplayedName = teamSectionPairs[iniKeyTeamDisplayedName];
+                }
+                catch (KeyNotFoundException) {
+                    throw;
+                }
+
+                teams.Add(team);
+            }
+
+            return teams;
+        }
+        private static List<Warhead> ParseWarheads(IDictionary<string, IDictionary<string, string>> sections) {
+            var outList = new List<Warhead>();
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeWarhead)) continue;
+
+                IDictionary<string, string> warheadSectionPairs = sectionPairs;
+                string warheadSectionName = section.Key;
+                var warhead = new Warhead(warheadSectionName) { };
+
+                try {
+                    warhead.Damage = int.Parse(warheadSectionPairs[iniKeyWarheadDamage]);
+                }
+                catch (FormatException) { continue; }
+                catch (KeyNotFoundException) { continue; }
+
+                outList.Add(warhead);
+            }
+            return outList;
+        }
+        private static List<Projectile> ParseProjectiles(IDictionary<string, IDictionary<string, string>> sections, Rules rules) {
+            var outList = new List<Projectile>();
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeProjectile)) continue;
+
+                IDictionary<string, string> projectileSectionPairs = sectionPairs;
+                string projectileSectionName = section.Key;
+                var projectile = new Projectile(projectileSectionName) { };
+
+                try {
+                    projectile.Warhead = rules.GetWarhead(iniKeyProjectileWarhead);
+                }
+                catch (KeyNotFoundException) { continue; }
+                catch (InvalidOperationException) { continue; }
+
+                outList.Add(projectile);
+            }
+            return outList;
+        }
+        private static List<Weapon> ParseWeapons(IDictionary<string, IDictionary<string, string>> sections, Rules rules) {
+            var outList = new List<Weapon>();
+            foreach (var section in sections) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeWeapon)) continue;
+
+                IDictionary<string, string> weaponSectionPairs = sectionPairs;
+                string weaponSectionName = section.Key;
+                var weapon = new Weapon(weaponSectionName) {
+                    // Необязательные параметры.
+                    Cooldown = weaponSectionPairs.TryParseValue(iniKeyWeaponCooldown, out float parsedCooldown) ? parsedCooldown : iniDefaultWeaponCooldown,
+                    DisplayedName = weaponSectionPairs.TryParseValue(iniKeyWeaponName, out string parsedName) ? parsedName : iniDefaultDisplayedName
+                };
+
+                try {
+                    weapon.Projectile = rules.GetProjectile(iniKeyWeaponPojectile);
+                }
+                catch (KeyNotFoundException) { continue; }
+                catch (InvalidOperationException) { continue; }
+
+                outList.Add(weapon);
+            }
+
+            return outList;
+        }
+        private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
+            var outList = new List<Unit>();
+            foreach (var section in ini) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeUnit)) {
+                    continue;
+                }
+                IDictionary<string, string> unitSectionPairs = sectionPairs;
+                string unitSectionName = section.Key;
+
+                var unit = new Unit() {
+                    // Необязательные параметры.
+                    DisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName,
+                    MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP,
+                    CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP,
+                };
+
+                // Обязательные параметры.
+                try {
+                    // BUG: теперь можно засунуть два unit на одну локацию.
+                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    // TODO: теперь нужно избавиться от цвета.
+                    unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
+                    unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
+                    unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
+                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
+                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
+                    unit.Weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
+                }
+                catch (FormatException) { continue; }
+                catch (KeyNotFoundException) { continue; }
+                catch (InvalidOperationException) { continue; }
+
+                outList.Add(unit);
+            }
+
+            return outList;
+        }
+        private static Landtile[,] ParseMap(string chars, ICollection<Landtile> landtiles, int x, int y) {
+            var outMap = new Landtile[x, y];
+            int i = 0;
+            for (int r = 0; r < y; r++) {
+                for (int c = 0; c < x; c++) {
+                    outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
+                    i++;
+                }
+            }
+            return outMap;
+        }
         private static Map InitializeMap(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
             foreach (var section in ini) {
                 string sectionName = section.Key;
@@ -270,92 +427,6 @@ namespace Game {
             throw new Exception();
         }
 
-        /// <exception cref="Exception"></exception>
-        private static Landtile[,] ParseMap(string chars, ICollection<Landtile> landtiles, int x, int y) {
-            var outMap = new Landtile[x, y];
-            int i = 0;
-            for (int r = 0; r < y; r++) {
-                for (int c = 0; c < x; c++) {
-                    try {
-                        outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
-                        i++;
-                    }
-                    catch (InvalidOperationException) {
-                        throw new Exception("Неизвестный тайл.");
-                    }
-                }
-            }
-            return outMap;
-        }
-        private static List<Team> ParseTeams(IDictionary<string, IDictionary<string, string>> sections) {
-            var teams = new List<Team>();
-
-            foreach (var section in sections) {
-                IDictionary<string, string> sectionPairs = section.Value;
-                if (!IsSectionTypeOf(sectionPairs, iniValueTypeTeam)) continue;
-                
-                IDictionary<string, string> teamSectionPairs = sectionPairs;
-                string teamSectionName = section.Key;
-                var team = new Team(teamSectionName);
-
-                try {
-                    bool parsedSusseffully = Enum.TryParse(teamSectionPairs[iniKeyTeamColor], out ConsoleColor parsedColor);
-                    if (!parsedSusseffully) continue;
-
-                    team.Color = parsedColor;
-                    team.DisplayedName = teamSectionPairs[iniKeyTeamDisplayedName];
-                }
-                catch (KeyNotFoundException) {
-                    throw;
-                }
-
-                teams.Add(team);
-            }
-
-            return teams;
-        }
-        private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
-            var outList = new List<Unit>();
-            foreach (var section in ini) {
-                IDictionary<string, string> sectionPairs = section.Value;
-                if (!IsSectionTypeOf(sectionPairs, iniValueTypeUnit)) {
-                    continue;
-                }
-                IDictionary<string, string> unitSectionPairs = sectionPairs;
-                string unitSectionName = section.Key;
-
-                // Необязательные параметры.
-                string unitDisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName;
-                Unit unit = new Unit() { DisplayedName = unitDisplayedName };
-                unit.MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string unitMaxHPTemp) && int.TryParse(unitMaxHPTemp, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP;
-                unit.CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string unitCurrentHPTemp) && int.TryParse(unitCurrentHPTemp, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
-
-                // Обязательные параметры.
-                try {
-                    // BUG: теперь можно засунуть два unit на одну локацию.
-                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
-                    // TODO: теперь нужно избавиться от цвета.
-                    unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
-                    unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
-                    unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
-                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
-                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
-                }
-                catch (FormatException) {
-                    continue;
-                }
-                catch (KeyNotFoundException) {
-                    continue;
-                }
-                catch (InvalidOperationException) {
-                    continue;
-                }
-
-                outList.Add(unit);
-            }
-
-            return outList;
-        }
 
         private static bool IsSectionTypeOf(IDictionary<string, string> section, string type) => section.TryGetValue(iniKeyType, out string sectionType) && sectionType == type;
         private static List<string> GetLandtilesNames(ICollection<Landtile> landtiles) {
