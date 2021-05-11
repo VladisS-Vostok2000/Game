@@ -1,43 +1,22 @@
 ﻿using Game;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Undefinded {
     public static class ExtensionsMethods {
-        /// <summary>
-        /// Отчистит строку от символов, относящихся к категории пробелов.
-        /// </summary>
-        public static string ClearEmptySpaces(this string target) {
-            string outString = "";
-            for (int i = 0; i < target.Length; i++) {
-                if (!char.IsWhiteSpace(target[i])) {
-                    outString += target[i];
-                }
-            }
-            return outString;
-        }
-
-        /// <summary>
-        /// Извлекает подстроку заданной длинны с заданной позиции.
-        /// </summary>
-        public static string Extract(this string target, int firstIndex, int Length) {
-            string outString = "";
-            for (int i = firstIndex; i < target.Length && Length-- > 0; i++) {
-                outString += target[i];
-            }
-            return outString;
-        }
+       
 
         /// <summary>
         /// Гарантирует нахождение числа в заданном диапазоне.
         /// </summary>
-        public static int InRange(in this int target, in int rangeStart, in int RangeLength) {
+        public static int InRange(in this int target, in int rangeStart, in int rangeLength) {
             int rawIndex = target - rangeStart;
-            int index = rawIndex % RangeLength;
-            return index < 0 ? index + RangeLength : index;
+            int index = rawIndex % rangeLength;
+            return index < 0 ? index + rangeLength : index;
         }
 
         /// <summary>
@@ -52,22 +31,37 @@ namespace Undefinded {
             dic.ContainsKey(key) && dic[key].Equals(value);
 
 
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out int result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && int.TryParse(strResult, out result);
         }
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out float result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && float.TryParse(strResult, out result);
         }
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out long result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && long.TryParse(strResult, out result);
         }
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out char result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && char.TryParse(strResult, out result);
         }
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out string result) {
             result = default;
             return pairs.TryGetValue(key, out result);
@@ -97,7 +91,7 @@ namespace Undefinded {
         //    }
         //    throw new KeyNotFoundException();
         //}
-        
+
         /// <summary>
         /// Производит модификацию секций, атрибутов и значений в соответствии с заданным словарём. 
         /// </summary>
@@ -147,7 +141,7 @@ namespace Undefinded {
             outItem = default;
             return false;
         }
-        public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2,T3>> predicate) {
+        public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2, T3>> predicate) {
             foreach (var pairs in dictionary) {
                 if (predicate(pairs.Value)) {
                     return dictionary.Remove(pairs);
@@ -162,6 +156,12 @@ namespace Undefinded {
                 collection.Add(item);
             }
         }
+
+
+        // REFACTORING: я пока не знаю, куда это пристроить.
+        public static bool TilesClosely(Point tile1Coord, Point tile2Coord) =>
+            (Math.Abs(tile1Coord.X - tile2Coord.X) == 1 && tile1Coord.Y == tile2Coord.Y) ||
+            (Math.Abs(tile1Coord.Y - tile2Coord.Y) == 1 && tile1Coord.X == tile2Coord.X);
 
     }
 }

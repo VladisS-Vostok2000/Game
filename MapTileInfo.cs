@@ -12,6 +12,7 @@ namespace Game {
         public bool ContainsUnit => Unit != null;
         public bool ReachableForSelectedUnit { get; }
         public bool AvailableForSelectedUnitMove { get; }
+        // TODO: что это за поле?
         public bool SelectedUnitRoute { get; }
 
 

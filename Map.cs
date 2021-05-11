@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using IniParser;
+using MyParsers;
 using Undefinded;
 
 namespace Game {
@@ -48,12 +48,12 @@ namespace Game {
 
         private const ConsoleColor unitAvailableRoutesColor = ConsoleColor.Cyan;
         private const ConsoleColor unitRouteColor = ConsoleColor.Red;
-        private const ConsoleColor selectedUnitRouting = ConsoleColor.Magenta;
+        private const ConsoleColor selectedUnitRoutingColor = ConsoleColor.Magenta;
         public Unit SelectedUnit { get; private set; }
         public ICollection<Unit> Units { get; }
         public bool UnitSelected { get; private set; }
         public ICollection<Point> SelectedUnitAvailableRoutes { get; private set; }
-        private IList<Point> SelectedUnitRouteTemp;
+        private IList<Point> SelectedUnitTempRoute;
         private float SelectedUnitTimeReserveTemp;
 
         public Team CurrentTeam { get; private set; }
@@ -111,9 +111,9 @@ namespace Game {
 
             if (UnitSelected) {
                 ChangeColors(outArray, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
-                ChangeColors(outArray, SelectedUnit.Route, unitRouteColor);
-                ChangeColors(outArray, SelectedUnitRouteTemp, unitRouteColor);
-                outArray[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRouting;
+                ChangeColors(outArray, SelectedUnit.GetRoute(), unitRouteColor);
+                ChangeColors(outArray, SelectedUnitTempRoute, unitRouteColor);
+                outArray[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
             }
 
             // Подсвеченный тайл.
@@ -138,16 +138,31 @@ namespace Game {
             if (unit == null || unit.Team != CurrentTeam) return;
 
             SelectedUnit = unit;
-            SelectedUnit.Location = SelectedTileLocation;
-            SelectedUnitRouteTemp = new List<Point>();
-            SelectedUnitRouteTemp.AddRange(SelectedUnit.Route);
+            SelectedUnitTempRoute = new List<Point>();
+            SelectedUnitTempRoute.AddRange(SelectedUnit.GetRoute());
             SelectedUnitTimeReserveTemp = SelectedUnit.TimeReserve;
             SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(SelectedUnitTimeReserveTemp);
             UnitSelected = true;
         }
         // FEATURE: добавить разделение времени на выход/вход в тайл.
-        private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) =>
-            FindUnitAvailableRoutesPerTime(GetSelectedUnitTempPosition(), SelectedUnit, timeReserve);
+        private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
+            timeReserve = GetSelectedUnitRemainingTimeTemp(SelectedUnit, timeReserve);
+            if (timeReserve <= 0) { return new List<Point>(); }
+            Point unitTempLocation = GetSelectedUnitTempPosition();
+            return FindUnitAvailableRoutesPerTime(unitTempLocation, SelectedUnit, timeReserve);
+        }
+
+        private float GetSelectedUnitRemainingTimeTemp(Unit unit, float timeReserve) {
+            float remainingTime = unit.TimeReserve + timeReserve;
+            var route = new List<Point>(unit.GetRoute());
+            route.AddRange(SelectedUnitTempRoute);
+            for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
+                Point way = route[i];
+                Landtile land = Landtiles[way.X, way.Y];
+                remainingTime -= UnitTimeSpentOnTile(land.Name, unit);
+            }
+            return remainingTime;
+        }
         private List<Point> FindUnitAvailableRoutesPerTime(in Point unitStartLocation, Unit unit, float timeReserve) {
             var outList = new List<Point>();
             // REFACTORING: подключить многопоточность?
@@ -213,26 +228,25 @@ namespace Game {
             string newPositionLandtileName = SelectedTile.Land.Name;
             float timeSpent = UnitTimeSpentOnTile(newPositionLandtileName, SelectedUnit);
             SelectedUnitTimeReserveTemp -= timeSpent;
-            SelectedUnitRouteTemp.Add(SelectedTileLocation);
+            SelectedUnitTempRoute.Add(SelectedTileLocation);
             SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(SelectedUnitTimeReserveTemp);
         }
         public bool MaptileLocationAvailableForSelectedUnitTempMove(Point landtileLocation) =>
             MaptileReachableForSelectedUnit(landtileLocation) &&
             TileClosestToSelectedUnitTempPosition(landtileLocation);
-        public bool MaptileIsSelectedUnitRoute(Point maptileLocation) => SelectedUnit.Route.Contains(maptileLocation) || SelectedUnitRouteTemp.Contains(maptileLocation);
+        public bool MaptileIsSelectedUnitRoute(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
             Point tempUnitPosition = GetSelectedUnitTempPosition();
-            return (Math.Abs(tile.X - tempUnitPosition.X) == 1 && tile.Y == tempUnitPosition.Y)
-                || (Math.Abs(tile.Y - tempUnitPosition.Y) == 1 && tile.X == tempUnitPosition.X);
+            return ExtensionsMethods.TilesClosely(tile, tempUnitPosition);
         }
         private Point GetSelectedUnitTempPosition() {
             Point tempUnitPosition;
-            if (SelectedUnitRouteTemp.Count != 0) {
-                tempUnitPosition = SelectedUnitRouteTemp.Last();
+            if (SelectedUnitTempRoute.Count != 0) {
+                tempUnitPosition = SelectedUnitTempRoute.Last();
             }
             else
-            if (SelectedUnit.Route.Count != 0) {
-                tempUnitPosition = SelectedUnit.Route.Last();
+            if (SelectedUnit.GetRoute().Count != 0) {
+                tempUnitPosition = SelectedUnit.GetRoute().Last();
             }
             else {
                 tempUnitPosition = SelectedUnit.Location;
@@ -241,7 +255,7 @@ namespace Game {
         }
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
         public void ConfirmSelectedUnitRoute() {
-            SelectedUnit.Route.AddRange(SelectedUnitRouteTemp);
+            SelectedUnit.GetRoute().AddRange(SelectedUnitTempRoute);
             SelectedUnit.TimeReserve = SelectedUnitTimeReserveTemp;
             UnselectUnit();
         }
@@ -267,10 +281,10 @@ namespace Game {
 
             foreach (var unit in Units) {
                 unit.TimeReserve += turnTimeDivision;
-                if (unit.Route.Count == 0) continue;
+                if (unit.GetRoute().Count == 0) continue;
 
-                while (unit.Route.Count > 0 && unit.TimeReserve >= 0) {
-                    Point nextRouteLocation = unit.Route.First();
+                while (unit.GetRoute().Count > 0 && unit.TimeReserve >= 0) {
+                    Point nextRouteLocation = unit.GetRoute().First();
                     if (lockedTiles.Contains(nextRouteLocation)) break;
                     lockedTiles.Add(nextRouteLocation);
 
@@ -280,7 +294,7 @@ namespace Game {
 
                     unit.TimeReserve -= spentTimeToReachedTile;
                     unit.Location = nextRouteLocation;
-                    unit.Route.RemoveAt(0);
+                    unit.GetRoute().RemoveAt(0);
                 }
             }
         }

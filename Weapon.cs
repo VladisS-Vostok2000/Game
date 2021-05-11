@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
-    public sealed class Weapon {
+    public sealed class Weapon : ICloneable {
         public string Name { get; set; }
         public string DisplayedName { get; set; }
         public Projectile Projectile { get; set; }
@@ -15,6 +15,8 @@ namespace Game {
 
 
         public Weapon(string name) => Name = name;
+
+        public object Clone() => MemberwiseClone();
 
     }
 }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.IO;
 using Undefinded;
 using System.Drawing;
+using MyParsers;
 
 namespace Game {
     /// <summary>
@@ -16,7 +17,7 @@ namespace Game {
         /// General
         private const string iniKeyType = "Type";
         private const string iniKeyDisplayedName = "Name";
-        private const string iniKeyImageChar = "CharImage";
+        private const string iniKeyUnitImageChar = "CharImage";
         private const string iniDefaultDisplayedName = "Default";
         /// Part
         private const string iniKeyPartMaxHP = "MaxHP";
@@ -45,6 +46,9 @@ namespace Game {
         private const string iniKeyWeaponName = "Name";
         private const string iniKeyWeaponPojectile = "Projectile";
         private const float iniDefaultWeaponCooldown = 5;
+        /// Route
+        private const string iniValueTypeRoute = "Route";
+        private const string iniKeyRoute = "Route";
         /// Unit
         private const string iniKeyUnitDisplayedName = "Name";
         private const string iniKeyUnitX = "X";
@@ -57,9 +61,12 @@ namespace Game {
         private const string iniKeyUnitEngine = "Engine";
         private const string iniKeyUnitTeam = "Team";
         private const string iniKeyUnitWeapon = "Weapon";
+        private const string iniKeyUnitColor = "Color";
+        private const string iniKeyUnitRoute = "Route";
         private const int iniDefaultUnitMaxHP = 100;
         private const int iniDefaultUnitCurrentHP = 100;
         private const string iniDefaultUnitDisplayedName = "Default";
+        private const ConsoleColor iniDefaultUnitColor = ConsoleColor.Black;
         /// Team
         private const string iniValueTypeTeam = "Team";
         private const string iniKeyTeamDisplayedName = "Name";
@@ -72,6 +79,7 @@ namespace Game {
         private const string iniKeyMap = "Map";
         private const string iniKeyMapLengthX = "LengthX";
         private const string iniKeyMapLengthY = "LengthY";
+
 
 
         public static Map InitializeMap(IDictionary<string, IDictionary<string, string>> rulesIni, IDictionary<string, IDictionary<string, string>> mapIni) {
@@ -92,7 +100,7 @@ namespace Game {
             rules.Projectiles = ParseProjectiles(rulesIni, rules);
             rules.Weapons = ParseWeapons(rulesIni, rules);
             rules.Teams = ParseTeams(rulesIni);
-
+            rules.Routes = ParseRoutes(rulesIni);
             return InitializeMap(rulesIni, rules);
         }
 
@@ -114,7 +122,7 @@ namespace Game {
                 // Обязательные параметры.
                 ConsoleImage consoleImage;
                 try {
-                    consoleImage = new ConsoleImage(char.Parse(landtilesSectionPairs[iniKeyImageChar]), (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]));
+                    consoleImage = new ConsoleImage(char.Parse(landtilesSectionPairs[iniKeyUnitImageChar]), (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]));
                 }
                 catch (FormatException) {
                     continue;
@@ -350,44 +358,30 @@ namespace Game {
 
             return outList;
         }
-        private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
-            var outList = new List<Unit>();
-            foreach (var section in ini) {
+        private static List<PlannedRoute> ParseRoutes(IDictionary<string, IDictionary<string, string>> sections) {
+            var outList = new List<PlannedRoute>();
+            foreach (var section in sections) {
                 IDictionary<string, string> sectionPairs = section.Value;
-                if (!IsSectionTypeOf(sectionPairs, iniValueTypeUnit)) {
-                    continue;
-                }
-                IDictionary<string, string> unitSectionPairs = sectionPairs;
-                string unitSectionName = section.Key;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeRoute)) continue;
 
-                var unit = new Unit() {
-                    // Необязательные параметры.
-                    DisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName,
-                    MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP,
-                    CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP,
-                };
+                IDictionary<string, string> routeSectionPairs = sectionPairs;
+                string routeSectionName = section.Key;
+                var route = new PlannedRoute(routeSectionName);
 
-                // Обязательные параметры.
                 try {
-                    // BUG: теперь можно засунуть два unit на одну локацию.
-                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
-                    // TODO: теперь нужно избавиться от цвета.
-                    unit.ConsoleImage = new ConsoleImage(char.Parse(unitSectionPairs[iniKeyImageChar]), ConsoleColor.Black);
-                    unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
-                    unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
-                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
-                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
-                    unit.Weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
+                    route.AddRange(PointListParser.ParsePouintList(routeSectionPairs[iniKeyRoute]));
                 }
-                catch (FormatException) { continue; }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
+                // REFACTORING: perfect solution
+                catch (Exception) { continue; }
 
-                outList.Add(unit);
+                outList.Add(route);
             }
 
             return outList;
         }
+
         private static Landtile[,] ParseMap(string chars, ICollection<Landtile> landtiles, int x, int y) {
             var outMap = new Landtile[x, y];
             int i = 0;
@@ -425,6 +419,48 @@ namespace Game {
             }
 
             throw new Exception();
+        }
+        private static List<Unit> ParseUnits(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
+            var outList = new List<Unit>();
+            foreach (var section in ini) {
+                IDictionary<string, string> sectionPairs = section.Value;
+                if (!IsSectionTypeOf(sectionPairs, iniValueTypeUnit)) { continue; }
+                IDictionary<string, string> unitSectionPairs = sectionPairs;
+                string unitSectionName = section.Key;
+
+                var unit = new Unit() {
+                    // Необязательные параметры.
+                    DisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName,
+                    MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP,
+                    CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP,
+                    Color = unitSectionPairs.TryParseValue(iniKeyUnitColor, out string parsedUnitColor) && Enum.TryParse(parsedUnitColor, out ConsoleColor color) ? color : iniDefaultUnitColor,
+                };
+
+                // Обязательные параметры.
+                try {
+                    // BUG: теперь можно засунуть два unit на одну локацию.
+                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    // TODO: теперь нужно избавиться от цвета.
+                    unit.ConsoleChar = char.Parse(unitSectionPairs[iniKeyUnitImageChar]);
+                    unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
+                    unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
+                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
+                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
+                    unit.Weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
+                }
+                catch (FormatException) { continue; }
+                catch (KeyNotFoundException) { continue; }
+                catch (InvalidOperationException) { continue; }
+
+                // Необязательные параметры.
+                Route route = unitSectionPairs.TryParseValue(iniKeyUnitRoute, out string extractedUnitRouteName) ? rules.GetRoute(extractedUnitRouteName) : new Route();
+                try { unit.SetRoute(route); }
+                catch (InvalidOperationException) { }
+
+                outList.Add(unit);
+            }
+
+            return outList;
         }
 
 

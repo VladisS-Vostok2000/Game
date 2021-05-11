@@ -16,6 +16,7 @@ namespace Game {
         public ICollection<Warhead> Warheads { get; set; }
         public ICollection<Projectile> Projectiles { get; set; }
         public ICollection<Weapon> Weapons { get; set; }
+        public ICollection<PlannedRoute> Routes { get; set; }
         public IList<Team> Teams { get; set; }
 
 
@@ -25,10 +26,11 @@ namespace Game {
         public Chassis GetChassis(string chassisName) => (Chassis)Chassis.First((Chassis chassis) => chassis.Name == chassisName).Clone();
         public Engine GetEngine(string engineName) => (Engine)Engines.First((engine) => engine.Name == engineName).Clone();
         public Team GetTeam(string teamName) => Teams.First((team) => team.Name == teamName);
-        public Weapon GetWeapon(string weaponName) => Weapons.First((weapon) => weapon.Name == weaponName);
-        public Passability GetPassability(string passabilityName) => Passabilities.First((passability) => passability.Name == passabilityName);
-        internal Warhead GetWarhead(string warheadName) => Warheads.First((warhead) => warhead.Name == warheadName);
-        internal Projectile GetProjectile(string projectileName) => Projectiles.First((projectile) => projectile.Name == projectileName);
+        public Weapon GetWeapon(string weaponName) => (Weapon)Weapons.First((weapon) => weapon.Name == weaponName).Clone();
+        public Passability GetPassability(string passabilityName) => (Passability)Passabilities.First((passability) => passability.Name == passabilityName).Clone();
+        internal Warhead GetWarhead(string warheadName) => (Warhead)Warheads.First((warhead) => warhead.Name == warheadName).Clone();
+        internal Projectile GetProjectile(string projectileName) => (Projectile)Projectiles.First((projectile) => projectile.Name == projectileName).Clone();
+        internal PlannedRoute GetRoute(string routeName) => Routes.First((plannedRoute) => plannedRoute.Name == routeName);
 
     }
 }

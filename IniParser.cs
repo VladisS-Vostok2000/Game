@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using Undefinded;
+using System.Drawing;
 
-namespace IniParser {
-    public static class Parser {
+namespace MyParsers {
+    public static class IniParser {
         public static IDictionary<string, IDictionary<string, string>> Parse(string filePath) {
             var outIniData = new Dictionary<string, IDictionary<string, string>>();
             string parcedText;
@@ -63,6 +64,7 @@ namespace IniParser {
                     }
 
                     if (!outIniData.ContainsKey(key)) {
+                        // BUG: дублирование пары приводит к падению программы.
                         outIniData[section].Add(key, value);
                     }
                     else {
@@ -73,6 +75,7 @@ namespace IniParser {
 
             return outIniData;
         }
+            
         private static string RemoveComment(string line) {
             string outString = "";
             for (int i = 0; i < line.Length; i++) {
@@ -88,6 +91,6 @@ namespace IniParser {
         private static bool IsIniSection(string line) => line[0] == '[' && line.Count((char chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((char chr) => chr == ']') == 1 && !line.Contains('=');
         private static bool IsIniKey(string line) => line.Count((char chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
         private static bool IsIniValue(string line) => !line.Contains('=') && !line.Contains('[') && !line.Contains(']');
-        
+
     }
 }

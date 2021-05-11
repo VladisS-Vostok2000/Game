@@ -132,8 +132,8 @@ namespace Game {
             } while (true);
         }
         private static Map InitializeMap(string rulesPath, string mapPath) {
-            IDictionary<string, IDictionary<string, string>> rulesIni = IniParser.Parser.Parse(rulesPath);
-            IDictionary<string, IDictionary<string, string>> mapIni = IniParser.Parser.Parse(mapPath);
+            IDictionary<string, IDictionary<string, string>> rulesIni = MyParsers.IniParser.Parse(rulesPath);
+            IDictionary<string, IDictionary<string, string>> mapIni = MyParsers.IniParser.Parse(mapPath);
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
@@ -149,8 +149,11 @@ namespace Game {
             Console.WriteLine(new string('-', Console.BufferWidth - 1));
             MaptileInfo tileInfo = map.SelectedTile;
             PrintKeys(tileInfo);
+            PrintCurrentTeamInfo(map.CurrentTeam);
             PrintTileInformation(tileInfo);
         }
+
+
         private static void PrintKeys(MaptileInfo tileInfo) {
             Console.Write(buttonsInstruction);
             if (tileInfo.ContainsUnit || map.UnitSelected) {
@@ -164,6 +167,10 @@ namespace Game {
             }
             Console.WriteLine("");
         }
+        private static void PrintCurrentTeamInfo(Team currentTeam) {
+            WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);
+        }
+
         private static void PrintTileInformation(MaptileInfo tileInfo) {
             if (tileInfo.ContainsUnit) {
                 PrintLandtileAndUnitTitle(tileInfo);
