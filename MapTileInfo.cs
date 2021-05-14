@@ -12,21 +12,17 @@ namespace Game {
         public bool ContainsUnit => Unit != null;
         public bool ReachableForSelectedUnit { get; }
         public bool AvailableForSelectedUnitMove { get; }
-        // TODO: что это за поле?
-        public bool SelectedUnitRoute { get; }
 
 
 
         public MaptileInfo(Landtile landtile,
                            Unit unit,
                            bool reachableForSelectedUnit,
-                           bool availableForSelectedUnitMove,
-                           bool selectedUnitRoute) {
+                           bool availableForSelectedUnitMove) {
             Unit = unit;
             Land = landtile;
             ReachableForSelectedUnit = reachableForSelectedUnit;
             AvailableForSelectedUnitMove = availableForSelectedUnitMove;
-            SelectedUnitRoute = selectedUnitRoute;
         }
 
 

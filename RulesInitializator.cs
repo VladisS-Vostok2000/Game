@@ -13,7 +13,6 @@ namespace Game {
     /// Инкапсулирует инициализацию правил из соответствующих строк.
     /// </summary>
     public static class RulesInitializator {
-        // DOING: инкапсуляция работы со строками.
         /// General
         private const string iniKeyType = "Type";
         private const string iniKeyDisplayedName = "Name";
@@ -428,36 +427,40 @@ namespace Game {
                 IDictionary<string, string> unitSectionPairs = sectionPairs;
                 string unitSectionName = section.Key;
 
-                var unit = new Unit() {
-                    // Необязательные параметры.
-                    DisplayedName = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName,
-                    MaxHP = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP,
-                    CurrentHP = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP,
-                    Color = unitSectionPairs.TryParseValue(iniKeyUnitColor, out string parsedUnitColor) && Enum.TryParse(parsedUnitColor, out ConsoleColor color) ? color : iniDefaultUnitColor,
-                };
+                // Необязательные параметры.
+                string displayedname = unitSectionPairs.TryParseValue(iniKeyUnitDisplayedName, out string unitNameTemp) ? unitNameTemp : iniDefaultUnitDisplayedName;
+                int maxhp = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP;
+                int currenthp = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
+                ConsoleColor color = unitSectionPairs.TryParseValue(iniKeyUnitColor, out string parsedUnitColor) && Enum.TryParse(parsedUnitColor, out ConsoleColor parsedColor) ? parsedColor : iniDefaultUnitColor;
+                Route route = unitSectionPairs.TryParseValue(iniKeyUnitRoute, out string extractedUnitRouteName) ? rules.GetRoute(extractedUnitRouteName) : new Route();
 
                 // Обязательные параметры.
                 try {
-                    // BUG: теперь можно засунуть два unit на одну локацию.
-                    unit.Location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
-                    // TODO: теперь нужно избавиться от цвета.
-                    unit.ConsoleChar = char.Parse(unitSectionPairs[iniKeyUnitImageChar]);
-                    unit.Body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
-                    unit.Chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
-                    unit.Engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
-                    unit.Team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
-                    unit.Weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
+                    Point location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
+                    char consolechar = char.Parse(unitSectionPairs[iniKeyUnitImageChar]);
+                    Body body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
+                    Chassis chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
+                    Engine engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
+                    Team team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
+                    Weapon weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
+                    Unit unit;
+                    try { unit = new Unit(location, route); }
+                    catch (InvalidOperationException) { unit = new Unit(location); }
+                    unit.ConsoleChar = consolechar;
+                    unit.Body = body;
+                    unit.Chassis = chassis;
+                    unit.Engine = engine;
+                    unit.Team = team;
+                    unit.Weapon = weapon;
+                    unit.DisplayedName = displayedname;
+                    unit.MaxHP = maxhp;
+                    unit.CurrentHP = currenthp;
+                    unit.Color = color;
+                    outList.Add(unit);
                 }
                 catch (FormatException) { continue; }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
-
-                // Необязательные параметры.
-                Route route = unitSectionPairs.TryParseValue(iniKeyUnitRoute, out string extractedUnitRouteName) ? rules.GetRoute(extractedUnitRouteName) : new Route();
-                try { unit.SetRoute(route); }
-                catch (InvalidOperationException) { }
-
-                outList.Add(unit);
             }
 
             return outList;

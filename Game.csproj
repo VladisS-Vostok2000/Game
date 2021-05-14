@@ -46,7 +46,7 @@
   <ItemGroup>
     <Compile Include="Body.cs" />
     <Compile Include="Chassis.cs" />
-    <Compile Include="Dumb.cs" />
+    <Compile Include="StaticClass.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="ExtensionsMethods.cs" />
     <Compile Include="IniParser.cs" />
@@ -69,13 +69,14 @@
     <Compile Include="StringExtensionsMethods.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="Unit.cs" />
-    <Compile Include="UnitConfigurator.cs" />
+    <Compile Include="UnitLocationEqualsComparer.cs" />
     <Compile Include="Warhead.cs" />
     <Compile Include="Weapon.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="App.config" />
+    <None Include="readme.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

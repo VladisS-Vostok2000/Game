@@ -37,24 +37,32 @@ namespace Game {
         // Map
         public Point Location {
             get => new Point(X, Y);
-            set {
+            private set {
                 X = value.X;
                 Y = value.Y;
             }
         }
-        public int X { get; set; }
-        public int Y { get; set; }
+        public int X { get; private set; }
+        public int Y { get; private set; }
+        public Point NextLocation {
+            get {
+                if (route.Empty) { throw new InvalidOperationException(); }
+                return route.First();
+            }
+        }
         public float TimeReserve { get; set; }
-        public Point SecondLocation { get; set; }
         private readonly Route route = new Route();
         public Team Team { get; set; }
 
 
 
         public Unit() { }
-        public Unit(in int x, in int y, Route route) {
+        public Unit(in int x, in int y) {
             X = x;
             Y = y;
+        }
+        public Unit(Point location) : this(location.X, location.Y) { }
+        public Unit(in int x, in int y, Route route) : this (x, y) {
             bool valid = RouteStartCloselyToLocation(route.Top);
             if (!valid) { throw new InvalidOperationException(); }
 
@@ -65,9 +73,23 @@ namespace Game {
 
 
         public float CalculateSpeedOnLandtile(string landtileName) => Engine.Power * Chassis.Passability[landtileName] * Engine.PowerCoeff / Passability.PassabilityCoeff / Masse;
-        
-        
-        public List<Point> GetRoute() => route.ToList();
+
+
+        public IReadOnlyCollection<Point> GetRoute() => route.ToList();
+
+        /// <summary>
+        /// Перемещает Unit на одну следующую позицию Route.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public void Move() {
+            Point nextLocation = route.Pop();
+            Location = nextLocation;
+        }
+
+        /// <summary>
+        /// Изменит маршрут Unit на корректно заданный.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public void SetRoute(Route newRoute) {
             if (!newRoute.Empty) {
                 bool valid = RouteStartCloselyToLocation(newRoute[0]);
@@ -76,8 +98,8 @@ namespace Game {
 
             route.Overwrite(newRoute);
         }
-        private bool RouteStartCloselyToLocation(Point routeStart) => ExtensionsMethods.TilesClosely(Location, routeStart);
-        public void AddRoute(Point way) {
+        /// <exception cref="InvalidOperationException"></exception>
+        public void AddWay(Point way) {
             if (route.Empty) {
                 bool valid = RouteStartCloselyToLocation(way);
                 if (!valid) { throw new InvalidOperationException(); }
@@ -85,6 +107,13 @@ namespace Game {
 
             route.Add(way);
         }
+        /// <exception cref="InvalidOperationException"></exception>
+        internal void AddRoute(IEnumerable<Point> appendedRoute) {
+            foreach (var way in appendedRoute) {
+                AddWay(way);
+            }
+        }
+        private bool RouteStartCloselyToLocation(Point routeStart) => ExtensionsMethods.TilesClosely(Location, routeStart);
 
     }
 }

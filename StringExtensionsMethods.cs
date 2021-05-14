@@ -20,7 +20,7 @@ namespace MyParsers {
         /// Извлекает подстроку заданной длинны с заданной позиции.
         /// </summary>
         public static string Extract(this string target, int startIndex, int length) {
-            // TODO: добавить exception.
+            // REFACTORING: добавить exception.
             StringBuilder sb = new StringBuilder();
             for (int i = startIndex; length-- > 0; i++) {
                 sb.Append(target[i]);

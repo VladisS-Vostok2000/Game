@@ -9,7 +9,6 @@ using Undefinded;
 
 namespace Game {
     public sealed class PlannedRoute : Route {
-        // REFACTORING: Существует ли эта сущность только как ключ словаря? Удалить её тогда?
         public string Name { get; private set; }
 
 

@@ -8,7 +8,15 @@ using System.Threading.Tasks;
 
 namespace Undefinded {
     public static class ExtensionsMethods {
-       
+        /// <summary>
+        /// True, если коллекция пуста.
+        /// </summary>
+        public static bool Empty<T>(this ICollection<T> sourse) => sourse.Count == 0;
+
+        /// <summary>
+        /// True, если коллекция пуста.
+        /// </summary>
+        public static bool Empty<T>(this IReadOnlyCollection<T> sourse) => sourse.Count == 0;
 
         /// <summary>
         /// Гарантирует нахождение числа в заданном диапазоне.
@@ -121,6 +129,7 @@ namespace Undefinded {
         }
 
         public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
+            // Вау, какие яркие цвета!
             foreach (var item in colletion) {
                 if (predicate(item)) {
                     return true;
@@ -150,7 +159,6 @@ namespace Undefinded {
             return false;
         }
 
-        public static bool Empty<T>(this ICollection<T> collection) => collection.Count == 0;
         public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> input) {
             foreach (var item in input) {
                 collection.Add(item);
@@ -158,7 +166,7 @@ namespace Undefinded {
         }
 
 
-        // REFACTORING: я пока не знаю, куда это пристроить.
+        // REFACTORING: что вообще здесь забыла бизнес-логика? Это даже не extension.
         public static bool TilesClosely(Point tile1Coord, Point tile2Coord) =>
             (Math.Abs(tile1Coord.X - tile2Coord.X) == 1 && tile1Coord.Y == tile2Coord.Y) ||
             (Math.Abs(tile1Coord.Y - tile2Coord.Y) == 1 && tile1Coord.X == tile2Coord.X);

@@ -64,7 +64,6 @@ namespace MyParsers {
                     }
 
                     if (!outIniData.ContainsKey(key)) {
-                        // BUG: дублирование пары приводит к падению программы.
                         outIniData[section].Add(key, value);
                     }
                     else {

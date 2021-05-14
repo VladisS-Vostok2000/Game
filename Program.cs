@@ -79,7 +79,6 @@ namespace Game {
 
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
-
             do {
                 Console.Clear();
                 PrintMapScreen();
@@ -115,7 +114,7 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
-                    map.AddSelectedUnitRoute();
+                    map.ConfrimSelectedUnitRoute();
                 }
                 else
                 if (input.Key == ConsoleKey.Escape) {

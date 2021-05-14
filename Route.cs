@@ -15,7 +15,11 @@ namespace Game {
 
 
 
+
         public Route() { }
+        /// <exception cref="ArgumentException"></exception>
+        // What the hell is going here?
+        public Route(IEnumerable<Point> sourse) { AddRange(sourse); }
 
 
 
@@ -29,9 +33,9 @@ namespace Game {
                 return;
             }
 
-            bool valid = ExtensionsMethods.TilesClosely(route.Last(), way);
-            if (!valid) { 
-                throw new InvalidOperationException(); }
+            Point unitTempLocation = route.Last();
+            bool valid = ExtensionsMethods.TilesClosely(unitTempLocation, way);
+            if (!valid) { throw new ArgumentException("Путь находится не в ближайшей конечной точке маршрута."); }
 
             route.Add(way);
         }

@@ -12,8 +12,7 @@ namespace Game {
     // FEATURE: добавить смену хода.
     public sealed class Map {
         private const float speedPerTile = 20;
-        private const float timePerTurn = 5;
-        private const float turnTimeDivision = 1;
+        private const float tirnTimeTick = 1;
 
 
         public int LengthX => Landtiles.GetUpperBound(0) + 1;
@@ -53,8 +52,8 @@ namespace Game {
         public ICollection<Unit> Units { get; }
         public bool UnitSelected { get; private set; }
         public ICollection<Point> SelectedUnitAvailableRoutes { get; private set; }
-        private IList<Point> SelectedUnitTempRoute;
-        private float SelectedUnitTimeReserveTemp;
+        private IList<Point> SelectedUnitTempRoute { get; set; }
+        private float UnitTimeReservePerTurn = 5;
 
         public Team CurrentTeam { get; private set; }
         private int currentTeamIndex;
@@ -67,17 +66,15 @@ namespace Game {
                 if (UnitSelected) {
                     return new MaptileInfo(
                         Landtiles[x, y],
-                        GetUnit(x, y),
+                        GetUnitOrNull(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
-                        MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
-                        MaptileIsSelectedUnitRoute(new Point(x, y))
+                        MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y))
                     );
                 }
                 else {
                     return new MaptileInfo(
                         Landtiles[x, y],
-                        GetUnit(x, y),
-                        false,
+                        GetUnitOrNull(x, y),
                         false,
                         false
                     );
@@ -91,11 +88,8 @@ namespace Game {
         public Map(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
             Landtiles = landtiles;
             Rules = rules;
-            Units = units;
+            Units = ExtractValidUnits(units).ToList();
             CurrentTeam = rules.Teams[0];
-            foreach (var unit in Units) {
-                unit.TimeReserve = timePerTurn;
-            }
         }
 
 
@@ -120,7 +114,7 @@ namespace Game {
             outArray[SelectedTileX, SelectedTileY].Color = selectedTileColor;
 
             return outArray;
-            void ChangeColors(ConsoleImage[,] consoleImages, ICollection<Point> coordList, ConsoleColor color) {
+            void ChangeColors(ConsoleImage[,] consoleImages, IEnumerable<Point> coordList, ConsoleColor color) {
                 foreach (var coord in coordList) {
                     consoleImages[coord.X, coord.Y].Color = color;
                 }
@@ -129,19 +123,17 @@ namespace Game {
 
 
         #region Unit
-        public Unit GetUnit(Point location) => Units.FirstOrDefault((unit) => unit.Location == location);
-        public Unit GetUnit(in int x, in int y) => GetUnit(new Point(x, y));
+        public Unit GetUnitOrNull(Point location) => Units.FirstOrDefault((unit) => unit.Location == location);
+        public Unit GetUnitOrNull(in int x, in int y) => GetUnitOrNull(new Point(x, y));
 
 
         public void SelectUnit() {
-            Unit unit = GetUnit(SelectedTileLocation);
-            if (unit == null || unit.Team != CurrentTeam) return;
+            Unit unit = GetUnitOrNull(SelectedTileLocation);
+            if (unit == null || unit.Team != CurrentTeam) { return; }
 
             SelectedUnit = unit;
             SelectedUnitTempRoute = new List<Point>();
-            SelectedUnitTempRoute.AddRange(SelectedUnit.GetRoute());
-            SelectedUnitTimeReserveTemp = SelectedUnit.TimeReserve;
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(SelectedUnitTimeReserveTemp);
+            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
             UnitSelected = true;
         }
         // FEATURE: добавить разделение времени на выход/вход в тайл.
@@ -156,6 +148,7 @@ namespace Game {
             float remainingTime = unit.TimeReserve + timeReserve;
             var route = new List<Point>(unit.GetRoute());
             route.AddRange(SelectedUnitTempRoute);
+
             for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
                 Point way = route[i];
                 Landtile land = Landtiles[way.X, way.Y];
@@ -218,7 +211,7 @@ namespace Game {
 
         public static float UnitTimeSpentOnTile(string landtileName, Unit unit) => speedPerTile / unit.CalculateSpeedOnLandtile(landtileName);
 
-        public void AddSelectedUnitRoute() {
+        public void ConfrimSelectedUnitRoute() {
             if (!UnitSelected
                 || !MaptileLocationAvailableForSelectedUnitTempMove(SelectedTileLocation)
                 || MaptileIsSelectedUnitRoute(SelectedTileLocation)) {
@@ -226,10 +219,8 @@ namespace Game {
             }
 
             string newPositionLandtileName = SelectedTile.Land.Name;
-            float timeSpent = UnitTimeSpentOnTile(newPositionLandtileName, SelectedUnit);
-            SelectedUnitTimeReserveTemp -= timeSpent;
             SelectedUnitTempRoute.Add(SelectedTileLocation);
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(SelectedUnitTimeReserveTemp);
+            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
         }
         public bool MaptileLocationAvailableForSelectedUnitTempMove(Point landtileLocation) =>
             MaptileReachableForSelectedUnit(landtileLocation) &&
@@ -255,8 +246,7 @@ namespace Game {
         }
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
         public void ConfirmSelectedUnitRoute() {
-            SelectedUnit.GetRoute().AddRange(SelectedUnitTempRoute);
-            SelectedUnit.TimeReserve = SelectedUnitTimeReserveTemp;
+            SelectedUnit.AddRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
         public void UnselectUnit() => UnitSelected = false;
@@ -269,35 +259,47 @@ namespace Game {
             CurrentTeam = Rules.Teams[currentTeamIndex];
         }
         public void MakeTurn() {
-            for (float i = 0; i < timePerTurn; i += turnTimeDivision) {
-                MoveUnits();
-            }
-            foreach (var unit in Units) {
-                unit.TimeReserve = 5;
-            }
+            MoveUnits(tirnTimeTick);
         }
-        private void MoveUnits() {
+        private void MoveUnits(float allotedTime) {
+            // BUG: список заблокированных маршрутов не хранится, т.к. иначе не сможет
+            // заработать, однако юнит, передвигающуюся на локацию, на который передвигается
+            // другой, при перемешивании списка уже может быть не первым претендентом на неё.
+            // В таком случае у него будет потерянный избыток времени, а если список будет "удачно"
+            // перемешиваться потоянно, локация никогда не будет достигнута кем-то из них.
             var lockedTiles = Units.Select(unit => unit.Location).ToList();
 
             foreach (var unit in Units) {
-                unit.TimeReserve += turnTimeDivision;
-                if (unit.GetRoute().Count == 0) continue;
+                if (unit.GetRoute().Count == 0) { continue; }
+                unit.TimeReserve += allotedTime;
 
-                while (unit.GetRoute().Count > 0 && unit.TimeReserve >= 0) {
-                    Point nextRouteLocation = unit.GetRoute().First();
-                    if (lockedTiles.Contains(nextRouteLocation)) break;
-                    lockedTiles.Add(nextRouteLocation);
+                do {
+                    Point nextWayLocation = unit.NextLocation;
+                    if (lockedTiles.Contains(nextWayLocation)) {
+                        unit.TimeReserve = 0;
+                        break;
+                    }
 
-                    Landtile nextTile = Landtiles[nextRouteLocation.X, nextRouteLocation.Y];
+                    lockedTiles.Add(nextWayLocation);
+
+                    Landtile nextTile = Landtiles[nextWayLocation.X, nextWayLocation.Y];
                     float spentTimeToReachedTile = UnitTimeSpentOnTile(nextTile.Name, unit);
-                    if (spentTimeToReachedTile > unit.TimeReserve) break;
+                    bool enoughtTime = unit.TimeReserve >= spentTimeToReachedTile;
+                    if (!enoughtTime) { break; }
 
                     unit.TimeReserve -= spentTimeToReachedTile;
-                    unit.Location = nextRouteLocation;
-                    unit.GetRoute().RemoveAt(0);
-                }
+                    unit.Move();
+
+                    if (unit.GetRoute().Empty()) {
+                        unit.TimeReserve = 0;
+                        break;
+                    }
+                } while (unit.TimeReserve > 0);
             }
         }
+
+
+        private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
 
     }
 }

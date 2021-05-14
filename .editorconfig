@@ -5,3 +5,15 @@ dotnet_diagnostic.CS0168.severity = silent
 
 # CS0219: Переменная назначена, но ее значение не используется
 dotnet_diagnostic.CS0219.severity = silent
+
+# IDE0005: Директива using не нужна.
+dotnet_diagnostic.IDE0005.severity = silent
+
+# Default severity for analyzer diagnostics with category 'Style'
+dotnet_analyzer_diagnostic.category-Style.severity = silent
+
+# IDE0059: Ненужное присваивание значения
+dotnet_diagnostic.IDE0059.severity = silent
+
+# IDE0059: Ненужное присваивание значения
+csharp_style_unused_value_assignment_preference = unused_local_variable
