@@ -16,9 +16,10 @@ namespace Game {
         private static string mapPath = @"map.txt";
 
         private static string buttonsInstruction = @"[→] [←] [↑] [↓] ";
-        private static string buttonsEnter = "[Enter]";
+        private static string buttonEnter = "[Enter]";
         private static string buttonsSpace = "[Space]";
-        private static string buttonsEscape = "[Esc]";
+        private static string buttonEscape = "[Esc]";
+        private static string buttonDel = "[Del]";
 
         private const int padConst = 15;
         private static Map map;
@@ -107,10 +108,7 @@ namespace Game {
                     if (map.UnitSelected) {
                         map.ConfirmSelectedUnitRoute();
                     }
-                    else
-                    if (map.SelectedTile.ContainsUnit) {
-                        map.SelectUnit();
-                    }
+                    else {map.SelectUnit(); }
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
@@ -127,6 +125,10 @@ namespace Game {
                 else
                 if (input.Key == ConsoleKey.P) {
                     map.PassTurn();
+                }
+                else
+                if (input.Key == ConsoleKey.Delete) {
+                    map.DeleteSelectedUnitLastWay();
                 }
             } while (true);
         }
@@ -153,18 +155,23 @@ namespace Game {
         }
 
 
-        private static void PrintKeys(MaptileInfo tileInfo) {
+        private static void PrintKeys(MaptileInfo maptileInfo) {
             Console.Write(buttonsInstruction);
-            if (tileInfo.ContainsUnit || map.UnitSelected) {
-                Console.Write(buttonsEnter);
+            if (maptileInfo.ContainsUnit || map.UnitSelected) {
+                Console.Write(buttonEnter);
             }
             if (map.UnitSelected) {
-                if (tileInfo.AvailableForSelectedUnitMove) {
+                if (maptileInfo.AvailableForSelectedUnitMove) {
                     Console.Write(buttonsSpace);
                 }
-                Console.Write(buttonsEscape);
+                Console.Write(buttonEscape);
+
+                Point tempSelectedUnitRoute = map.GetSelectedUnitLastRoutePosition();
+                if (maptileInfo.Location == tempSelectedUnitRoute &&
+                        map.SelectedUnit.Location != tempSelectedUnitRoute) {
+                    Console.Write(buttonDel);
+                }
             }
-            Console.WriteLine("");
         }
         private static void PrintCurrentTeamInfo(Team currentTeam) {
             WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);
@@ -213,6 +220,7 @@ namespace Game {
             Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.Engine.DisplayedName);
             Console.WriteLine("Мощность:".PadRight(padConst) + unit.Engine.Power);
             Console.WriteLine("Орудие:".PadRight(padConst) + unit.Weapon.DisplayedName);
+            Console.WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
         }
 
     }

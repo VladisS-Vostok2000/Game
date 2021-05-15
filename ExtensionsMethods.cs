@@ -150,6 +150,7 @@ namespace Undefinded {
             outItem = default;
             return false;
         }
+        //  REFACTORING: разве здесь нужен Т3?
         public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2, T3>> predicate) {
             foreach (var pairs in dictionary) {
                 if (predicate(pairs.Value)) {
@@ -170,6 +171,15 @@ namespace Undefinded {
         public static bool TilesClosely(Point tile1Coord, Point tile2Coord) =>
             (Math.Abs(tile1Coord.X - tile2Coord.X) == 1 && tile1Coord.Y == tile2Coord.Y) ||
             (Math.Abs(tile1Coord.Y - tile2Coord.Y) == 1 && tile1Coord.X == tile2Coord.X);
+
+        public static void RemoveLast<T>(this ICollection<T> collection) {
+            if (collection.Empty()) { throw new InvalidOperationException("Коллекция пуста."); }
+            T removingItem = default; 
+            foreach (var item in collection) {
+                removingItem = item;
+            }
+            collection.Remove(removingItem);
+        }
 
     }
 }

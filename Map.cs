@@ -66,6 +66,7 @@ namespace Game {
                 if (UnitSelected) {
                     return new MaptileInfo(
                         Landtiles[x, y],
+                        new Point(x, y),
                         GetUnitOrNull(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
                         MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y))
@@ -74,6 +75,7 @@ namespace Game {
                 else {
                     return new MaptileInfo(
                         Landtiles[x, y],
+                        new Point(x, y),
                         GetUnitOrNull(x, y),
                         false,
                         false
@@ -132,19 +134,18 @@ namespace Game {
             if (unit == null || unit.Team != CurrentTeam) { return; }
 
             SelectedUnit = unit;
+            UnitSelected = true;
             SelectedUnitTempRoute = new List<Point>();
             SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
-            UnitSelected = true;
         }
         // FEATURE: добавить разделение времени на выход/вход в тайл.
         private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
-            timeReserve = GetSelectedUnitRemainingTimeTemp(SelectedUnit, timeReserve);
+            timeReserve = GetSelectedUnitRemainingTempTime(SelectedUnit, timeReserve);
             if (timeReserve <= 0) { return new List<Point>(); }
-            Point unitTempLocation = GetSelectedUnitTempPosition();
+            Point unitTempLocation = GetSelectedUnitLastRoutePosition();
             return FindUnitAvailableRoutesPerTime(unitTempLocation, SelectedUnit, timeReserve);
         }
-
-        private float GetSelectedUnitRemainingTimeTemp(Unit unit, float timeReserve) {
+        private float GetSelectedUnitRemainingTempTime(Unit unit, float timeReserve) {
             float remainingTime = unit.TimeReserve + timeReserve;
             var route = new List<Point>(unit.GetRoute());
             route.AddRange(SelectedUnitTempRoute);
@@ -178,12 +179,11 @@ namespace Game {
             // Это довольно сложно реализовать, а также потребует память
             // и лишит преимущества простого распараллеливания.
             var outList = new List<Point>();
-            bool tileExists = TryGetTile(x, y, out MaptileInfo landtileInfo);
+            bool tileExists = TryGetLandtile(x, y, out Landtile landtile);
             if (!tileExists) {
                 return outList;
             }
 
-            Landtile landtile = landtileInfo.Land;
             string landtileName = landtile.Name;
             float timeSpent = UnitTimeSpentOnTile(landtileName, unit);
             if (timeSpent > unitTimeReserve) {
@@ -202,10 +202,9 @@ namespace Game {
             outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x, y - 1, unit, unitTimeReserve));
             return outList;
         }
-        private bool TryGetTile(Point landtileLocation, out MaptileInfo landtile) => TryGetTile(landtileLocation.X, landtileLocation.Y, out landtile);
-        private bool TryGetTile(int landtileX, int landtileY, out MaptileInfo landtile) {
+        private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {
             bool correctIndexation = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1);
-            landtile = correctIndexation ? this[landtileX, landtileY] : default;
+            landtile = correctIndexation ? Landtiles[landtileX, landtileY] : default;
             return correctIndexation;
         }
 
@@ -222,15 +221,20 @@ namespace Game {
             SelectedUnitTempRoute.Add(SelectedTileLocation);
             SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
         }
+
         public bool MaptileLocationAvailableForSelectedUnitTempMove(Point landtileLocation) =>
             MaptileReachableForSelectedUnit(landtileLocation) &&
             TileClosestToSelectedUnitTempPosition(landtileLocation);
+
         public bool MaptileIsSelectedUnitRoute(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
-            Point tempUnitPosition = GetSelectedUnitTempPosition();
+            Point tempUnitPosition = GetSelectedUnitLastRoutePosition();
             return ExtensionsMethods.TilesClosely(tile, tempUnitPosition);
         }
-        private Point GetSelectedUnitTempPosition() {
+        
+        public Point GetSelectedUnitLastRoutePosition() {
+            if (!UnitSelected) { throw new InvalidOperationException(); }
+
             Point tempUnitPosition;
             if (SelectedUnitTempRoute.Count != 0) {
                 tempUnitPosition = SelectedUnitTempRoute.Last();
@@ -244,12 +248,30 @@ namespace Game {
             }
             return tempUnitPosition;
         }
+        
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
+        
         public void ConfirmSelectedUnitRoute() {
             SelectedUnit.AddRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
+        
         public void UnselectUnit() => UnitSelected = false;
+
+        public void DeleteSelectedUnitLastWay() {
+            // REFACTORING: обозначить все эксепшены так же верно.
+            if (!UnitSelected) { return; }
+
+            if (!SelectedUnitTempRoute.Empty()) {
+                SelectedUnitTempRoute.RemoveLast();
+                return;
+            }
+
+            bool removedSuccessfully = SelectedUnit.TryRemoveLastWay();
+            if (!removedSuccessfully) { return; }
+
+            if (SelectedUnit.GetRoute().Empty()) { SelectedUnit.TimeReserve = 0; }
+        }
         #endregion
 
 
@@ -300,6 +322,10 @@ namespace Game {
 
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
+
+        #region Exceptions
+        private InvalidOperationException MissingSelectedUnit() => new InvalidOperationException("Отсутствует выбранный юнит.");
+        #endregion
 
     }
 }

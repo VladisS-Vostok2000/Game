@@ -98,6 +98,8 @@ namespace Game {
 
             route.Overwrite(newRoute);
         }
+
+        /// Дополнит маршрут <see cref="Unit"/>.
         /// <exception cref="InvalidOperationException"></exception>
         public void AddWay(Point way) {
             if (route.Empty) {
@@ -107,13 +109,28 @@ namespace Game {
 
             route.Add(way);
         }
+
+        /// Дополнит марштрут <see cref="Unit"/>
         /// <exception cref="InvalidOperationException"></exception>
-        internal void AddRoute(IEnumerable<Point> appendedRoute) {
+        public void AddRoute(IEnumerable<Point> appendedRoute) {
             foreach (var way in appendedRoute) {
                 AddWay(way);
             }
         }
+
+        /// <summary>
+        /// True, если конечная точка маршрута была удалена.
+        /// </summary>
+        public bool TryRemoveLastWay() {
+            if (route.Empty) { return false; }
+            route.RemoveLast();
+            return true;
+        }
+
         private bool RouteStartCloselyToLocation(Point routeStart) => ExtensionsMethods.TilesClosely(Location, routeStart);
 
+        #region Exceptions
+        private InvalidOperationException EmptyRouteException(string param) => new InvalidOperationException(param);
+        #endregion
     }
 }

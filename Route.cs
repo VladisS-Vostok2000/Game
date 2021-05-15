@@ -50,6 +50,10 @@ namespace Game {
             }
         }
         public void Overwrite(Route newRoute) => route = newRoute.route;
+        internal void RemoveLast() {
+            if (Empty) { throw new InvalidOperationException(); }
+            route.RemoveLast();
+        }
 
 
         public IEnumerator<Point> GetEnumerator() => route.GetEnumerator();
