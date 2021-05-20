@@ -128,6 +128,8 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Delete) {
+                    // ISSUE: тут щелчок на любой тайл пути удаляет последний путь.
+                    // Не баг а фича!
                     map.DeleteSelectedUnitLastWay();
                 }
             } while (true);
@@ -214,12 +216,12 @@ namespace Game {
         private static void PrintUnitInfo(Unit unit) {
             Console.WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
             Console.WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);
-            Console.WriteLine("Тип кузова:".PadRight(padConst) + unit.Body.DisplayedName);
-            Console.WriteLine("Тип ходовой:".PadRight(padConst) + unit.Chassis.DisplayedName);
+            Console.WriteLine("Тип кузова:".PadRight(padConst) + unit.BodyCondition.Body.DisplayedName);
+            Console.WriteLine("Тип ходовой:".PadRight(padConst) + unit.ChassisCondition.Chassis.DisplayedName);
             Console.WriteLine("Масса:".PadRight(padConst) + unit.Masse);
-            Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.Engine.DisplayedName);
-            Console.WriteLine("Мощность:".PadRight(padConst) + unit.Engine.Power);
-            Console.WriteLine("Орудие:".PadRight(padConst) + unit.Weapon.DisplayedName);
+            Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.EngineCondition.Engine.DisplayedName);
+            Console.WriteLine("Мощность:".PadRight(padConst) + unit.EngineCondition.Engine.Power);
+            Console.WriteLine("Орудие:".PadRight(padConst) + unit.WeaponCondition.Weapon.DisplayedName);
             Console.WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
         }
 

@@ -129,7 +129,6 @@ namespace Undefinded {
         }
 
         public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
-            // Вау, какие яркие цвета!
             foreach (var item in colletion) {
                 if (predicate(item)) {
                     return true;
@@ -150,7 +149,6 @@ namespace Undefinded {
             outItem = default;
             return false;
         }
-        //  REFACTORING: разве здесь нужен Т3?
         public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2, T3>> predicate) {
             foreach (var pairs in dictionary) {
                 if (predicate(pairs.Value)) {

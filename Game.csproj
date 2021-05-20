@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Body.cs" />
     <Compile Include="Chassis.cs" />
+    <Compile Include="Dumb.cs" />
     <Compile Include="StaticClass.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="ExtensionsMethods.cs" />
@@ -62,14 +63,19 @@
     <Compile Include="Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsoleImage.cs" />
-    <Compile Include="PlannedRoute.cs" />
+    <Compile Include="NamedRoute.cs" />
     <Compile Include="Route.cs" />
     <Compile Include="Rules.cs" />
     <Compile Include="RulesInitializator.cs" />
     <Compile Include="StringExtensionsMethods.cs" />
     <Compile Include="Team.cs" />
     <Compile Include="Unit.cs" />
+    <Compile Include="BodyCondition.cs" />
+    <Compile Include="ChassisCondition.cs" />
+    <Compile Include="EngineCondition.cs" />
     <Compile Include="UnitLocationEqualsComparer.cs" />
+    <Compile Include="PartCondition.cs" />
+    <Compile Include="WeaponCondition.cs" />
     <Compile Include="Warhead.cs" />
     <Compile Include="Weapon.cs" />
   </ItemGroup>

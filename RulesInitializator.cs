@@ -174,7 +174,6 @@ namespace Game {
             // Необязательные параметры.
             part.DisplayedName = sections.TryParseValue(iniKeyDisplayedName, out string displayedName) ? displayedName : iniDefaultDisplayedName;
             part.MaxHP = sections.TryParseValue(iniKeyPartMaxHP, out int maxHP) ? maxHP : iniDefaultPartMaxHP;
-            part.CurrentHP = part.MaxHP;
             part.Masse = sections.TryParseValue(iniKeyPartMasse, out int masse) ? masse : iniDefaultPartMasse;
             return part;
         }
@@ -323,7 +322,8 @@ namespace Game {
                 var projectile = new Projectile(projectileSectionName) { };
 
                 try {
-                    projectile.Warhead = rules.GetWarhead(iniKeyProjectileWarhead);
+                    string warheadName = projectileSectionPairs[iniKeyProjectileWarhead];
+                    projectile.Warhead = rules.GetWarhead(warheadName);
                 }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
@@ -357,25 +357,27 @@ namespace Game {
 
             return outList;
         }
-        private static List<PlannedRoute> ParseRoutes(IDictionary<string, IDictionary<string, string>> sections) {
-            var outList = new List<PlannedRoute>();
+        private static List<NamedRoute> ParseRoutes(IDictionary<string, IDictionary<string, string>> sections) {
+            var outList = new List<NamedRoute>();
             foreach (var section in sections) {
                 IDictionary<string, string> sectionPairs = section.Value;
                 if (!IsSectionTypeOf(sectionPairs, iniValueTypeRoute)) continue;
 
                 IDictionary<string, string> routeSectionPairs = sectionPairs;
                 string routeSectionName = section.Key;
-                var route = new PlannedRoute(routeSectionName);
+                NamedRoute namedRoute;
 
                 try {
-                    route.AddRange(PointListParser.ParsePouintList(routeSectionPairs[iniKeyRoute]));
+                    var points = PointListParser.ParsePouintList(routeSectionPairs[iniKeyRoute]);
+                    var route = new Route(points);
+                    namedRoute = new NamedRoute(routeSectionName, route);
                 }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
                 // REFACTORING: perfect solution
                 catch (Exception) { continue; }
 
-                outList.Add(route);
+                outList.Add(namedRoute);
             }
 
             return outList;
@@ -432,30 +434,27 @@ namespace Game {
                 int maxhp = unitSectionPairs.TryParseValue(iniKeyUnitMaxHP, out string parsedUnitMaxHP) && int.TryParse(parsedUnitMaxHP, out int unitMaxHP) ? unitMaxHP : iniDefaultUnitMaxHP;
                 int currenthp = unitSectionPairs.TryParseValue(iniKeyUnitCurrentHP, out string parsedUnitCurrentHP) && int.TryParse(parsedUnitCurrentHP, out int unitCurrentHP) ? unitCurrentHP : iniDefaultUnitCurrentHP;
                 ConsoleColor color = unitSectionPairs.TryParseValue(iniKeyUnitColor, out string parsedUnitColor) && Enum.TryParse(parsedUnitColor, out ConsoleColor parsedColor) ? parsedColor : iniDefaultUnitColor;
-                Route route = unitSectionPairs.TryParseValue(iniKeyUnitRoute, out string extractedUnitRouteName) ? rules.GetRoute(extractedUnitRouteName) : new Route();
+                Route route = unitSectionPairs.TryParseValue(iniKeyUnitRoute, out string extractedUnitRouteName) ? rules.GetNamedRoute(extractedUnitRouteName).Route : null;
 
                 // Обязательные параметры.
                 try {
                     Point location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
                     char consolechar = char.Parse(unitSectionPairs[iniKeyUnitImageChar]);
-                    Body body = rules.GetBody(unitSectionPairs[iniKeyUnitBody]);
-                    Chassis chassis = rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]);
-                    Engine engine = rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]);
+                    BodyCondition unitBody = new BodyCondition(rules.GetBody(unitSectionPairs[iniKeyUnitBody]));
+                    ChassisCondition unitChassis = new ChassisCondition(rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]));
+                    EngineCondition unitEngine = new EngineCondition(rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]));
+                    WeaponCondition unitWeapon = new WeaponCondition(rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]));
                     Team team = rules.GetTeam(unitSectionPairs[iniKeyUnitTeam]);
-                    Weapon weapon = rules.GetWeapon(unitSectionPairs[iniKeyUnitWeapon]);
-                    Unit unit;
-                    try { unit = new Unit(location, route); }
-                    catch (InvalidOperationException) { unit = new Unit(location); }
+                    Unit unit = new Unit(location, unitBody, unitChassis, unitEngine, unitWeapon);
                     unit.ConsoleChar = consolechar;
-                    unit.Body = body;
-                    unit.Chassis = chassis;
-                    unit.Engine = engine;
                     unit.Team = team;
-                    unit.Weapon = weapon;
                     unit.DisplayedName = displayedname;
                     unit.MaxHP = maxhp;
                     unit.CurrentHP = currenthp;
                     unit.Color = color;
+                    if (route != null) {
+                        unit.TrySetRoute(route);
+                    }
                     outList.Add(unit);
                 }
                 catch (FormatException) { continue; }

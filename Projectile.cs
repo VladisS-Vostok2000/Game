@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Game {
-    public sealed class Projectile : ICloneable, IConsoleDrawable {
+    public sealed class Projectile : IConsoleDrawable {
         private ConsoleImage consoleImage;
         public ConsoleImage ConsoleImage { get => consoleImage; set => consoleImage = value; }
         public ConsoleColor Color { get => ConsoleImage.Color; set => consoleImage.Color = value; }
@@ -12,11 +12,9 @@ namespace Game {
 
 
 
-        public Projectile(string name) => Name = name;
+        public Projectile(string name) {
+            Name = name;
+        }
 
-
-
-        public object Clone() => this.MemberwiseClone();
-        
     }
 }

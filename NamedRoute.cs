@@ -8,12 +8,16 @@ using System.Threading.Tasks;
 using Undefinded;
 
 namespace Game {
-    public sealed class PlannedRoute : Route {
+    public sealed class NamedRoute {
         public string Name { get; private set; }
+        public Route Route { get; set; }
 
 
 
-        public PlannedRoute(string routeName) => Name = routeName;
+        public NamedRoute(string routeName, Route route) {
+            Name = routeName;
+            Route = route;
+        }
 
     }
 }

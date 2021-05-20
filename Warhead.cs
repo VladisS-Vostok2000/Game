@@ -1,14 +1,14 @@
 ﻿using System;
 namespace Game {
-    public sealed class Warhead : ICloneable {
+    public sealed class Warhead {
         public string Name { get; private set; }
         public int Damage { get; set; }
 
 
 
-        public Warhead(string name) => Name = name;
-
-        public object Clone() => MemberwiseClone();
+        public Warhead(string name) {
+            Name = name;
+        }
 
     }
 }

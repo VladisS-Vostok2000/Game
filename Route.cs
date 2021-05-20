@@ -15,7 +15,6 @@ namespace Game {
 
 
 
-
         public Route() { }
         /// <exception cref="ArgumentException"></exception>
         // What the hell is going here?
@@ -49,7 +48,7 @@ namespace Game {
                 Add(point);
             }
         }
-        public void Overwrite(Route newRoute) => route = newRoute.route;
+        public void Overwrite(Route newRoute) => route = newRoute.route.ToList();
         internal void RemoveLast() {
             if (Empty) { throw new InvalidOperationException(); }
             route.RemoveLast();

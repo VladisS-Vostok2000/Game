@@ -9,7 +9,6 @@ using MyParsers;
 using Undefinded;
 
 namespace Game {
-    // FEATURE: добавить смену хода.
     public sealed class Map {
         private const float speedPerTile = 20;
         private const float tirnTimeTick = 1;
@@ -160,10 +159,10 @@ namespace Game {
         private List<Point> FindUnitAvailableRoutesPerTime(in Point unitStartLocation, Unit unit, float timeReserve) {
             var outList = new List<Point>();
             // REFACTORING: подключить многопоточность?
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X + 1, unitStartLocation.Y, SelectedUnit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X - 1, unitStartLocation.Y, SelectedUnit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y + 1, SelectedUnit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y - 1, SelectedUnit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X + 1, unitStartLocation.Y, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X - 1, unitStartLocation.Y, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y + 1, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y - 1, unit, timeReserve));
             // REFACTORING: такое себе решение от дубликатов.
             foreach (var location in outList) {
                 if (!outList.Contains(location)) {
@@ -252,14 +251,13 @@ namespace Game {
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
         
         public void ConfirmSelectedUnitRoute() {
-            SelectedUnit.AddRoute(SelectedUnitTempRoute);
+            SelectedUnit.AppendRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
         
         public void UnselectUnit() => UnitSelected = false;
 
         public void DeleteSelectedUnitLastWay() {
-            // REFACTORING: обозначить все эксепшены так же верно.
             if (!UnitSelected) { return; }
 
             if (!SelectedUnitTempRoute.Empty()) {
@@ -322,10 +320,6 @@ namespace Game {
 
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
-
-        #region Exceptions
-        private InvalidOperationException MissingSelectedUnit() => new InvalidOperationException("Отсутствует выбранный юнит.");
-        #endregion
 
     }
 }

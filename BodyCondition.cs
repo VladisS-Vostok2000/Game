@@ -5,12 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game {
-    public sealed class Engine : Part {
-        public int Power { get; set; }
+    public class BodyCondition : PartCondition {
+        public Body Body => (Body)Part;
 
 
 
-        public Engine(string name) : base(name) { }
+        public BodyCondition(Body body) : base(body) { }
 
     }
 }

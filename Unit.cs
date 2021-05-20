@@ -28,10 +28,16 @@ namespace Game {
         // FEATURE: создать вычисление массы согласно броне и запчастей.
         public int Masse { get; set; } = 500;
 
-        public Body Body { get; set; }
-        public Chassis Chassis { get; set; }
-        public Engine Engine { get; set; }
-        public Weapon Weapon { get; set; }
+        public BodyCondition BodyCondition { get; set; }
+        public ChassisCondition ChassisCondition { get;set; }
+        public EngineCondition EngineCondition { get; set; }
+        public WeaponCondition WeaponCondition { get; set; }
+
+
+        /// <summary>
+        /// За сколько массы 1 мощность даст 1 скорость.
+        /// </summary>
+        public const float PowerCoeff = 100;
 
 
         // Map
@@ -56,24 +62,23 @@ namespace Game {
 
 
 
-        public Unit() { }
-        public Unit(in int x, in int y) {
+        public Unit(Point location, BodyCondition body, ChassisCondition chassis, EngineCondition engine, WeaponCondition weapon) : this(location.X, location.Y, body, chassis, engine, weapon) { 
+        
+        }
+        public Unit(in int x, in int y, BodyCondition body, ChassisCondition chassis, EngineCondition engine, WeaponCondition weapon) {
             X = x;
             Y = y;
+            BodyCondition = body;
+            ChassisCondition = chassis;
+            EngineCondition = engine;
+            WeaponCondition = weapon;
         }
-        public Unit(Point location) : this(location.X, location.Y) { }
-        public Unit(in int x, in int y, Route route) : this (x, y) {
-            bool valid = RouteStartCloselyToLocation(route.Top);
-            if (!valid) { throw new InvalidOperationException(); }
 
-            this.route = route;
+
+
+        public float CalculateSpeedOnLandtile(string landtileName) {
+            return  EngineCondition.Engine.Power * ChassisCondition.Chassis.Passability[landtileName] * PowerCoeff / Passability.PassabilityCoeff / Masse;
         }
-        public Unit(Point location, Route route) : this(location.X, location.Y, route) { }
-
-
-
-        public float CalculateSpeedOnLandtile(string landtileName) => Engine.Power * Chassis.Passability[landtileName] * Engine.PowerCoeff / Passability.PassabilityCoeff / Masse;
-
 
         public IReadOnlyCollection<Point> GetRoute() => route.ToList();
 
@@ -89,30 +94,32 @@ namespace Game {
         /// <summary>
         /// Изменит маршрут Unit на корректно заданный.
         /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public void SetRoute(Route newRoute) {
-            if (!newRoute.Empty) {
-                bool valid = RouteStartCloselyToLocation(newRoute[0]);
-                if (!valid) { throw new InvalidOperationException(); }
-            }
+        public bool TrySetRoute(Route newRoute) {
+            if (!newRoute.Empty && !ExtensionsMethods.TilesClosely(Location, newRoute[0])) { return false; }
 
             route.Overwrite(newRoute);
+            return true;
         }
 
         /// Дополнит маршрут <see cref="Unit"/>.
         /// <exception cref="InvalidOperationException"></exception>
         public void AddWay(Point way) {
+            Point lastWay;
             if (route.Empty) {
-                bool valid = RouteStartCloselyToLocation(way);
-                if (!valid) { throw new InvalidOperationException(); }
+                lastWay = Location;
+            }
+            else {
+                lastWay = route.Last();
             }
 
+            if (!ExtensionsMethods.TilesClosely(lastWay, way)) { throw new ArgumentException($"{nameof(way)} обязан стыковаться с последним тайлом пути"); }
+            
             route.Add(way);
         }
 
         /// Дополнит марштрут <see cref="Unit"/>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AddRoute(IEnumerable<Point> appendedRoute) {
+        public void AppendRoute(IEnumerable<Point> appendedRoute) {
             foreach (var way in appendedRoute) {
                 AddWay(way);
             }
@@ -127,10 +134,5 @@ namespace Game {
             return true;
         }
 
-        private bool RouteStartCloselyToLocation(Point routeStart) => ExtensionsMethods.TilesClosely(Location, routeStart);
-
-        #region Exceptions
-        private InvalidOperationException EmptyRouteException(string param) => new InvalidOperationException(param);
-        #endregion
     }
 }
