@@ -15,7 +15,7 @@ namespace Game {
         private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.txt";
 
-        private static string buttonsInstruction = @"[→] [←] [↑] [↓] ";
+        private static string buttonsArrows = @"[→] [←] [↑] [↓]";
         private static string buttonEnter = "[Enter]";
         private static string buttonsSpace = "[Space]";
         private static string buttonEscape = "[Esc]";
@@ -37,8 +37,12 @@ namespace Game {
             do {
                 ConsoleKeyInfo input = Console.ReadKey(true);
                 if (input.Key == ConsoleKey.Enter) {
-                    Console.Clear();
-                    StartGame(rulesPath, mapPath);
+                    if (mainMenuPointer == 0) {
+                        StartGame(rulesPath, mapPath);
+                    }
+                    else {
+                        Environment.Exit(0);
+                    }
                 }
                 else {
                     if (input.Key == ConsoleKey.DownArrow) {
@@ -76,7 +80,10 @@ namespace Game {
         private static void WriteLineColored(char chr, ConsoleColor color) => WriteColored(chr.ToString(), color);
         private static void WriteColored(ConsoleImage charImage) => WriteColored(charImage.Char, charImage.Color);
         private static void WriteLineColored(ConsoleImage charImage) => WriteLineColored(charImage.Char, charImage.Color);
-
+        private static void WriteSeparator() {
+            int separatorsCount = Console.BufferWidth - 1 - Console.CursorLeft;
+            Console.WriteLine(new string('-', separatorsCount));
+        }
 
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
@@ -112,7 +119,7 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
-                    map.ConfrimSelectedUnitRoute();
+                    map.AddSelectedUnitWay();
                 }
                 else
                 if (input.Key == ConsoleKey.Escape) {
@@ -128,9 +135,9 @@ namespace Game {
                 }
                 else
                 if (input.Key == ConsoleKey.Delete) {
-                    // ISSUE: тут щелчок на любой тайл пути удаляет последний путь.
-                    // Не баг а фича!
-                    map.DeleteSelectedUnitLastWay();
+                    if (selectedTileInfo.SelectedUnitWay) {
+                        map.DeleteSelectedUnitLastWay();
+                    }
                 }
             } while (true);
         }
@@ -149,31 +156,30 @@ namespace Game {
             }
         }
         private static void PrintGameMenu() {
-            Console.WriteLine(new string('-', Console.BufferWidth - 1));
+            WriteSeparator();
             MaptileInfo tileInfo = map.SelectedTile;
-            PrintKeys(tileInfo);
+            string keys = GetStringPossibleKeys(tileInfo);
+            Console.WriteLine(keys);
+
+            WriteSeparator();
             PrintCurrentTeamInfo(map.CurrentTeam);
             PrintTileInformation(tileInfo);
         }
 
 
-        private static void PrintKeys(MaptileInfo maptileInfo) {
-            Console.Write(buttonsInstruction);
-            if (maptileInfo.ContainsUnit || map.UnitSelected) {
-                Console.Write(buttonEnter);
-            }
+        private static string GetStringPossibleKeys(MaptileInfo maptileInfo) {
+            string outString = buttonsArrows;
             if (map.UnitSelected) {
-                if (maptileInfo.AvailableForSelectedUnitMove) {
-                    Console.Write(buttonsSpace);
-                }
-                Console.Write(buttonEscape);
+                outString += " " + buttonEnter;
+                if (maptileInfo.AvailableForSelectedUnitMove) { outString += " " + buttonsSpace; }
 
-                Point tempSelectedUnitRoute = map.GetSelectedUnitLastRoutePosition();
-                if (maptileInfo.Location == tempSelectedUnitRoute &&
-                        map.SelectedUnit.Location != tempSelectedUnitRoute) {
-                    Console.Write(buttonDel);
-                }
+                if (maptileInfo.SelectedUnitWay) { outString += " " + buttonDel; }
+                outString += " " + buttonEscape;
             }
+            else {
+                if (maptileInfo.ContainsUnit) { outString += " " + buttonEnter; }
+            }
+            return outString;
         }
         private static void PrintCurrentTeamInfo(Team currentTeam) {
             WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);

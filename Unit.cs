@@ -56,6 +56,8 @@ namespace Game {
                 return route.First();
             }
         }
+        // REFACTORING: теперь кажется, что логику времени лучше инкапсулировать
+        // внутри unit. Route инкапсулирован же.
         public float TimeReserve { get; set; }
         private readonly Route route = new Route();
         public Team Team { get; set; }
@@ -81,6 +83,8 @@ namespace Game {
         }
 
         public IReadOnlyCollection<Point> GetRoute() => route.ToList();
+
+        public int RouteLength => route.Count();
 
         /// <summary>
         /// Перемещает Unit на одну следующую позицию Route.
@@ -125,13 +129,9 @@ namespace Game {
             }
         }
 
-        /// <summary>
-        /// True, если конечная точка маршрута была удалена.
-        /// </summary>
-        public bool TryRemoveLastWay() {
-            if (route.Empty) { return false; }
+        public void RemoveLastWay() {
+            if (route.Empty) { throw new InvalidOperationException("Маршрут пуст."); }
             route.RemoveLast();
-            return true;
         }
 
     }

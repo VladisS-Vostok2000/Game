@@ -14,19 +14,22 @@ namespace Game {
         public bool ContainsUnit => Unit != null;
         public bool ReachableForSelectedUnit { get; }
         public bool AvailableForSelectedUnitMove { get; }
+        public bool SelectedUnitWay { get; }
 
 
 
         public MaptileInfo(Landtile landtile,
                            Point location,
                            Unit unit,
-                           bool reachableForSelectedUnit, bool availableForSelectedUnitMove
-                           ) {
+                           bool reachableForSelectedUnit,
+                           bool availableForSelectedUnitMove,
+                           bool selectedUnitWay) {
             Location = location;
             Unit = unit;
             Land = landtile;
             ReachableForSelectedUnit = reachableForSelectedUnit;
             AvailableForSelectedUnitMove = availableForSelectedUnitMove;
+            SelectedUnitWay = selectedUnitWay;
         }
 
 

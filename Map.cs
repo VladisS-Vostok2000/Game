@@ -68,7 +68,8 @@ namespace Game {
                         new Point(x, y),
                         GetUnitOrNull(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
-                        MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y))
+                        MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
+                        MaptileIsSelectedUnitWay(new Point(x, y))
                     );
                 }
                 else {
@@ -76,8 +77,9 @@ namespace Game {
                         Landtiles[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
-                        false,
-                        false
+                        default,
+                        default,
+                        default
                     );
                 }
             }
@@ -135,7 +137,7 @@ namespace Game {
             SelectedUnit = unit;
             UnitSelected = true;
             SelectedUnitTempRoute = new List<Point>();
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
+            RefreshSelectedUnitAwailableRoutes();
         }
         // FEATURE: добавить разделение времени на выход/вход в тайл.
         private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
@@ -209,28 +211,34 @@ namespace Game {
 
         public static float UnitTimeSpentOnTile(string landtileName, Unit unit) => speedPerTile / unit.CalculateSpeedOnLandtile(landtileName);
 
-        public void ConfrimSelectedUnitRoute() {
+        private void RefreshSelectedUnitAwailableRoutes() {
+            if (!UnitSelected) { throw new Exception(); }
+            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
+
+        }
+
+        public void AddSelectedUnitWay() {
             if (!UnitSelected
                 || !MaptileLocationAvailableForSelectedUnitTempMove(SelectedTileLocation)
-                || MaptileIsSelectedUnitRoute(SelectedTileLocation)) {
+                || MaptileIsSelectedUnitWay(SelectedTileLocation)) {
                 return;
             }
 
             string newPositionLandtileName = SelectedTile.Land.Name;
             SelectedUnitTempRoute.Add(SelectedTileLocation);
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
+            RefreshSelectedUnitAwailableRoutes();
         }
 
         public bool MaptileLocationAvailableForSelectedUnitTempMove(Point landtileLocation) =>
             MaptileReachableForSelectedUnit(landtileLocation) &&
             TileClosestToSelectedUnitTempPosition(landtileLocation);
 
-        public bool MaptileIsSelectedUnitRoute(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
+        public bool MaptileIsSelectedUnitWay(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
             Point tempUnitPosition = GetSelectedUnitLastRoutePosition();
             return ExtensionsMethods.TilesClosely(tile, tempUnitPosition);
         }
-        
+
         public Point GetSelectedUnitLastRoutePosition() {
             if (!UnitSelected) { throw new InvalidOperationException(); }
 
@@ -247,28 +255,32 @@ namespace Game {
             }
             return tempUnitPosition;
         }
-        
+
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
-        
+
         public void ConfirmSelectedUnitRoute() {
             SelectedUnit.AppendRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
-        
+
         public void UnselectUnit() => UnitSelected = false;
 
         public void DeleteSelectedUnitLastWay() {
             if (!UnitSelected) { return; }
 
+            bool wayRemoved = false;
             if (!SelectedUnitTempRoute.Empty()) {
                 SelectedUnitTempRoute.RemoveLast();
-                return;
+                wayRemoved = true;
+            }
+            else 
+            if (SelectedUnit.RouteLength > 0) {
+                if (SelectedUnit.RouteLength == 1) { SelectedUnit.TimeReserve = 0; }
+                SelectedUnit.RemoveLastWay();
+                wayRemoved = true;
             }
 
-            bool removedSuccessfully = SelectedUnit.TryRemoveLastWay();
-            if (!removedSuccessfully) { return; }
-
-            if (SelectedUnit.GetRoute().Empty()) { SelectedUnit.TimeReserve = 0; }
+            if (wayRemoved) { RefreshSelectedUnitAwailableRoutes(); }
         }
         #endregion
 
