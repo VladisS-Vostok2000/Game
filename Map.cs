@@ -11,7 +11,7 @@ using Undefinded;
 namespace Game {
     public sealed class Map {
         private const float speedPerTile = 20;
-        private const float tirnTimeTick = 1;
+        private const float turnTimeTick = 1;
 
 
         public int LengthX => Landtiles.GetUpperBound(0) + 1;
@@ -102,6 +102,7 @@ namespace Game {
 
             for (int r = 0; r < LengthY; r++) {
                 for (int c = 0; c < LengthX; c++) {
+                    // REFACTORING: сделать тут интерфейс и не обращаться к MaptileInfo?
                     outArray[c, r] = this[c, r].ToConsoleImage();
                 }
             }
@@ -273,7 +274,7 @@ namespace Game {
                 SelectedUnitTempRoute.RemoveLast();
                 wayRemoved = true;
             }
-            else 
+            else
             if (SelectedUnit.RouteLength > 0) {
                 if (SelectedUnit.RouteLength == 1) { SelectedUnit.TimeReserve = 0; }
                 SelectedUnit.RemoveLastWay();
@@ -285,13 +286,16 @@ namespace Game {
         #endregion
 
 
+        #region Turn
         public void PassTurn() {
             UnselectUnit();
             currentTeamIndex = (currentTeamIndex + 1) % Rules.Teams.Count;
             CurrentTeam = Rules.Teams[currentTeamIndex];
         }
         public void MakeTurn() {
-            MoveUnits(tirnTimeTick);
+            MoveUnits(turnTimeTick);
+            AttackUnits(turnTimeTick);
+            RefreshTimers(turnTimeTick);
         }
         private void MoveUnits(float allotedTime) {
             // BUG: список заблокированных маршрутов не хранится, т.к. иначе не сможет
@@ -329,9 +333,38 @@ namespace Game {
                 } while (unit.TimeReserve > 0);
             }
         }
+        private void AttackUnits(float allotedTime) {
+            foreach (var unit in Units) {
+                if (unit.WeaponCondition.CurrentCooldown > 0) {
+                    unit.WeaponCondition.CurrentCooldown -= allotedTime;
+                    continue;
+                }
+
+                List<Unit> targets = FindAwailableUnitTargets(unit);
+                if (targets.Count == 0) { continue; }
+
+                Unit target = targets.First();
+                // REFACTORING: может, это инкапсулировать в unit?
+                target.GetAttacked(unit.WeaponCondition.Weapon.Warhead);
+                unit.WeaponCondition.CurrentCooldown = unit.WeaponCondition.Weapon.Cooldown;
+            }
+        }
+        private List<Unit> FindAwailableUnitTargets(Unit unit) {
+            // REFACTORING: Добавить дальность оружию.
+            return Units.Except(new Unit[] { unit }).ToList();
+        }
+        private void RefreshTimers(float allotedTime) {
+            foreach (var unit in Units) {
+                unit.FlashTimer -= allotedTime;
+            }
+        }
+        #endregion
 
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
+
+        private bool IsSpaseBetweenMaptiles(Point p1, Point p2) =>
+            Math.Abs(p1.Y - p2.Y) > 1 || Math.Abs(p1.X - p2.X) > 1;
 
     }
 }

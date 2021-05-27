@@ -16,7 +16,7 @@ namespace Game {
         /// General
         private const string iniKeyType = "Type";
         private const string iniKeyDisplayedName = "Name";
-        private const string iniKeyUnitImageChar = "CharImage";
+        private const string iniKeyUnitCharImage = "CharImage";
         private const string iniDefaultDisplayedName = "Default";
         /// Part
         private const string iniKeyPartMaxHP = "MaxHP";
@@ -38,21 +38,24 @@ namespace Game {
         private const string iniKeyWarheadDamage = "Damage";
         /// Projectiles
         private const string iniValueTypeProjectile = "Projectile";
-        private const string iniKeyProjectileWarhead = "Warhead";
+        private const string iniKeyProjectileCharImage = "CharImage";
+        private const string iniKeyProjectileColor = "Color";
+        private const ConsoleColor iniDefaultProjectileColor = ConsoleColor.Cyan;
         /// Weapon
         private const string iniValueTypeWeapon = "Weapon";
         private const string iniKeyWeaponCooldown = "Cooldown";
         private const string iniKeyWeaponName = "Name";
         private const string iniKeyWeaponPojectile = "Projectile";
+        private const string iniKeyWeaponWarhead = "Warhead";
         private const float iniDefaultWeaponCooldown = 5;
         /// Route
         private const string iniValueTypeRoute = "Route";
         private const string iniKeyRoute = "Route";
         /// Unit
+        private const string iniValueTypeUnit = "Unit";
         private const string iniKeyUnitDisplayedName = "Name";
         private const string iniKeyUnitX = "X";
         private const string iniKeyUnitY = "Y";
-        private const string iniValueTypeUnit = "Unit";
         private const string iniKeyUnitBody = "Body";
         private const string iniKeyUnitChassis = "Chassis";
         private const string iniKeyUnitMaxHP = "MaxHP";
@@ -121,7 +124,7 @@ namespace Game {
                 // Обязательные параметры.
                 ConsoleImage consoleImage;
                 try {
-                    consoleImage = new ConsoleImage(char.Parse(landtilesSectionPairs[iniKeyUnitImageChar]), (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]));
+                    consoleImage = new ConsoleImage(char.Parse(landtilesSectionPairs[iniKeyUnitCharImage]), (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]));
                 }
                 catch (FormatException) {
                     continue;
@@ -311,6 +314,8 @@ namespace Game {
             }
             return outList;
         }
+
+        [Obsolete]
         private static List<Projectile> ParseProjectiles(IDictionary<string, IDictionary<string, string>> sections, Rules rules) {
             var outList = new List<Projectile>();
             foreach (var section in sections) {
@@ -320,10 +325,10 @@ namespace Game {
                 IDictionary<string, string> projectileSectionPairs = sectionPairs;
                 string projectileSectionName = section.Key;
                 var projectile = new Projectile(projectileSectionName) { };
+                projectile.Color = projectileSectionPairs.TryParseValue(iniKeyProjectileColor, out ConsoleColor parsedColor) ? parsedColor : iniDefaultProjectileColor;
 
                 try {
-                    string warheadName = projectileSectionPairs[iniKeyProjectileWarhead];
-                    projectile.Warhead = rules.GetWarhead(warheadName);
+                    projectile.ConsoleChar = char.Parse(projectileSectionPairs[iniKeyProjectileCharImage]);
                 }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
@@ -348,6 +353,7 @@ namespace Game {
 
                 try {
                     weapon.Projectile = rules.GetProjectile(iniKeyWeaponPojectile);
+                    weapon.Warhead = rules.GetWarhead(iniKeyWeaponWarhead);
                 }
                 catch (KeyNotFoundException) { continue; }
                 catch (InvalidOperationException) { continue; }
@@ -439,7 +445,7 @@ namespace Game {
                 // Обязательные параметры.
                 try {
                     Point location = new Point(int.Parse(unitSectionPairs[iniKeyUnitX]), int.Parse(unitSectionPairs[iniKeyUnitY]));
-                    char consolechar = char.Parse(unitSectionPairs[iniKeyUnitImageChar]);
+                    char consolechar = char.Parse(unitSectionPairs[iniKeyUnitCharImage]);
                     BodyCondition unitBody = new BodyCondition(rules.GetBody(unitSectionPairs[iniKeyUnitBody]));
                     ChassisCondition unitChassis = new ChassisCondition(rules.GetChassis(unitSectionPairs[iniKeyUnitChassis]));
                     EngineCondition unitEngine = new EngineCondition(rules.GetEngine(unitSectionPairs[iniKeyUnitEngine]));

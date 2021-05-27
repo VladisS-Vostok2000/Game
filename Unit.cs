@@ -8,20 +8,36 @@ using Undefinded;
 
 namespace Game {
     public sealed class Unit : IConsoleDrawable {
-        private ConsoleImage consoleImage;
         public ConsoleImage ConsoleImage {
-            get => SpecificColor ? consoleImage : new ConsoleImage(consoleImage.Char, Team.Color);
-            set => consoleImage = value;
+            get {
+                ConsoleColor color = Flashed ? FlashColor : SpecificColor ? Color : Team.Color;
+                return new ConsoleImage(ConsoleChar, color);
+            }
+            set {
+                color = value.Color;
+                consoleChar = value.Char;
+            }
         }
         public bool SpecificColor { get; set; }
+        private ConsoleColor color;
         public ConsoleColor Color {
-            get => ConsoleImage.Color;
-            set => consoleImage.Color = value;
+            get => color;
+            set => color = value;
         }
+        private char consoleChar;
         public char ConsoleChar {
-            get => ConsoleImage.Char;
-            set => consoleImage.Char = value;
+            get => consoleChar;
+            set => consoleChar = value;
         }
+
+        public bool Flashed => FlashTimer > 0;
+        private float flashTimer;
+        public float FlashTimer {
+            get => flashTimer;
+            set => flashTimer = value.NotNegative();
+        }
+        public const ConsoleColor FlashColor = ConsoleColor.Cyan;
+
         public string DisplayedName { get; set; }
         public int MaxHP { get; set; }
         public int CurrentHP { get; set; }
@@ -132,6 +148,13 @@ namespace Game {
         public void RemoveLastWay() {
             if (route.Empty) { throw new InvalidOperationException("Маршрут пуст."); }
             route.RemoveLast();
+        }
+
+        internal void GetAttacked(Warhead warhead) {
+            CurrentHP -= warhead.Damage;
+            BodyCondition.CurrentHP -= warhead.Damage;
+            ChassisCondition.CurrentHP -= warhead.Damage;
+            FlashTimer += 2;
         }
 
     }

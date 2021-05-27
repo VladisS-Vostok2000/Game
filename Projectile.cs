@@ -1,6 +1,7 @@
 ﻿using System;
 
 namespace Game {
+    [Obsolete]
     public sealed class Projectile : IConsoleDrawable {
         private ConsoleImage consoleImage;
         public ConsoleImage ConsoleImage { get => consoleImage; set => consoleImage = value; }
@@ -8,7 +9,6 @@ namespace Game {
         public char ConsoleChar { get => ConsoleImage.Char; set => consoleImage.Char = value; }
         
         public string Name { get; set; }
-        public Warhead Warhead { get; set; }
 
 
 

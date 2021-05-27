@@ -17,3 +17,6 @@ dotnet_diagnostic.IDE0059.severity = silent
 
 # IDE0059: Ненужное присваивание значения
 csharp_style_unused_value_assignment_preference = unused_local_variable
+
+# CS0612: Тип или член устарел
+dotnet_diagnostic.CS0612.severity = silent

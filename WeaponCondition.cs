@@ -3,13 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Undefinded;
 
 namespace Game {
     public class WeaponCondition : PartCondition {
         public Weapon Weapon => (Weapon)Part;
 
 
-        public float CurrentCooldown { get; set; }
+        private float currentCooldown;
+        public float CurrentCooldown {
+            get => currentCooldown;
+            set => currentCooldown = value.NotNegative();
+        }
 
 
 

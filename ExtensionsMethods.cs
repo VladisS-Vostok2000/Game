@@ -28,6 +28,11 @@ namespace Undefinded {
         }
 
         /// <summary>
+        /// Возвращает 0, если число меньше нуля или само значение иначе.
+        /// </summary>
+        public static float NotNegative(in this float target) => target < 0 ? 0 : target;
+
+        /// <summary>
         /// True, если число лежит в заданном диапазоне.
         /// </summary>
         public static bool IsInRange(in this int target, in int lowerBound, in int upperBound) => target >= lowerBound && target <= upperBound;
@@ -74,31 +79,13 @@ namespace Undefinded {
             result = default;
             return pairs.TryGetValue(key, out result);
         }
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref int result) => result = int.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref long result) => result = long.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref char result) => result = char.Parse(pairs[key]);
-        //public static void ParseValue<T>(this Dictionary<T, string> pairs, T key, ref string result) => result = pairs[key];
-
-
-        //public static bool TryFindAndRemove<T>(this ICollection<T> collection, T target) where T: IComparable<T> {
-        //    foreach (var item in collection) {
-        //        if (target.Equals(item)) {
-        //            collection.Remove(item);
-        //            return true;
-        //        }
-        //    }
-        //    return false;
-        //}
-        ///// <exception cref="KeyNotFoundException"></exception>
-        //public static bool FindAndRemove<T>(this ICollection<T> collection, T target) where T : IComparable<T> {
-        //    foreach (var item in collection) {
-        //        if (target.Equals(item)) {
-        //            collection.Remove(item);
-        //            return true;
-        //        }
-        //    }
-        //    throw new KeyNotFoundException();
-        //}
+        /// <summary>
+        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// </summary>
+        public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out ConsoleColor result) {
+            result = default;
+            return pairs.TryGetValue(key, out string value) && Enum.TryParse(value, out result);
+        }
 
         /// <summary>
         /// Производит модификацию секций, атрибутов и значений в соответствии с заданным словарём. 
