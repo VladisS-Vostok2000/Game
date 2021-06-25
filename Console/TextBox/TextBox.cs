@@ -1,4 +1,5 @@
 ﻿using ExtensionMethods;
+using Game.Console.ConsolePicture;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,19 +11,30 @@ using System.Xml;
 
 namespace Console.TextBox {
     public class TextBox : IConsoleDrawable {
-        private StringBuilder[] Text { get; }
-        public Point Location { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int X { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int Y { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public Point Location {
+            get => new Point(X, Y);
+            set {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
+        public int X { get; set; }
+        public int Y { get; set; }
 
+
+        private ConsolePicture consolePicture;
         public ConsolePicture ConsolePicture => throw new NotImplementedException();
 
-        public TextBox(string text, int width, int height) {
-            Width = width > 0 ? width : throw new TextBoxInvalidArgumentException($"Ширина обязана быть больше нуля. {nameof(width)} была {width}", width);
-            Height = height > 0 ? height : throw new TextBoxInvalidArgumentException($"Высота обязана быть больше нуля. {nameof(height)} была {height}", width);
-            Text = new StringBuilder[Height].Fill(() => new StringBuilder()) ?? throw new TextBoxInvalidArgumentException($"{nameof(text)} был null.", text);
-            CharImage.Fill(() => string.Empty);
-            Render(text);
+
+
+        public TextBox(ColoredText text, int width, int height) {
+            try {
+                consolePicture = new ConsolePicture(width, height);
+            }
+            catch (ConsolePictureException exception) {
+                throw new TextBoxException($"Один из заданных параметров недопустим для создания блока текста: {exception.Message}.", exception);
+            }
+            
         }
 
 

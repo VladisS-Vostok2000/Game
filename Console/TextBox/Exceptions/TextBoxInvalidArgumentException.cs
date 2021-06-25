@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Console.TextBox {
     public class TextBoxInvalidArgumentException : TextBoxException {
-        public object Causer { get; }
+        public object ActualValue { get; }
 
 
 
-        public TextBoxInvalidArgumentException(string comment, object causer) : base(comment) => Causer = causer;
+        public TextBoxInvalidArgumentException(string message, object actualValue) : base(message) => ActualValue = actualValue;
+        public TextBoxInvalidArgumentException(string message, Exception innerException) : base(message, innerException) { }
 
     }
-
 }

@@ -46,7 +46,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Console\ColoredText.cs" />
-    <Compile Include="Console\ConsolePicture.cs" />
+    <Compile Include="Console\ConsolePicture\ConsolePicture.cs" />
+    <Compile Include="Console\ConsolePicture\ConsolePictureException.cs" />
+    <Compile Include="Console\ConsolePicture\ConsolePictureInvalidArgumentException.cs" />
     <Compile Include="Console\ConsolePixel.cs" />
     <Compile Include="Console\TextBox\TextBox.cs" />
     <Compile Include="Console\TextBox\Exceptions\TextBoxException.cs" />

@@ -6,11 +6,8 @@ using System.Threading.Tasks;
 
 namespace Console.TextBox {
     public class TextBoxException : Exception {
-        public string Comment { get; }
-
-
-
-        public TextBoxException(string comment) => Comment = comment;
+        public TextBoxException(string message) :base(message) { }
+        public TextBoxException(string message, Exception innerException) : base(message, innerException) { }
 
     }
 }
