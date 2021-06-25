@@ -5,9 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using Undefinded;
+using ExtensionMethods;
+using static Core.ConsoleScreen;
+using Core.CharWindow;
 
-namespace Game {
+namespace Core {
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
@@ -27,7 +29,13 @@ namespace Game {
 
 
         public static void Main(string[] args) {
-            //Console.ReadKey(true);
+            var field = new TextBox("а", 1, 1).CharImage;
+            var field1 = new TextBox(" ", 1, 1).CharImage;
+            var field2 = new TextBox("слово слово слово слово", 6, 4).CharImage;
+            var field3 = new TextBox("слово  слово  слово  слово", 6, 10).CharImage;
+            var field4 = new TextBox("  слово  слово  слово  слово  ", 6, 10).CharImage;
+            var field5 = new TextBox("  слово  слов  сло  сл  ", 4, 10).CharImage;
+            Console.ReadKey(true);
             Console.CursorVisible = false;
             Console.BufferHeight = 50;
 
@@ -66,24 +74,6 @@ namespace Game {
         }
 
 
-        private static void WriteColored(string str, ConsoleColor color) {
-            ConsoleColor currentColor = Console.ForegroundColor;
-            Console.ForegroundColor = color;
-            Console.Write(str);
-            Console.ForegroundColor = currentColor;
-        }
-        private static void WriteLineColored(string str, ConsoleColor color) {
-            WriteColored(str, color);
-            Console.WriteLine();
-        }
-        private static void WriteColored(char chr, ConsoleColor color) => WriteColored(chr.ToString(), color);
-        private static void WriteLineColored(char chr, ConsoleColor color) => WriteColored(chr.ToString(), color);
-        private static void WriteColored(ConsoleImage charImage) => WriteColored(charImage.Char, charImage.Color);
-        private static void WriteLineColored(ConsoleImage charImage) => WriteLineColored(charImage.Char, charImage.Color);
-        private static void WriteSeparator() {
-            int separatorsCount = Console.BufferWidth - 1 - Console.CursorLeft;
-            Console.WriteLine(new string('-', separatorsCount));
-        }
 
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
@@ -142,8 +132,8 @@ namespace Game {
             } while (true);
         }
         private static Map InitializeMap(string rulesPath, string mapPath) {
-            IDictionary<string, IDictionary<string, string>> rulesIni = MyParsers.IniParser.Parse(rulesPath);
-            IDictionary<string, IDictionary<string, string>> mapIni = MyParsers.IniParser.Parse(mapPath);
+            IDictionary<string, IDictionary<string, string>> rulesIni = Parser.IniParser.Parse(rulesPath);
+            IDictionary<string, IDictionary<string, string>> mapIni = Parser.IniParser.Parse(mapPath);
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
@@ -206,6 +196,9 @@ namespace Game {
             string name = tileInfo.Land.DisplayedName;
             Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
+
+    }
+}
         private static void PrintLandtileAndUnitTitle(MaptileInfo tileInfo) {
             Landtile landtile = tileInfo.Land;
             Console.Write("[");
@@ -230,6 +223,3 @@ namespace Game {
             Console.WriteLine("Орудие:".PadRight(padConst) + unit.WeaponCondition.Weapon.DisplayedName);
             Console.WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
         }
-
-    }
-}
