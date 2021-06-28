@@ -1,5 +1,6 @@
 ﻿using ExtensionMethods;
 using Game.Console.ConsolePicture;
+using Game.Console.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,102 +23,155 @@ namespace Console.TextBox {
         public int Y { get; set; }
 
 
-        private ConsolePicture consolePicture;
-        public ConsolePicture ConsolePicture => throw new NotImplementedException();
+        public int Width { get; }
+        public int Height { get; }
+
+
+        public ConsolePicture ConsolePicture => new ConsolePicture(Width, Height, Pixels);
+        private ConsolePixel[,] Pixels { get; }
 
 
 
-        public TextBox(ColoredText text, int width, int height) {
-            try {
-                consolePicture = new ConsolePicture(width, height);
+        public TextBox(MultycoloredString text, int width, int height) {
+            if (width < 0) {
+                throw new TextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
-            catch (ConsolePictureException exception) {
-                throw new TextBoxException($"Один из заданных параметров недопустим для создания блока текста: {exception.Message}.", exception);
+            if (height < 0) {
+                throw new TextBoxInvalidArgumentException($"Высота должна быть больше нуля. {nameof(height)} был {height}.", height);
             }
-            
+
+            Pixels = new ConsolePixel[Width, Height];
+            Render(text);
         }
 
 
 
-        private void Render(string text) {
+        private void Render(MultycoloredString text) {
+            MultycoloredString[] arrangedText = new MultycoloredString[Height];
+            ConsolePixel[,] Pixels = new ConsolePixel[Width, Height];
             int lineIndex = 0;
-            foreach (string line in text.SplitToLines()) {
-                WriteLine(line, ref lineIndex);
-                lineIndex++;
-                if (lineIndex >= Height) { break; }
-            }
-            for (int i = 0; i < text.Length; i++) {
-                char str = text[i];
-                CharImage[i] = str.ToString().PadRight(Width);
-            }
+            WriteMultycoloredText();
+            PadArrangedText();
+            TextToPixelArray();
 
 
-            void WriteLine(string line, ref int _lineIndex) {
-                if (line.Length <= LineFreeSpace(_lineIndex)) {
-                    Text[_lineIndex].Append(line);
+            void WriteMultycoloredText() {
+                foreach (var multycoloredLine in text.SplitToLines()) {
+                    WriteMultycoloredLine(multycoloredLine);
+                    if (++lineIndex >= Height) { break; }
+                }
+            }
+
+            void WriteMultycoloredLine(MultycoloredString multycoloredLine) {
+                if (multycoloredLine.Length <= ArrangedTextCurrentLineFreeSpace()) {
+                    arrangedText[lineIndex].Append(multycoloredLine);
                     return;
                 }
 
-                bool isSeparator = char.IsWhiteSpace(line[0]);
-                foreach (var charSequence in Read(line)) {
-                    WriteSequense(charSequence, ref _lineIndex, isSeparator);
-                    if (_lineIndex >= Height) { return; }
+                foreach (var coloredString in multycoloredLine) {
+                    WriteColoredString(coloredString);
+                }
+            }
+
+            int ArrangedTextCurrentLineFreeSpace() => ArrangedTextLineFreeSpace(lineIndex);
+
+            int ArrangedTextLineFreeSpace(int index) => Width - arrangedText[index].Length;
+
+            void WriteColoredString(ColoredString coloredString) {
+                bool isSeparator = char.IsWhiteSpace(coloredString[0].Char);
+                foreach (var charSequence in ReadSequence(coloredString)) {
+                    WriteSequence(charSequence, isSeparator);
+                    if (lineIndex >= Height) { return; }
+
                     isSeparator = !isSeparator;
                 }
             }
 
-            void WriteSequense(string sequence, ref int _lineIndex, bool isSeparator) {
-                if (sequence.Length < LineFreeSpace(_lineIndex)) {
-                    Text[_lineIndex].Append(sequence);
-                    return;
-                }
+            IEnumerable<ColoredString> ReadSequence(ColoredString value) {
+                int i = 0;
+                while (i < value.Length) {
+                    var sb = new StringBuilder(value[i].Char);
+                    bool startType = char.IsWhiteSpace(value[i].Char);
+                    for (i++; i < value.Length; i++) {
+                        char letter = value[i].Char;
+                        bool letterType = char.IsWhiteSpace(letter);
+                        if (letterType != startType) { break; }
 
-                if (isSeparator || sequence.Length > Width) {
-                    WriteLongSequence(sequence, ref _lineIndex);
-                    return;
-                }
-
-                _lineIndex++;
-                if (_lineIndex >= Height) {
-                    return;
-                }
-
-                Text[_lineIndex].Append(sequence);
-            }
-
-            void WriteLongSequence(string _sequence, ref int _lineIndex) {
-                int sequenceIndex = LineFreeSpace(_lineIndex);
-                Text[_lineIndex].Append(_sequence.Substring(0, sequenceIndex));
-
-                while (sequenceIndex < _sequence.Length && ++_lineIndex < Height) {
-                    if (sequenceIndex - _sequence.Length < Width) {
-                        Text[_lineIndex].Append(_sequence.Substring(sequenceIndex));
-                        break;
+                        sb.Append(letter);
                     }
-                    else {
-                        Text[_lineIndex].Append(_sequence.Substring(sequenceIndex, Width));
-                        sequenceIndex += Width;
+
+                    yield return new ColoredString(sb.ToString(), value.Color);
+                }
+            }
+
+            void WriteSequence(ColoredString sequence, bool isSeparator) {
+                if (sequence.Length < ArrangedTextCurrentLineFreeSpace()) {
+                    arrangedText[lineIndex].Append(sequence);
+                    return;
+                }
+
+                if (isSeparator) {
+                    WriteSeparator(sequence);
+                    return;
+                }
+
+                if (sequence.Length > Width) {
+                    WriteSolidSequence(sequence);
+                    return;
+                }
+
+                lineIndex++;
+                if (lineIndex >= Height) { return; }
+                arrangedText[lineIndex].Append(sequence.ColoredSubstring(lineIndex));
+            }
+
+            void WriteSeparator(ColoredString sequence) {
+                arrangedText[lineIndex].Append(sequence.ColoredSubstring(0, ArrangedTextCurrentLineFreeSpace()));
+                // Один пробел удаляется при переносе строки, чтобы избежать "красных строк".
+                int sequenceStartIndex = ArrangedTextCurrentLineFreeSpace() + 1;
+                while (lineIndex < Height && sequenceStartIndex < sequence.Length) {
+                    FitSequence(sequence, sequenceStartIndex);
+                    lineIndex++;
+                    sequenceStartIndex += Width + 1;
+                }
+            }
+
+            void WriteSolidSequence(ColoredString sequence) {
+                arrangedText[lineIndex].Append(sequence.ColoredSubstring(0, ArrangedTextCurrentLineFreeSpace()));
+                int sequenceIndex = ArrangedTextCurrentLineFreeSpace();
+                while (lineIndex++ < Height && sequenceIndex < sequence.Length) {
+                    FitSequence(sequence, sequenceIndex);
+                    lineIndex++;
+                    sequenceIndex += Width;
+                }
+            }
+
+            void FitSequence(ColoredString sequence, int sequenceStartIndex) {
+                if (sequenceStartIndex - sequence.Length < Width) {
+                    arrangedText[lineIndex].Append(sequence.ColoredSubstring(sequenceStartIndex));
+                    return;
+                }
+                else {
+                    arrangedText[lineIndex].Append(sequence.ColoredSubstring(sequenceStartIndex, Width));
+                }
+            }
+
+
+            void PadArrangedText() {
+                foreach (var multycoloredString in arrangedText) {
+                    multycoloredString.PadRight(Width);
+                }
+            }
+
+            void TextToPixelArray() {
+                for (int c = 0; c < Width; c++) {
+                    for (int r = 0; r < Height; r++) {
+                        Pixels[c, r] = arrangedText[r][c % Width];
                     }
                 }
             }
-        }
-        private static IEnumerable<string> Read(string sourse) {
-            int i = 0;
-            while (i < sourse.Length) {
-                var sb = new StringBuilder(sourse[i]);
-                bool startType = char.IsWhiteSpace(sourse[i]);
-                for (i++; i < sourse.Length; i++) {
-                    char letter = sourse[i];
-                    bool letterType = char.IsWhiteSpace(letter);
-                    if (letterType != startType) { break; }
 
-                    sb.Append(letter);
-                }
-
-                yield return sb.ToString();
-            }
         }
-        private int LineFreeSpace(int index) => Width - Text[index].Length;
 
     }
 }

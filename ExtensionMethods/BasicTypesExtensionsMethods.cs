@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ExtensionMethods {
     public static class BasicTypesExtensionsMethods {
-
+        #region ICollection, IReadOnlyCollection
         /// <summary>
         /// True, если коллекция пуста.
         /// </summary>
@@ -67,9 +67,9 @@ namespace ExtensionMethods {
             }
             collection.Remove(removingItem);
         }
+        #endregion
 
-
-
+        #region Int32
         /// <summary>
         /// Гарантирует нахождение числа в заданном диапазоне.
         /// </summary>
@@ -83,16 +83,17 @@ namespace ExtensionMethods {
         /// True, если число лежит в заданном диапазоне включительно.
         /// </summary>
         public static bool IsInRange(in this int target, in int lowerBound, in int upperBound) => target >= lowerBound && target <= upperBound;
+        #endregion
 
-
-
+        #region Float
         /// <summary>
         /// Возвращает 0, если число меньше нуля или само значение иначе.
         /// </summary>
         public static float NotNegative(in this float target) => target < 0 ? 0 : target;
+        #endregion
 
 
-
+        #region Dictionary
         /// <summary>
         /// True, если пара из заданных ключа-значения содержится в заданном словаре.
         /// </summary>
@@ -182,9 +183,10 @@ namespace ExtensionMethods {
             }
             return false;
         }
+        #endregion
 
 
-
+        #region String
         /// <summary>
         /// Отчистит строку от символов, относящихся к категории пробелов.
         /// </summary>
@@ -263,8 +265,22 @@ namespace ExtensionMethods {
             }
         }
 
+        /// <summary>
+        /// Вовзращает индекс символа(-ов), относящихся к переносу строки.
+        /// -1, если не найден.
+        /// </summary>
+        public static int IndexOfNewLine(this string value) => value.IndexOf(Environment.NewLine);
+        
+        /// <summary>
+        /// Вовзращает индекс символа(-ов), относящихся к переносу строки.
+        /// -1, если не найден.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static int IndexOfNewLine(this string value, int startIndex) => value.IndexOf(Environment.NewLine, startIndex);
+        #endregion
 
 
+        #region Array
         /// <summary>
         /// Заполнит массив заданными значениями.
         /// </summary>
@@ -288,7 +304,7 @@ namespace ExtensionMethods {
         /// Создаст нередактируемое отражение <see cref="Array"/>.
         /// </summary>
         public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
-
+        #endregion
 
         ///// <summary>
         ///// Возвращает индекс "\r\n" c заданной позиции. -1, если не найден.

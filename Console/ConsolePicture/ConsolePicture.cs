@@ -14,7 +14,7 @@ namespace Console {
 
 
 
-        public ConsolePicture(int width, int height) {
+        public ConsolePicture(int width, int height, ConsolePixel[,] consolePixel) {
             if (width < 0) {
                 throw new ConsolePictureInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
@@ -23,15 +23,12 @@ namespace Console {
             }
             Width = width;
             Height = height;
-            Pixels = new ConsolePixel[Width, Height];
+            Pixels = consolePixel;
         }
 
 
 
-        public ConsolePixel this[int x, int y] {
-            get => Pixels[x, y];
-            set => Pixels[x, y] = value;
-        }
+        public ConsolePixel this[int x, int y] => Pixels[x, y];
 
     }
 }

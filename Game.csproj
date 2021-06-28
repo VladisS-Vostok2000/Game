@@ -45,11 +45,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Console\ColoredText.cs" />
+    <Compile Include="Console\MultycoloredString.cs" />
     <Compile Include="Console\ConsolePicture\ConsolePicture.cs" />
     <Compile Include="Console\ConsolePicture\ConsolePictureException.cs" />
     <Compile Include="Console\ConsolePicture\ConsolePictureInvalidArgumentException.cs" />
     <Compile Include="Console\ConsolePixel.cs" />
+    <Compile Include="Console\ExtensionMethods\ColoredStringExtensionMethods.cs" />
     <Compile Include="Console\TextBox\TextBox.cs" />
     <Compile Include="Console\TextBox\Exceptions\TextBoxException.cs" />
     <Compile Include="Console\TextBox\Exceptions\TextBoxInvalidArgumentException.cs" />
@@ -62,7 +63,7 @@
     <Compile Include="Console\ConsoleWindow\ConsoleWindow.cs" />
     <Compile Include="Core\Chassis.cs" />
     <Compile Include="Console\ConsoleDrawing.cs" />
-    <Compile Include="ExtensionMethods\ConsoleExtensionMethods.cs" />
+    <Compile Include="Console\ExtensionMethods\ConsoleExtensionMethods.cs" />
     <Compile Include="Console\ConsoleWindow\ConsoleWindowsList.cs" />
     <Compile Include="Other\Dumb.cs" />
     <Compile Include="Console\ConsoleScreen.cs" />
