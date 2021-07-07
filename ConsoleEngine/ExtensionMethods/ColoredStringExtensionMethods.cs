@@ -1,20 +1,19 @@
-﻿using Console;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.Console.ExtensionMethods {
+namespace ConsoleEngine {
     public static class ColoredStringExtensionMethods {
         /// <summary>
         /// Возвращает проходящий по строкам перечислитель заданного текста.
         /// </summary>
-        public static IEnumerable<MultycoloredString> SplitToLines(this MultycoloredString value) {
+        public static IEnumerable<MulticoloredString> SplitToLines(this MulticoloredString value) {
             if (value == null) { throw new ArgumentNullException($"{nameof(value)} был null."); }
 
-            var outColoredText = new MultycoloredString();
+            var outColoredText = new MulticoloredString();
             foreach (var coloredString in value) {
                 int newLineIndex = coloredString.IndexOfNewLine();
                 if (newLineIndex == -1) {
@@ -27,7 +26,7 @@ namespace Game.Console.ExtensionMethods {
                     var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
                     outColoredText.Append(coloredSubstring);
                     yield return outColoredText;
-                    outColoredText = new MultycoloredString();
+                    outColoredText = new MulticoloredString();
                     startIndex = newLineIndex + 1;
                     if (startIndex > coloredString.Length) { break; }
 

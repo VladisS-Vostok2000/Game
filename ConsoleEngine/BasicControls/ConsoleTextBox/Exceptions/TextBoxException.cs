@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Console.TextBox {
+namespace ConsoleEngine {
     public class TextBoxException : Exception {
         public TextBoxException(string message) :base(message) { }
         public TextBoxException(string message, Exception innerException) : base(message, innerException) { }

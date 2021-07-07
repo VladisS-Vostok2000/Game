@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 
 namespace ExtensionMethods {
     public static class BasicTypesExtensionsMethods {
+        // REFACTORING: необходимо расчленить этот класс на несколько, потому что
+        // в нём собраны методы расширения со всех библиотек.
+
         #region ICollection, IReadOnlyCollection
         /// <summary>
         /// True, если коллекция пуста.
@@ -91,7 +94,6 @@ namespace ExtensionMethods {
         /// </summary>
         public static float NotNegative(in this float target) => target < 0 ? 0 : target;
         #endregion
-
 
         #region Dictionary
         /// <summary>
@@ -185,7 +187,6 @@ namespace ExtensionMethods {
         }
         #endregion
 
-
         #region String
         /// <summary>
         /// Отчистит строку от символов, относящихся к категории пробелов.
@@ -266,19 +267,36 @@ namespace ExtensionMethods {
         }
 
         /// <summary>
-        /// Вовзращает индекс символа(-ов), относящихся к переносу строки.
+        /// Возвращает индекс символа(-ов), относящихся к переносу строки.
         /// -1, если не найден.
         /// </summary>
         public static int IndexOfNewLine(this string value) => value.IndexOf(Environment.NewLine);
         
         /// <summary>
-        /// Вовзращает индекс символа(-ов), относящихся к переносу строки.
+        /// Возвращает индекс символа(-ов), относящихся к переносу строки.
         /// -1, если не найден.
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
         public static int IndexOfNewLine(this string value, int startIndex) => value.IndexOf(Environment.NewLine, startIndex);
-        #endregion
 
+        /// <summary>
+        /// Возвращает подстроку заданной длинны. Вернётся полная строка при избыточной длинне.
+        /// Вернётся пустая строка при длинне 0.
+        /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static string StringPart(this string value, int length) {
+            if (length < 0) {
+                throw new ArgumentOutOfRangeException(nameof(length), "Длинна не может быть отрицательной.");
+            }
+            
+            if (length <= value.Length) {
+                return value.Substring(0, length);
+            }
+
+            return value.Substring(0, value.Length);
+        }
+
+        #endregion
 
         #region Array
         /// <summary>
@@ -305,35 +323,6 @@ namespace ExtensionMethods {
         /// </summary>
         public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
         #endregion
-
-        ///// <summary>
-        ///// Возвращает индекс "\r\n" c заданной позиции. -1, если не найден.
-        ///// </summary>
-        //public static int InfexOfRN(this string target, int startPosition = 0) {
-        //    for (int i = startPosition; i < target.Length - 1; i++) {
-        //        var substring = target[i].ToString() + target[i + 1].ToString();
-        //        if (substring == Environment.NewLine) {
-        //            return i;
-        //        }
-        //    }
-        //    return -1;
-        //}
-        ///// <summary>
-        ///// Возвращает заданную строку без "/r/n".
-        ///// </summary>
-        //public static string RemoveRN(this string target) {
-        //    var sb = new StringBuilder();
-
-        //    for (int i = 0; i < target.Length - 1; i++) {
-        //        if (target[i] == '\r' && target[i + 1] == '\n') {
-        //            continue;
-        //        }
-
-        //        sb.Append(target[i]);
-        //    }
-
-        //    return sb.ToString();
-        //}
 
     }
 }

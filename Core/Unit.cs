@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExtensionMethods;
+using ConsoleEngine;
+using static Core.TilesMethods;
 
 namespace Core {
-    public sealed class Unit : IConsolePicture {
-        public ConsoleImage ConsoleImage {
+    public sealed class Unit {
+        public ColoredChar ColoredChar {
             get {
                 ConsoleColor color = Flashed ? FlashColor : SpecificColor ? Color : Team.Color;
-                return new ConsoleImage(ConsoleChar, color);
+                return new ColoredChar(ConsoleChar, color);
             }
             set {
                 color = value.Color;
@@ -115,7 +117,7 @@ namespace Core {
         /// Изменит маршрут Unit на корректно заданный.
         /// </summary>
         public bool TrySetRoute(Route newRoute) {
-            if (!newRoute.Empty && !BasicTypesExtensionsMethods.TilesClosely(Location, newRoute[0])) { return false; }
+            if (!newRoute.Empty && !TilesClosely(Location, newRoute[0])) { return false; }
 
             route.Overwrite(newRoute);
             return true;
@@ -132,7 +134,7 @@ namespace Core {
                 lastWay = route.Last();
             }
 
-            if (!BasicTypesExtensionsMethods.TilesClosely(lastWay, way)) { throw new ArgumentException($"{nameof(way)} обязан стыковаться с последним тайлом пути"); }
+            if (!TilesClosely(lastWay, way)) { throw new ArgumentException($"{nameof(way)} обязан стыковаться с последним тайлом пути."); }
             
             route.Add(way);
         }

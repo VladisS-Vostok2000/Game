@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Console.TextBox {
+namespace ConsoleEngine {
     public class TextBoxInvalidArgumentException : TextBoxException {
         public object ActualValue { get; }
 

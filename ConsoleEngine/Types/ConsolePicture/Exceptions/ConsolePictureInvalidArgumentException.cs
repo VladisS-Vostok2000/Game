@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.Console.ConsolePicture {
+namespace ConsoleEngine {
     class ConsolePictureInvalidArgumentException : ConsolePictureException {
         public object ActualValue { get; }
 

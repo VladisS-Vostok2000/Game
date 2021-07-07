@@ -1,6 +1,4 @@
 ﻿using ExtensionMethods;
-using Game.Console.ConsolePicture;
-using Game.Console.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -10,8 +8,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml;
 
-namespace Console.TextBox {
-    public class TextBox : IConsoleDrawable {
+namespace ConsoleEngine {
+    public sealed class ConsoleTextbox : IConsoleControl {
         public Point Location {
             get => new Point(X, Y);
             set {
@@ -26,13 +24,12 @@ namespace Console.TextBox {
         public int Width { get; }
         public int Height { get; }
 
-
-        public ConsolePicture ConsolePicture => new ConsolePicture(Width, Height, Pixels);
-        private ConsolePixel[,] Pixels { get; }
-
+        
+        public ConsolePicture ColoredCharPicture { get; private set; }
 
 
-        public TextBox(MultycoloredString text, int width, int height) {
+
+        public ConsoleTextbox(MulticoloredString text, int width, int height) {
             if (width < 0) {
                 throw new TextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
@@ -40,20 +37,17 @@ namespace Console.TextBox {
                 throw new TextBoxInvalidArgumentException($"Высота должна быть больше нуля. {nameof(height)} был {height}.", height);
             }
 
-            Pixels = new ConsolePixel[Width, Height];
             Render(text);
         }
 
 
 
-        private void Render(MultycoloredString text) {
-            MultycoloredString[] arrangedText = new MultycoloredString[Height];
-            ConsolePixel[,] Pixels = new ConsolePixel[Width, Height];
+        private void Render(MulticoloredString text) {
+            MulticoloredString[] arrangedText = new MulticoloredString[Height];
             int lineIndex = 0;
             WriteMultycoloredText();
             PadArrangedText();
-            TextToPixelArray();
-
+            ColoredCharPicture = new ConsolePicture(arrangedText);
 
             void WriteMultycoloredText() {
                 foreach (var multycoloredLine in text.SplitToLines()) {
@@ -62,7 +56,7 @@ namespace Console.TextBox {
                 }
             }
 
-            void WriteMultycoloredLine(MultycoloredString multycoloredLine) {
+            void WriteMultycoloredLine(MulticoloredString multycoloredLine) {
                 if (multycoloredLine.Length <= ArrangedTextCurrentLineFreeSpace()) {
                     arrangedText[lineIndex].Append(multycoloredLine);
                     return;
@@ -156,18 +150,9 @@ namespace Console.TextBox {
                 }
             }
 
-
             void PadArrangedText() {
                 foreach (var multycoloredString in arrangedText) {
                     multycoloredString.PadRight(Width);
-                }
-            }
-
-            void TextToPixelArray() {
-                for (int c = 0; c < Width; c++) {
-                    for (int r = 0; r < Height; r++) {
-                        Pixels[c, r] = arrangedText[r][c % Width];
-                    }
                 }
             }
 

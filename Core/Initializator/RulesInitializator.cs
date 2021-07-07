@@ -7,6 +7,7 @@ using System.IO;
 using ExtensionMethods;
 using System.Drawing;
 using Parser;
+using ConsoleEngine;
 
 namespace Core {
     /// <summary>
@@ -79,8 +80,8 @@ namespace Core {
         /// Map
         private const string iniSectionMap = "Map";
         private const string iniKeyMap = "Map";
-        private const string iniKeyMapLengthX = "LengthX";
-        private const string iniKeyMapLengthY = "LengthY";
+        private const string iniKeyMapWidth = "Width";
+        private const string iniKeyMapHeight = "Height";
 
 
 
@@ -122,9 +123,10 @@ namespace Core {
                 string displayedName = landtilesSectionPairs.TryParseValue(iniKeyDisplayedName, out string temp) ? temp : iniDefaultDisplayedName;
 
                 // Обязательные параметры.
-                ConsoleImage consoleImage;
                 try {
-                    consoleImage = new ConsoleImage(char.Parse(landtilesSectionPairs[iniKeyUnitCharImage]), (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]));
+                    char chr = char.Parse(landtilesSectionPairs[iniKeyUnitCharImage]);
+                    var color = (ConsoleColor)Enum.Parse(typeof(ConsoleColor), landtilesSectionPairs[iniKeyTileColor]);
+                    outList.Add(new Landtile(landtilesSectionName, displayedName, chr, color));
                 }
                 catch (FormatException) {
                     continue;
@@ -133,7 +135,6 @@ namespace Core {
                     continue;
                 }
 
-                outList.Add(new Landtile(landtilesSectionName, displayedName, consoleImage));
             }
             return outList;
         }
@@ -389,12 +390,12 @@ namespace Core {
             return outList;
         }
 
-        private static Landtile[,] ParseMap(string chars, ICollection<Landtile> landtiles, int x, int y) {
-            var outMap = new Landtile[x, y];
+        private static Landtile[,] ParseMap(string landtilesChars, ICollection<Landtile> landtiles, int width, int height) {
+            var outMap = new Landtile[width, height];
             int i = 0;
-            for (int r = 0; r < y; r++) {
-                for (int c = 0; c < x; c++) {
-                    outMap[c, r] = landtiles.First((Landtile _landtile) => _landtile.ConsoleImage.Char == chars[i]);
+            for (int r = 0; r < height; r++) {
+                for (int c = 0; c < width; c++) {
+                    outMap[c, r] = landtiles.First((Landtile landtile) => landtile.Char == landtilesChars[i]);
                     i++;
                 }
             }
@@ -406,16 +407,16 @@ namespace Core {
                 if (sectionName != iniSectionMap) {
                     continue;
                 }
-                string mapSectionName = sectionName;
+                // string mapSectionName = sectionName;
                 IDictionary<string, string> mapSectionPairs = section.Value;
 
                 // Обязательные параметры.
                 // REFACTORING: рассмотреть возможность сократить это.
                 Map map = default;
                 try {
-                    int x = int.Parse(mapSectionPairs[iniKeyMapLengthX]);
-                    int y = int.Parse(mapSectionPairs[iniKeyMapLengthY]);
-                    Landtile[,] mapLandtiles = ParseMap(mapSectionPairs[iniKeyMap], rules.Landtiles, x, y);
+                    int width = int.Parse(mapSectionPairs[iniKeyMapWidth]);
+                    int height = int.Parse(mapSectionPairs[iniKeyMapHeight]);
+                    Landtile[,] mapLandtiles = ParseMap(mapSectionPairs[iniKeyMap], rules.Landtiles, width, height);
                     List<Unit> units = ParseUnits(ini, rules);
                     map = new Map(mapLandtiles, rules, units);
                 }

@@ -5,17 +5,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Console {
+namespace ConsoleEngine {
     public sealed class ColoredString {
         public string Text { get; set; }
-        public ConsoleColor Color { get; set; } = ConsoleColor.White;
-        public int Length { get; internal set; }
-
-        public ColoredString(string text, ConsoleColor color = ConsoleColor.White) => Color = color;
+        public ConsoleColor Color { get; set; }
+        public int Length => Text.Length;
 
 
 
-        public ConsolePixel this[int index] => new ConsolePixel(Text[index], Color);
+        public ColoredString(string text, ConsoleColor color = ConsoleColor.White) {
+            Text = text;
+            Color = color;
+        }
+
+
+
+        public ColoredChar this[int index] => new ColoredChar(Text[index], Color);
 
 
 

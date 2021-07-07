@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Console.ConsoleWindow {
+namespace ConsoleEngine {
     public class ConsoleWindowsList : IEnumerable<ConsoleWindow> {
         public int Count => list.Count;
 

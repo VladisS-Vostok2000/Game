@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using ExtensionMethods;
-using static Core.ConsoleScreen;
-using Core.CharWindow;
+using static System.Console;
+using static ConsoleEngine.ConsoleScreen;
+using ConsoleEngine;
 
 namespace Core {
     public static class Program {
@@ -29,21 +30,11 @@ namespace Core {
 
 
         public static void Main(string[] args) {
-            var field = new TextBox("а", 1, 1).CharImage;
-            var field1 = new TextBox(" ", 1, 1).CharImage;
-            var field2 = new TextBox("слово слово слово слово", 6, 4).CharImage;
-            var field3 = new TextBox("слово  слово  слово  слово", 6, 10).CharImage;
-            var field4 = new TextBox("  слово  слово  слово  слово  ", 6, 10).CharImage;
-            var field5 = new TextBox("  слово  слов  сло  сл  ", 4, 10).CharImage;
-            Console.ReadKey(true);
-            Console.CursorVisible = false;
-            Console.BufferHeight = 50;
-
             int mainMenuPointer = 0;
             PrintMainMenu(mainMenuPointer);
 
             do {
-                ConsoleKeyInfo input = Console.ReadKey(true);
+                ConsoleKeyInfo input = ReadKey(true);
                 if (input.Key == ConsoleKey.Enter) {
                     if (mainMenuPointer == 0) {
                         StartGame(rulesPath, mapPath);
@@ -65,7 +56,7 @@ namespace Core {
             } while (true);
         }
         private static void PrintMainMenu(int optionHighlitedNumber) {
-            Console.Clear();
+            Clear();
             for (int i = 0; i < menuOptions.Length; i++) {
                 ConsoleColor consoleColor = i == optionHighlitedNumber ? hightlitedMenuOptionColor : defaultColor;
                 WriteColored("* ", consoleColor);
@@ -81,7 +72,7 @@ namespace Core {
                 Console.Clear();
                 PrintMapScreen();
                 PrintGameMenu();
-                ConsoleKeyInfo input = Console.ReadKey(true);
+                ConsoleKeyInfo input = ReadKey(true);
                 MaptileInfo selectedTileInfo = map.SelectedTile;
                 // Нет проверок на выделенный тайл,
                 // потому что играю от API.
@@ -105,7 +96,7 @@ namespace Core {
                     if (map.UnitSelected) {
                         map.ConfirmSelectedUnitRoute();
                     }
-                    else {map.SelectUnit(); }
+                    else { map.SelectUnit(); }
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
@@ -137,19 +128,19 @@ namespace Core {
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            ConsoleImage[,] images = map.Visualize();
+            ConsolePicture[,] images = map.RefreshColoredCharPicture();
             for (int r = 0; r < map.LengthY; r++) {
                 for (int c = 0; c < map.LengthX; c++) {
                     WriteColored(images[c, r]);
                 }
-                Console.WriteLine();
+                WriteLine();
             }
         }
         private static void PrintGameMenu() {
             WriteSeparator();
             MaptileInfo tileInfo = map.SelectedTile;
             string keys = GetStringPossibleKeys(tileInfo);
-            Console.WriteLine(keys);
+            WriteLine(keys);
 
             WriteSeparator();
             PrintCurrentTeamInfo(map.CurrentTeam);
@@ -189,37 +180,37 @@ namespace Core {
         }
         private static void PrintLandtileTitle(MaptileInfo tileInfo) {
             Landtile landtile = tileInfo.Land;
-            Console.Write("[");
-            WriteColored(landtile.ConsoleImage);
-            Console.Write("] ");
+            Write("[");
+            WriteColored(landtile.ColoredCharPicture);
+            Write("] ");
 
             string name = tileInfo.Land.DisplayedName;
-            Console.WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
+            WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
 
-    }
-}
         private static void PrintLandtileAndUnitTitle(MaptileInfo tileInfo) {
             Landtile landtile = tileInfo.Land;
-            Console.Write("[");
-            WriteColored(landtile.ConsoleImage);
-            Console.Write("]");
+            Write("[");
+            WriteColored(landtile.ColoredCharPicture);
+            Write("]");
             Unit unit = tileInfo.Unit;
-            Console.Write("[");
-            WriteColored(tileInfo.Unit.ConsoleImage);
-            Console.Write("]");
+            Write("[");
+            WriteColored(tileInfo.Unit.ColoredChar);
+            Write("]");
             string landtileName = tileInfo.Land.DisplayedName;
             string unitName = tileInfo.Unit.DisplayedName;
-            Console.WriteLine(" " + landtileName + "/" + unitName + $"({map.SelectedTileX}; {map.SelectedTileY})");
+            WriteLine(" " + landtileName + "/" + unitName + $"({map.SelectedTileX}; {map.SelectedTileY})");
         }
         private static void PrintUnitInfo(Unit unit) {
-            Console.WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
-            Console.WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);
-            Console.WriteLine("Тип кузова:".PadRight(padConst) + unit.BodyCondition.Body.DisplayedName);
-            Console.WriteLine("Тип ходовой:".PadRight(padConst) + unit.ChassisCondition.Chassis.DisplayedName);
-            Console.WriteLine("Масса:".PadRight(padConst) + unit.Masse);
-            Console.WriteLine("Тип двигателя:".PadRight(padConst) + unit.EngineCondition.Engine.DisplayedName);
-            Console.WriteLine("Мощность:".PadRight(padConst) + unit.EngineCondition.Engine.Power);
-            Console.WriteLine("Орудие:".PadRight(padConst) + unit.WeaponCondition.Weapon.DisplayedName);
-            Console.WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
+            WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
+            WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);
+            WriteLine("Тип кузова:".PadRight(padConst) + unit.BodyCondition.Body.DisplayedName);
+            WriteLine("Тип ходовой:".PadRight(padConst) + unit.ChassisCondition.Chassis.DisplayedName);
+            WriteLine("Масса:".PadRight(padConst) + unit.Masse);
+            WriteLine("Тип двигателя:".PadRight(padConst) + unit.EngineCondition.Engine.DisplayedName);
+            WriteLine("Мощность:".PadRight(padConst) + unit.EngineCondition.Engine.Power);
+            WriteLine("Орудие:".PadRight(padConst) + unit.WeaponCondition.Weapon.DisplayedName);
+            WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
         }
+    }
+}
