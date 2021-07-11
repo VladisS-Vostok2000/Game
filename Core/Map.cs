@@ -8,10 +8,10 @@ using System.Drawing;
 using Parser;
 using ExtensionMethods;
 using ConsoleEngine;
-using static Core.TilesMethods;
+using static Core.MapMethods;
 
 namespace Core {
-    public sealed class Map : IConsoleDrawable {
+    public sealed class Map : IColoredCharsDrawable {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
@@ -65,7 +65,7 @@ namespace Core {
 
 
         private ColoredChar[,] coloredCharsPicture;
-        public ConsolePicture ColoredCharPicture { get; }
+        public Picture ConsolePicture { get; }
 
 
 
@@ -75,7 +75,7 @@ namespace Core {
             Units = ExtractValidUnits(units).ToList();
             CurrentTeam = rules.Teams[0];
             coloredCharsPicture = new ColoredChar[landtiles.GetUpperBound(0), landtiles.GetUpperBound(1)];
-            ColoredCharPicture = new ConsolePicture(coloredCharsPicture);
+            ConsolePicture = new ColoredCharsPicture(coloredCharsPicture);
         }
 
 
@@ -88,7 +88,7 @@ namespace Core {
                         Landtiles[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
-                        GetCharPicture(x, y),
+                        GetColoredChar(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
                         MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
                         MaptileIsSelectedUnitWay(new Point(x, y))
@@ -99,7 +99,7 @@ namespace Core {
                         Landtiles[x, y],
                         new Point(x, y),
                         null,
-                        GetCharPicture(x, y),
+                        GetColoredChar(x, y),
                         false,
                         false,
                         false
@@ -273,10 +273,10 @@ namespace Core {
         #endregion
 
 
-        public ColoredChar ToCharPicture(Point location) => GetCharPicture(location.X, location.Y);
-        public ColoredChar GetCharPicture(int x, int y) {
+        public ColoredChar ToCharPicture(Point location) => GetColoredChar(location.X, location.Y);
+        public ColoredChar GetColoredChar(int x, int y) {
             var unit = GetUnitOrNull(x, y);
-            return unit != null ? unit.ColoredChar : Landtiles[x, y];
+            return unit != null ? unit.ColoredChar : Landtiles[x, y].ColoredChar;
         }
 
 

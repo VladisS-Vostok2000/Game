@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ExtensionMethods;
 using ConsoleEngine;
-using static Core.TilesMethods;
+using static Core.MapMethods;
 
 namespace Core {
     public sealed class Unit {

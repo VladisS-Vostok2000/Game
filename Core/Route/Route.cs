@@ -6,26 +6,28 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExtensionMethods;
+using static Core.MapMethods;
 
 namespace Core {
     public class Route : IEnumerable<Point> {
         private IList<Point> route = new List<Point>();
         public bool Empty => route.Count == 0;
-        public Point Top => Empty? throw new InvalidOperationException() : route[0];
+        public Point Top => Empty ? throw new InvalidOperationException() : route[0];
 
 
 
         public Route() { }
+        ///
         /// <exception cref="ArgumentException"></exception>
-        // What the hell is going here?
-        public Route(IEnumerable<Point> sourse) { AddRange(sourse); }
+        public Route(IList<Point> sourse) { AddRange(sourse); }
 
 
 
         public Point this[int index] => route[index];
 
 
-
+        /// 
+        /// <exception cref="RouteInvalidArgumentException"></exception>
         public void Add(Point way) {
             if (Empty) {
                 route.Add(way);
@@ -33,20 +35,25 @@ namespace Core {
             }
 
             Point unitTempLocation = route.Last();
-            bool valid = BasicTypesExtensionsMethods.TilesClosely(unitTempLocation, way);
-            if (!valid) { throw new ArgumentException("Путь находится не в ближайшей конечной точке маршрута."); }
+            bool valid = TilesClosely(unitTempLocation, way);
+            if (!valid) { throw new RouteInvalidArgumentException("Путь находится не в ближайшей конечной точке маршрута.", way); }
 
             route.Add(way);
         }
+        /// 
+        /// <exception cref="RouteInvalidArgumentException"></exception>
+        public void AddRange(IList<Point> points) {
+            for (int i = 0; i < points.Count - 1; i++) {
+                if (!TilesClosely(points[i], points[i + 1])) {
+                    throw new RouteInvalidArgumentException("Точки маршрута не представляют собой непрерывного пути.", points);
+                }
+            }
+        }
+
         public Point Pop() {
             var out_value = route[0];
             route.RemoveAt(0);
             return out_value;
-        }
-        public void AddRange(IEnumerable<Point> points) {
-            foreach (var point in points) {
-                Add(point);
-            }
         }
         public void Overwrite(Route newRoute) => route = newRoute.route.ToList();
         internal void RemoveLast() {

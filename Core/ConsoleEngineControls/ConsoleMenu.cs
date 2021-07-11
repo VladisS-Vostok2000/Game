@@ -8,8 +8,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Game.Core.ConsoleEngineControls {
-    public sealed class ConsoleMenu : IConsoleControl {
+namespace Core {
+    public sealed class ConsoleMenu : IConsoleDrawable {
         public int Width { get; }
         public int Height { get; }
 
@@ -26,7 +26,9 @@ namespace Game.Core.ConsoleEngineControls {
         public int Y { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public ColoredChar[,] coloredChars;
-        public ConsolePicture ColoredCharPicture { get; }
+        public ConsoleEngine.ColoredCharsPicture ColoredCharPicture { get; }
+
+        public Picture ConsolePicture => throw new NotImplementedException();
 
 
 
@@ -45,7 +47,7 @@ namespace Game.Core.ConsoleEngineControls {
                 MenuOptions[i] = menuStrings[i].StringPart(MenuStringLength).PadRight(MenuStringLength);
             }
             coloredChars = new ColoredChar[Width, Height];
-            ColoredCharPicture = new ConsolePicture(coloredChars);
+            ColoredCharPicture = new ConsoleEngine.ColoredCharsPicture(coloredChars);
             Render();
         }
 

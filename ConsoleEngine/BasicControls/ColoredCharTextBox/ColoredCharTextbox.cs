@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 
 namespace ConsoleEngine {
-    public sealed class ConsoleTextbox : IConsoleControl {
+    public sealed class ColoredCharTextbox : IConsoleDrawable {
         public Point Location {
             get => new Point(X, Y);
             set {
@@ -24,12 +24,13 @@ namespace ConsoleEngine {
         public int Width { get; }
         public int Height { get; }
 
+
         
-        public ConsolePicture ColoredCharPicture { get; private set; }
+        public Picture ConsolePicture { get; }
 
 
 
-        public ConsoleTextbox(MulticoloredString text, int width, int height) {
+        public ColoredCharTextbox(MulticoloredString text, int width, int height) {
             if (width < 0) {
                 throw new TextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
@@ -37,17 +38,20 @@ namespace ConsoleEngine {
                 throw new TextBoxInvalidArgumentException($"Высота должна быть больше нуля. {nameof(height)} был {height}.", height);
             }
 
-            Render(text);
+            ConsolePicture = Render(text);
         }
 
 
 
-        private void Render(MulticoloredString text) {
+        // TODO: должен возвращать значение, чтобы при изменении кода не нужно
+        // было лопатить весь метод.
+        private Picture Render(MulticoloredString text) {
+            ColoredCharsPicture outPicture;
             MulticoloredString[] arrangedText = new MulticoloredString[Height];
             int lineIndex = 0;
             WriteMultycoloredText();
             PadArrangedText();
-            ColoredCharPicture = new ConsolePicture(arrangedText);
+            return new MulticoloredStringsPicture(arrangedText);
 
             void WriteMultycoloredText() {
                 foreach (var multycoloredLine in text.SplitToLines()) {

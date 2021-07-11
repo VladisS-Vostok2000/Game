@@ -6,20 +6,20 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace ConsoleEngine {
-    public class ConsoleWindowsList : IEnumerable<ConsoleWindow> {
+    public class ConsoleWindowsList : IEnumerable<ColoredCharWindow> {
         public int Count => list.Count;
 
 
 
-        private List<ConsoleWindow> list;
+        private List<ColoredCharWindow> list;
 
 
 
-        public ConsoleWindowsList() => list = new List<ConsoleWindow>();
+        public ConsoleWindowsList() => list = new List<ColoredCharWindow>();
 
 
 
-        public void Add(ConsoleWindow consoleWindow) => list.Add(consoleWindow);
+        public void Add(ColoredCharWindow consoleWindow) => list.Add(consoleWindow);
         public void RemoveAt(int index) {
             try { list.RemoveAt(index); }
             catch (ArgumentOutOfRangeException) { throw; }
@@ -27,7 +27,7 @@ namespace ConsoleEngine {
 
 
         #region IEnumerable
-        public IEnumerator<ConsoleWindow> GetEnumerator() => ((IEnumerable<ConsoleWindow>)list).GetEnumerator();
+        public IEnumerator<ColoredCharWindow> GetEnumerator() => ((IEnumerable<ColoredCharWindow>)list).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)list).GetEnumerator();
         #endregion
 
