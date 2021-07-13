@@ -107,6 +107,5 @@
     <None Include="App.config" />
     <None Include="Other\readme.md" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
