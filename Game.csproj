@@ -45,6 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleList.cs" />
+    <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleListItem.cs" />
     <Compile Include="Core\TilesMethods.cs" />
     <Compile Include="ExtensionMethods\BasicTypesExtensionMethods.cs" />
     <Compile Include="ConsoleEngine\Types\MulticoloredString.cs" />
@@ -103,6 +105,8 @@
     <None Include="App.config" />
     <None Include="Other\readme.md" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="ConsoleEngine\BasicControls\ConsoleList\Exceptions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
