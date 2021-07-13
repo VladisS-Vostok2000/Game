@@ -7,27 +7,27 @@ using ConsoleEngine;
 
 namespace Game.ConsoleEngine.BasicControls.ConsoleList
 {
-    class ConsoleListItem
+    internal class ConsoleListItem
     {
-        private bool _Checked;
+        private bool @checked;
         public bool Checked {
             get
             {
-                return _Checked;
+                return @checked;
             }
             set
             {
-                _Checked = value;
-                Text.Color = (_Checked) ? CheckedColor : UncheckedColor;
+                @checked = value;
+                ColoredString.Color = (@checked) ? CheckedColor : UncheckedColor;
             } 
         }
-        public ColoredString Text { get; set; }
+        public ColoredString ColoredString { get; set; }
         public ConsoleColor CheckedColor { get; set; } = ConsoleColor.Red;
         public ConsoleColor UncheckedColor { get; set; } = ConsoleColor.White;
 
         public ConsoleListItem(string text, ConsoleColor color = ConsoleColor.White)
         {
-            Text = new ColoredString(text, color);
+            ColoredString = new ColoredString(text, color);
             Checked = false;
         }
 

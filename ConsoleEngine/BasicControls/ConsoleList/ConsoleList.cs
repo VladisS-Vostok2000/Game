@@ -19,31 +19,42 @@ namespace Game.ConsoleEngine.BasicControls.ConsoleList
             }
         }
         public int X { get; set; }
+        public bool Empty 
+        {
+            get
+            {
+                return Items.Count == 0;
+            } 
+        }
         public int Y { get; set; }
         public int Width { get; set; }
         public int Height { get; set; }
-        public List<ConsoleListItem> Items { get; private set; }
+        private List<ConsoleListItem> items;
+        public List<ConsoleListItem> Items 
+        { 
+            get 
+            {
+                return items.AsReadOnly().ToList();
+            } 
+            private set 
+            {
+                items = value;
+            } 
+        }
         
-        private int _SelectedIndex = -1;
+        private int selectedIndex = -1;
         public int SelectedIndex {
             get
             {
-                return _SelectedIndex;
+                return selectedIndex;
                 
                 
             }
             set
             {
-                if (Items.Count < value)
-                {
-                    if (SelectedIndex != -1) Items[SelectedIndex].Checked = false;
-                    _SelectedIndex = -1;
-                }
-                else
-                {
-                    _SelectedIndex = value;
-                    if (SelectedIndex != -1) Items[SelectedIndex].Checked = true;
-                }
+                if (Items.Count < value) throw new IndexOutOfRangeException("Cannot select this index");
+                selectedIndex = value;
+                if (!this.Empty) Items[SelectedIndex].Checked = true;
             }
         }
 
@@ -52,57 +63,54 @@ namespace Game.ConsoleEngine.BasicControls.ConsoleList
         { 
             get
             {
-                return (SelectedIndex != -1) ? Items[SelectedIndex] : null;
+                return (!this.Empty) ? Items[SelectedIndex] : null;
             }
             set
             {
 
-                if (SelectedIndex != -1) 
+                if (!this.Empty) 
                 {
                     SelectedItem.Checked = false;
                 }
 
-                ConsoleListItem ItemToCheck = Items.Find(i => i == value);
-                if (ItemToCheck != null) 
-                {
-                    ItemToCheck.Checked = true;
-                }
+                if (!Items.Contains(value)) throw new ArgumentException("value", "Attempt to set invalid item as SelectedItem"); 
+                value.Checked = true;
+                
                 
 
             }
         }
-
+       
         public ConsoleList()
         {
             Location = new Point(0, 0);
             Height = 1;
             Width = 3;
-           
-            
+            items = new List<ConsoleListItem>();            
         }
-        ConsolePicture IConsoleDrawable.ColoredCharPicture => throw new NotImplementedException();
-
-        //Not so optimized
-        public ConsolePicture ColoredCharPicture() {
-
-            string Decorator = "[*] - ";
-            //Calculation of Width of ConsolePicture 
-            int Width = 0;
-            for (int i = 0; i < Items.Count; i++)
-                if (Width < Items[i].Text.Length)
-                    Width = Items[i].Text.Length;
-
-            Width += Decorator.Length;
-            ColoredChar[,] Pixels = new ColoredChar[Items.Count, Width];
-
-            for (int i = 0; i < Items.Count; i++)
+        ConsolePicture IConsoleDrawable.ColoredCharPicture
+        {
+            get
             {
-                ColoredString cs = new ColoredString(Decorator + Items[i].Text, Items[i].Text.Color);
-                for (int j = 0; j < cs.Length; j++)
-                    Pixels[i, j] = cs[j];
-            }
+                int Width = 0;
+                for (int i = 0; i < Items.Count; i++)
+                    if (Width < Items[i].ColoredString.Length)
+                        Width = Items[i].ColoredString.Length;
 
-            return new ConsolePicture(Pixels);
+                ColoredChar[,] Pixels = new ColoredChar[Items.Count, Width];
+
+                for (int i = 0; i < Items.Count; i++)
+                {
+                    ColoredString cs = new ColoredString(Items[i].ColoredString.Text, Items[i].ColoredString.Color);
+                    for (int j = 0; j < cs.Length; j++)
+                        Pixels[i, j] = cs[j];
+                }
+
+                return new ConsolePicture(Pixels);
+
+            }
         }
+
+        
     }
 }
