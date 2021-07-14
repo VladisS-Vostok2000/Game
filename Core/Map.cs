@@ -8,7 +8,6 @@ using System.Drawing;
 using Parser;
 using ExtensionMethods;
 using ConsoleEngine;
-using static Core.MapMethods;
 
 namespace Core {
     public sealed class Map : IColoredCharsDrawable {
@@ -149,7 +148,7 @@ namespace Core {
         public bool MaptileIsSelectedUnitWay(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
             Point tempUnitPosition = GetSelectedUnitLastRoutePosition();
-            return TilesClosely(tile, tempUnitPosition);
+            return tempUnitPosition.CloseTo(tile);
         }
 
         public Point GetSelectedUnitLastRoutePosition() {
@@ -310,8 +309,6 @@ namespace Core {
 
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
-        private bool IsSpaseBetweenMaptiles(Point p1, Point p2) =>
-            Math.Abs(p1.Y - p2.Y) > 1 || Math.Abs(p1.X - p2.X) > 1;
 
 
         private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {

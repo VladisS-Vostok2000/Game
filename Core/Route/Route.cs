@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExtensionMethods;
-using static Core.MapMethods;
 
 namespace Core {
     public class Route : IEnumerable<Point> {
@@ -35,7 +34,7 @@ namespace Core {
             }
 
             Point unitTempLocation = route.Last();
-            bool valid = TilesClosely(unitTempLocation, way);
+            bool valid = unitTempLocation.CloseTo(way);
             if (!valid) { throw new RouteInvalidArgumentException("Путь находится не в ближайшей конечной точке маршрута.", way); }
 
             route.Add(way);
@@ -44,7 +43,8 @@ namespace Core {
         /// <exception cref="RouteInvalidArgumentException"></exception>
         public void AddRange(IList<Point> points) {
             for (int i = 0; i < points.Count - 1; i++) {
-                if (!TilesClosely(points[i], points[i + 1])) {
+                bool valid = points[i].CloseTo(points[i + 1]);
+                if (!valid) {
                     throw new RouteInvalidArgumentException("Точки маршрута не представляют собой непрерывного пути.", points);
                 }
             }
