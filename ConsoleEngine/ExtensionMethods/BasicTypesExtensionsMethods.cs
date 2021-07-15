@@ -1,4 +1,5 @@
-﻿using Core;
+﻿using ConsoleEngine;
+using Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -244,6 +245,23 @@ namespace ExtensionMethods {
             return value.Substring(0, value.Length);
         }
 
+        #endregion
+
+        #region String[]
+        public static List<ColoredString> ToColoredStrings(this string[] array, ConsoleColor color = ConsoleColor.White) {
+            var outList = new List<ColoredString>();
+            foreach (var str in array) {
+                outList.Add(new ColoredString(str, color));
+            }
+            return outList;
+        }
+        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuilders(this string[] array, ConsoleColor color = ConsoleColor.White) {
+            var outList = new List<MulticoloredStringBuilder>();
+            foreach (var str in array) {
+                outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
+            }
+            return outList;
+        }
         #endregion
 
         #region Array

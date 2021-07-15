@@ -10,10 +10,10 @@ namespace ConsoleEngine {
         /// <summary>
         /// Возвращает проходящий по строкам перечислитель заданного текста.
         /// </summary>
-        public static IEnumerable<MulticoloredString> SplitToLines(this MulticoloredString value) {
+        public static IEnumerable<MulticoloredStringBuilder> SplitToLines(this MulticoloredStringBuilder value) {
             if (value == null) { throw new ArgumentNullException($"{nameof(value)} был null."); }
 
-            var outColoredText = new MulticoloredString();
+            var outColoredText = new MulticoloredStringBuilder();
             foreach (var coloredString in value) {
                 int newLineIndex = coloredString.IndexOfNewLine();
                 if (newLineIndex == -1) {
@@ -26,7 +26,7 @@ namespace ConsoleEngine {
                     var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
                     outColoredText.Append(coloredSubstring);
                     yield return outColoredText;
-                    outColoredText = new MulticoloredString();
+                    outColoredText = new MulticoloredStringBuilder();
                     startIndex = newLineIndex + 1;
                     if (startIndex > coloredString.Length) { break; }
 

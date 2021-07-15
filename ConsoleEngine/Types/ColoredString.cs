@@ -31,6 +31,7 @@ namespace ConsoleEngine {
         public string Substring(int startIndex, int length) => Text.Substring(startIndex, length);
         public ColoredString ColoredSubstring(int startIndex) => new ColoredString(Text.Substring(startIndex), Color);
         public ColoredString ColoredSubstring(int startIndex, int length) => new ColoredString(Text.Substring(startIndex, length), Color);
+        public override string ToString() => Text;
 
     }
 }

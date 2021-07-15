@@ -22,6 +22,13 @@ namespace ConsoleEngine {
 
 
 
+        public ConsoleControl(int width, int height) {
+            Width = width;
+            Height = height;
+        }
+
+
+
         /// <summary>
         /// True, если области <see cref="ConsoleControl"/> пересекается.
         /// </summary>

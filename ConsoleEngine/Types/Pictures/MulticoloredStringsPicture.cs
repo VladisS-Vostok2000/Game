@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace ConsoleEngine {
     class MulticoloredStringsPicture : Picture {
-        private MulticoloredString[] picture;
+        private MulticoloredStringBuilder[] picture;
 
 
 
-        public MulticoloredStringsPicture(MulticoloredString[] picture) {
+        public MulticoloredStringsPicture(MulticoloredStringBuilder[] picture) {
             // TODO: проверка на "квадратность"
             this.picture = picture;
             // Width = 
@@ -20,7 +20,7 @@ namespace ConsoleEngine {
 
 
         // TODO: реализовать
-        public IEnumerable<MulticoloredString> ToMulticoloredStrings() {
+        public IEnumerable<MulticoloredStringBuilder> ToMulticoloredStrings() {
             foreach (var multicoloredString in picture) {
                 yield return multicoloredString;
             }

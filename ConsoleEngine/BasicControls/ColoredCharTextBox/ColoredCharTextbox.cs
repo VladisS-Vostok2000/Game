@@ -30,7 +30,7 @@ namespace ConsoleEngine {
 
 
 
-        public ColoredCharTextbox(MulticoloredString text, int width, int height) {
+        public ColoredCharTextbox(MulticoloredStringBuilder text, int width, int height) {
             if (width < 0) {
                 throw new TextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
@@ -45,9 +45,9 @@ namespace ConsoleEngine {
 
         // TODO: должен возвращать значение, чтобы при изменении кода не нужно
         // было лопатить весь метод.
-        private Picture Render(MulticoloredString text) {
+        private Picture Render(MulticoloredStringBuilder text) {
             ColoredCharsPicture outPicture;
-            MulticoloredString[] arrangedText = new MulticoloredString[Height];
+            MulticoloredStringBuilder[] arrangedText = new MulticoloredStringBuilder[Height];
             int lineIndex = 0;
             WriteMultycoloredText();
             PadArrangedText();
@@ -60,7 +60,7 @@ namespace ConsoleEngine {
                 }
             }
 
-            void WriteMultycoloredLine(MulticoloredString multycoloredLine) {
+            void WriteMultycoloredLine(MulticoloredStringBuilder multycoloredLine) {
                 if (multycoloredLine.Length <= ArrangedTextCurrentLineFreeSpace()) {
                     arrangedText[lineIndex].Append(multycoloredLine);
                     return;

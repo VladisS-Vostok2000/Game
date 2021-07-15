@@ -72,5 +72,13 @@ namespace ConsoleEngine {
             return outMulticoloredString;
         }
 
+        public override string ToString() {
+            var sb = new StringBuilder();
+            foreach (var coloredString in ColoredStrings) {
+                sb.Append(coloredString.Text);
+            }
+            return sb.ToString();
+        }
+
     }
 }
