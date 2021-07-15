@@ -45,6 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+
+    <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleList.cs" />
+    <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleListItem.cs" />
+    <Compile Include="Core\TilesMethods.cs" />
+
     <Compile Include="ConsoleEngine\StaticMethods\Geometry.cs" />
     <Compile Include="ConsoleEngine\Types\ConsoleContainer.cs" />
     <Compile Include="ConsoleEngine\Types\Pictures\MulticoloredStringsPicture.cs" />
@@ -52,6 +57,7 @@
     <Compile Include="Core\Route\RouteException.cs" />
     <Compile Include="Core\Route\RouteInvalidArgumentException.cs" />
     <Compile Include="Core\Route\RouteInvalidOperationException.cs" />
+
     <Compile Include="ExtensionMethods\BasicTypesExtensionMethods.cs" />
     <Compile Include="ConsoleEngine\Types\MulticoloredString.cs" />
     <Compile Include="ConsoleEngine\Types\Pictures\ColoredCharsPicture.cs" />
@@ -110,7 +116,11 @@
     <None Include="Other\readme.md" />
   </ItemGroup>
   <ItemGroup>
+
+    <Folder Include="ConsoleEngine\BasicControls\ConsoleList\Exceptions\" />
+
     <Folder Include="Core\StaticMethods\" />
+
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
