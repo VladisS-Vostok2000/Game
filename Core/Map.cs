@@ -7,9 +7,10 @@ using System.IO;
 using System.Drawing;
 using Parser;
 using ExtensionMethods;
+using ConsoleEngine;
 
 namespace Core {
-    public sealed class Map {
+    public sealed class Map : IColoredCharsDrawable {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
@@ -19,6 +20,9 @@ namespace Core {
         public int Square => LengthX * LengthY;
 
 
+        // REFACTORING: на самом деле класс, инкапсулирующий поле ниже
+        // это и есть Map.cs. Нужно расчленить этот, т.к. не очевидно,
+        // почему карта содержит огромную часть бизнес-логики.
         public Landtile[,] Landtiles { get; }
         public Rules Rules { get; }
 
@@ -54,19 +58,36 @@ namespace Core {
         private IList<Point> SelectedUnitTempRoute { get; set; }
         private float UnitTimeReservePerTurn = 5;
 
-        public Team CurrentTeam { get; private set; }
+
         private int currentTeamIndex;
+        public Team CurrentTeam { get; private set; }
+
+
+        private ColoredChar[,] coloredCharsPicture;
+        public Picture ConsolePicture { get; }
+
+
+
+        public Map(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
+            Landtiles = landtiles;
+            Rules = rules;
+            Units = ExtractValidUnits(units).ToList();
+            CurrentTeam = rules.Teams[0];
+            coloredCharsPicture = new ColoredChar[landtiles.GetUpperBound(0), landtiles.GetUpperBound(1)];
+            ConsolePicture = new ColoredCharsPicture(coloredCharsPicture);
+        }
 
 
 
         public MaptileInfo this[int x, int y] {
             get {
-                // REFACTORING: Повторяющийся код.
+                // REFACTORING: повторяющийся код.
                 if (UnitSelected) {
                     return new MaptileInfo(
                         Landtiles[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
+                        GetColoredChar(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
                         MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
                         MaptileIsSelectedUnitWay(new Point(x, y))
@@ -76,54 +97,17 @@ namespace Core {
                     return new MaptileInfo(
                         Landtiles[x, y],
                         new Point(x, y),
-                        GetUnitOrNull(x, y),
-                        default,
-                        default,
-                        default
+                        null,
+                        GetColoredChar(x, y),
+                        false,
+                        false,
+                        false
                     );
                 }
             }
         }
         public MaptileInfo this[Point point] => this[point.X, point.Y];
 
-
-
-        public Map(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
-            Landtiles = landtiles;
-            Rules = rules;
-            Units = ExtractValidUnits(units).ToList();
-            CurrentTeam = rules.Teams[0];
-        }
-
-
-
-        public ConsoleImage[,] Visualize() {
-            var outArray = new ConsoleImage[LengthX, LengthY];
-
-            for (int r = 0; r < LengthY; r++) {
-                for (int c = 0; c < LengthX; c++) {
-                    // REFACTORING: сделать тут интерфейс и не обращаться к MaptileInfo?
-                    outArray[c, r] = this[c, r].ToConsoleImage();
-                }
-            }
-
-            if (UnitSelected) {
-                ChangeColors(outArray, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
-                ChangeColors(outArray, SelectedUnit.GetRoute(), unitRouteColor);
-                ChangeColors(outArray, SelectedUnitTempRoute, unitRouteColor);
-                outArray[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
-            }
-
-            // Подсвеченный тайл.
-            outArray[SelectedTileX, SelectedTileY].Color = selectedTileColor;
-
-            return outArray;
-            void ChangeColors(ConsoleImage[,] consoleImages, IEnumerable<Point> coordList, ConsoleColor color) {
-                foreach (var coord in coordList) {
-                    consoleImages[coord.X, coord.Y].Color = color;
-                }
-            }
-        }
 
 
         #region Unit
@@ -141,82 +125,9 @@ namespace Core {
             RefreshSelectedUnitAwailableRoutes();
         }
         // FEATURE: добавить разделение времени на выход/вход в тайл.
-        private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
-            timeReserve = GetSelectedUnitRemainingTempTime(SelectedUnit, timeReserve);
-            if (timeReserve <= 0) { return new List<Point>(); }
-            Point unitTempLocation = GetSelectedUnitLastRoutePosition();
-            return FindUnitAvailableRoutesPerTime(unitTempLocation, SelectedUnit, timeReserve);
-        }
-        private float GetSelectedUnitRemainingTempTime(Unit unit, float timeReserve) {
-            float remainingTime = unit.TimeReserve + timeReserve;
-            var route = new List<Point>(unit.GetRoute());
-            route.AddRange(SelectedUnitTempRoute);
-
-            for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
-                Point way = route[i];
-                Landtile land = Landtiles[way.X, way.Y];
-                remainingTime -= UnitTimeSpentOnTile(land.Name, unit);
-            }
-            return remainingTime;
-        }
-        private List<Point> FindUnitAvailableRoutesPerTime(in Point unitStartLocation, Unit unit, float timeReserve) {
-            var outList = new List<Point>();
-            // REFACTORING: подключить многопоточность?
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X + 1, unitStartLocation.Y, unit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X - 1, unitStartLocation.Y, unit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y + 1, unit, timeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y - 1, unit, timeReserve));
-            // REFACTORING: такое себе решение от дубликатов.
-            foreach (var location in outList) {
-                if (!outList.Contains(location)) {
-                    outList.Add(location);
-                }
-            }
-            return outList;
-        }
-        private List<Point> GetUnitAvailableRoutesPerTimeWithTile(in int x, in int y, Unit unit, float unitTimeReserve) {
-            // FEATURE: теоретически, можно сделать это эффективнее, если
-            // рассчитывать не все тайлы по нескольку раз подряд, а делать
-            // это итеративно и выбирать тайлы с наибольшим запасом времени.
-            // Это довольно сложно реализовать, а также потребует память
-            // и лишит преимущества простого распараллеливания.
-            var outList = new List<Point>();
-            bool tileExists = TryGetLandtile(x, y, out Landtile landtile);
-            if (!tileExists) {
-                return outList;
-            }
-
-            string landtileName = landtile.Name;
-            float timeSpent = UnitTimeSpentOnTile(landtileName, unit);
-            if (timeSpent > unitTimeReserve) {
-                return outList;
-            }
-            // REFACTORING: такое себе решение от дубликатов.
-            if (!outList.Contains(new Point(x, y))) {
-                outList.Add(new Point(x, y));
-            }
-            unitTimeReserve -= timeSpent;
-            // BUG: приложение умирает при тайлах > 10.
-            // REFACTORING: подключить многопоточность?
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x + 1, y, unit, unitTimeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x - 1, y, unit, unitTimeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x, y + 1, unit, unitTimeReserve));
-            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x, y - 1, unit, unitTimeReserve));
-            return outList;
-        }
-        private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {
-            bool correctIndexation = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1);
-            landtile = correctIndexation ? Landtiles[landtileX, landtileY] : default;
-            return correctIndexation;
-        }
 
         public static float UnitTimeSpentOnTile(string landtileName, Unit unit) => speedPerTile / unit.CalculateSpeedOnLandtile(landtileName);
 
-        private void RefreshSelectedUnitAwailableRoutes() {
-            if (!UnitSelected) { throw new Exception(); }
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
-
-        }
 
         public void AddSelectedUnitWay() {
             if (!UnitSelected
@@ -237,7 +148,7 @@ namespace Core {
         public bool MaptileIsSelectedUnitWay(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
             Point tempUnitPosition = GetSelectedUnitLastRoutePosition();
-            return BasicTypesExtensionsMethods.TilesClosely(tile, tempUnitPosition);
+            return tempUnitPosition.CloseTo(tile);
         }
 
         public Point GetSelectedUnitLastRoutePosition() {
@@ -361,12 +272,120 @@ namespace Core {
         #endregion
 
 
+        public ColoredChar ToCharPicture(Point location) => GetColoredChar(location.X, location.Y);
+        public ColoredChar GetColoredChar(int x, int y) {
+            var unit = GetUnitOrNull(x, y);
+            return unit != null ? unit.ColoredChar : Landtiles[x, y].ColoredChar;
+        }
+
+
+
+        private void RefreshColoredCharPicture() {
+            for (int r = 0; r < LengthY; r++) {
+                for (int c = 0; c < LengthX; c++) {
+                    // REFACTORING: сделать тут интерфейс и не обращаться к MaptileInfo?
+                    coloredCharsPicture[c, r] = ToCharPicture(new Point(c, r));
+                }
+            }
+
+            if (UnitSelected) {
+                ChangeColors(coloredCharsPicture, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
+                ChangeColors(coloredCharsPicture, SelectedUnit.GetRoute(), unitRouteColor);
+                ChangeColors(coloredCharsPicture, SelectedUnitTempRoute, unitRouteColor);
+                coloredCharsPicture[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
+            }
+
+            // Подсвеченный тайл.
+            coloredCharsPicture[SelectedTileX, SelectedTileY].Color = selectedTileColor;
+            return;
+
+
+            void ChangeColors(ColoredChar[,] CharPictures, IEnumerable<Point> coordList, ConsoleColor color) {
+                foreach (var coord in coordList) {
+                    CharPictures[coord.X, coord.Y].Color = color;
+                }
+            }
+        }
+
+
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
-        public static bool TilesClosely(Point tile1Coord, Point tile2Coord) =>
-    (Math.Abs(tile1Coord.X - tile2Coord.X) == 1 && tile1Coord.Y == tile2Coord.Y) ||
-    (Math.Abs(tile1Coord.Y - tile2Coord.Y) == 1 && tile1Coord.X == tile2Coord.X);
-        private bool IsSpaseBetweenMaptiles(Point p1, Point p2) =>
-            Math.Abs(p1.Y - p2.Y) > 1 || Math.Abs(p1.X - p2.X) > 1;
+
+
+        private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {
+            bool correctIndexation = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1);
+            landtile = correctIndexation ? Landtiles[landtileX, landtileY] : default;
+            return correctIndexation;
+        }
+
+
+        private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
+            timeReserve = GetSelectedUnitRemainingTempTime(SelectedUnit, timeReserve);
+            if (timeReserve <= 0) { return new List<Point>(); }
+            Point unitTempLocation = GetSelectedUnitLastRoutePosition();
+            return FindUnitAvailableRoutesPerTime(unitTempLocation, SelectedUnit, timeReserve);
+        }
+        private float GetSelectedUnitRemainingTempTime(Unit unit, float timeReserve) {
+            float remainingTime = unit.TimeReserve + timeReserve;
+            var route = new List<Point>(unit.GetRoute());
+            route.AddRange(SelectedUnitTempRoute);
+
+            for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
+                Point way = route[i];
+                Landtile land = Landtiles[way.X, way.Y];
+                remainingTime -= UnitTimeSpentOnTile(land.Name, unit);
+            }
+            return remainingTime;
+        }
+        private List<Point> FindUnitAvailableRoutesPerTime(in Point unitStartLocation, Unit unit, float timeReserve) {
+            var outList = new List<Point>();
+            // REFACTORING: подключить многопоточность?
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X + 1, unitStartLocation.Y, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X - 1, unitStartLocation.Y, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y + 1, unit, timeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X, unitStartLocation.Y - 1, unit, timeReserve));
+            // REFACTORING: такое себе решение от дубликатов.
+            foreach (var location in outList) {
+                if (!outList.Contains(location)) {
+                    outList.Add(location);
+                }
+            }
+            return outList;
+        }
+        private List<Point> GetUnitAvailableRoutesPerTimeWithTile(in int x, in int y, Unit unit, float unitTimeReserve) {
+            // FEATURE: теоретически, можно сделать это эффективнее, если
+            // рассчитывать не все тайлы по нескольку раз подряд, а делать
+            // это итеративно и выбирать тайлы с наибольшим запасом времени.
+            // Это довольно сложно реализовать, а также потребует память
+            // и лишит преимущества простого распараллеливания.
+            var outList = new List<Point>();
+            bool tileExists = TryGetLandtile(x, y, out Landtile landtile);
+            if (!tileExists) {
+                return outList;
+            }
+
+            string landtileName = landtile.Name;
+            float timeSpent = UnitTimeSpentOnTile(landtileName, unit);
+            if (timeSpent > unitTimeReserve) {
+                return outList;
+            }
+            // REFACTORING: такое себе решение от дубликатов.
+            if (!outList.Contains(new Point(x, y))) {
+                outList.Add(new Point(x, y));
+            }
+            unitTimeReserve -= timeSpent;
+            // BUG: приложение умирает при тайлах > 10.
+            // REFACTORING: подключить многопоточность?
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x + 1, y, unit, unitTimeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x - 1, y, unit, unitTimeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x, y + 1, unit, unitTimeReserve));
+            outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(x, y - 1, unit, unitTimeReserve));
+            return outList;
+        }
+        private void RefreshSelectedUnitAwailableRoutes() {
+            if (!UnitSelected) { throw new Exception(); }
+            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
+
+        }
 
     }
 }

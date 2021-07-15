@@ -5,13 +5,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ExtensionMethods;
+using ConsoleEngine;
 
 namespace Core {
-    public sealed class Unit : IConsolePicture {
-        public ConsoleImage ConsoleImage {
+    public sealed class Unit {
+        public ColoredChar ColoredChar {
             get {
                 ConsoleColor color = Flashed ? FlashColor : SpecificColor ? Color : Team.Color;
-                return new ConsoleImage(ConsoleChar, color);
+                return new ColoredChar(ConsoleChar, color);
             }
             set {
                 color = value.Color;
@@ -45,7 +46,7 @@ namespace Core {
         public int Masse { get; set; } = 500;
 
         public BodyCondition BodyCondition { get; set; }
-        public ChassisCondition ChassisCondition { get;set; }
+        public ChassisCondition ChassisCondition { get; set; }
         public EngineCondition EngineCondition { get; set; }
         public WeaponCondition WeaponCondition { get; set; }
 
@@ -80,8 +81,8 @@ namespace Core {
 
 
 
-        public Unit(Point location, BodyCondition body, ChassisCondition chassis, EngineCondition engine, WeaponCondition weapon) : this(location.X, location.Y, body, chassis, engine, weapon) { 
-        
+        public Unit(Point location, BodyCondition body, ChassisCondition chassis, EngineCondition engine, WeaponCondition weapon) : this(location.X, location.Y, body, chassis, engine, weapon) {
+
         }
         public Unit(in int x, in int y, BodyCondition body, ChassisCondition chassis, EngineCondition engine, WeaponCondition weapon) {
             X = x;
@@ -95,7 +96,7 @@ namespace Core {
 
 
         public float CalculateSpeedOnLandtile(string landtileName) {
-            return  EngineCondition.Engine.Power * ChassisCondition.Chassis.Passability[landtileName] * PowerCoeff / Passability.PassabilityCoeff / Masse;
+            return EngineCondition.Engine.Power * ChassisCondition.Chassis.Passability[landtileName] * PowerCoeff / Passability.PassabilityCoeff / Masse;
         }
 
         public IReadOnlyCollection<Point> GetRoute() => route.ToList();
@@ -115,7 +116,8 @@ namespace Core {
         /// Изменит маршрут Unit на корректно заданный.
         /// </summary>
         public bool TrySetRoute(Route newRoute) {
-            if (!newRoute.Empty && !BasicTypesExtensionsMethods.TilesClosely(Location, newRoute[0])) { return false; }
+            bool valid = Location.CloseTo(newRoute[0]);
+            if (!newRoute.Empty && !valid) { return false; }
 
             route.Overwrite(newRoute);
             return true;
@@ -132,8 +134,9 @@ namespace Core {
                 lastWay = route.Last();
             }
 
-            if (!BasicTypesExtensionsMethods.TilesClosely(lastWay, way)) { throw new ArgumentException($"{nameof(way)} обязан стыковаться с последним тайлом пути"); }
-            
+            bool valid = lastWay.CloseTo(way);
+            if (!valid) { throw new ArgumentException($"{nameof(way)} обязан стыковаться с последним тайлом пути."); }
+
             route.Add(way);
         }
 

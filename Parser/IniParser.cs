@@ -86,7 +86,7 @@ namespace Parser {
             }
             return outString;
         }
-        private static string ExtractIniSectionName(string _parcedLine) => _parcedLine.Extract(1, _parcedLine.Length - 2);
+        private static string ExtractIniSectionName(string _parcedLine) => _parcedLine.Substring(1, _parcedLine.Length - 2);
         private static bool IsIniSection(string line) => line[0] == '[' && line.Count((char chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((char chr) => chr == ']') == 1 && !line.Contains('=');
         private static bool IsIniKey(string line) => line.Count((char chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
         private static bool IsIniValue(string line) => !line.Contains('=') && !line.Contains('[') && !line.Contains(']');
