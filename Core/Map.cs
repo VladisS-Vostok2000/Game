@@ -8,10 +8,9 @@ using System.Drawing;
 using Parser;
 using ExtensionMethods;
 using ConsoleEngine;
-using static Core.TilesMethods;
 
 namespace Core {
-    public sealed class Map : IConsoleDrawable {
+    public sealed class Map : IColoredCharsDrawable {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
@@ -65,7 +64,7 @@ namespace Core {
 
 
         private ColoredChar[,] coloredCharsPicture;
-        public ConsolePicture ColoredCharPicture { get; }
+        public Picture ConsolePicture { get; }
 
 
 
@@ -75,7 +74,7 @@ namespace Core {
             Units = ExtractValidUnits(units).ToList();
             CurrentTeam = rules.Teams[0];
             coloredCharsPicture = new ColoredChar[landtiles.GetUpperBound(0), landtiles.GetUpperBound(1)];
-            ColoredCharPicture = new ConsolePicture(coloredCharsPicture);
+            ConsolePicture = new ColoredCharsPicture(coloredCharsPicture);
         }
 
 
@@ -88,7 +87,7 @@ namespace Core {
                         Landtiles[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
-                        GetCharPicture(x, y),
+                        GetColoredChar(x, y),
                         MaptileReachableForSelectedUnit(new Point(x, y)),
                         MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
                         MaptileIsSelectedUnitWay(new Point(x, y))
@@ -99,7 +98,7 @@ namespace Core {
                         Landtiles[x, y],
                         new Point(x, y),
                         null,
-                        GetCharPicture(x, y),
+                        GetColoredChar(x, y),
                         false,
                         false,
                         false
@@ -149,7 +148,7 @@ namespace Core {
         public bool MaptileIsSelectedUnitWay(Point maptileLocation) => SelectedUnit.GetRoute().Contains(maptileLocation) || SelectedUnitTempRoute.Contains(maptileLocation);
         private bool TileClosestToSelectedUnitTempPosition(Point tile) {
             Point tempUnitPosition = GetSelectedUnitLastRoutePosition();
-            return TilesClosely(tile, tempUnitPosition);
+            return tempUnitPosition.CloseTo(tile);
         }
 
         public Point GetSelectedUnitLastRoutePosition() {
@@ -273,10 +272,10 @@ namespace Core {
         #endregion
 
 
-        public ColoredChar ToCharPicture(Point location) => GetCharPicture(location.X, location.Y);
-        public ColoredChar GetCharPicture(int x, int y) {
+        public ColoredChar ToCharPicture(Point location) => GetColoredChar(location.X, location.Y);
+        public ColoredChar GetColoredChar(int x, int y) {
             var unit = GetUnitOrNull(x, y);
-            return unit != null ? unit.ColoredChar : Landtiles[x, y];
+            return unit != null ? unit.ColoredChar : Landtiles[x, y].ColoredChar;
         }
 
 
@@ -310,8 +309,6 @@ namespace Core {
 
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
-        private bool IsSpaseBetweenMaptiles(Point p1, Point p2) =>
-            Math.Abs(p1.Y - p2.Y) > 1 || Math.Abs(p1.X - p2.X) > 1;
 
 
         private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {

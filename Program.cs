@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using ExtensionMethods;
-using static System.Console;
 using static ConsoleEngine.ConsoleScreen;
+using static System.Console;
 using ConsoleEngine;
 
 namespace Core {
@@ -57,11 +57,7 @@ namespace Core {
         }
         private static void PrintMainMenu(int optionHighlitedNumber) {
             Clear();
-            for (int i = 0; i < menuOptions.Length; i++) {
-                ConsoleColor consoleColor = i == optionHighlitedNumber ? hightlitedMenuOptionColor : defaultColor;
-                WriteColored("* ", consoleColor);
-                WriteLineColored(menuOptions[i], defaultColor);
-            }
+            // TODO:
         }
 
 
@@ -128,21 +124,13 @@ namespace Core {
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            ConsolePicture[,] images = map.RefreshColoredCharPicture();
-            for (int r = 0; r < map.LengthY; r++) {
-                for (int c = 0; c < map.LengthX; c++) {
-                    WriteColored(images[c, r]);
-                }
-                WriteLine();
-            }
+            // TODO:
         }
         private static void PrintGameMenu() {
-            WriteSeparator();
             MaptileInfo tileInfo = map.SelectedTile;
             string keys = GetStringPossibleKeys(tileInfo);
             WriteLine(keys);
 
-            WriteSeparator();
             PrintCurrentTeamInfo(map.CurrentTeam);
             PrintTileInformation(tileInfo);
         }
@@ -163,7 +151,7 @@ namespace Core {
             return outString;
         }
         private static void PrintCurrentTeamInfo(Team currentTeam) {
-            WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);
+            //WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);
         }
 
         private static void PrintTileInformation(MaptileInfo tileInfo) {
@@ -179,27 +167,11 @@ namespace Core {
             }
         }
         private static void PrintLandtileTitle(MaptileInfo tileInfo) {
-            Landtile landtile = tileInfo.Land;
-            Write("[");
-            WriteColored(landtile.ColoredCharPicture);
-            Write("] ");
-
-            string name = tileInfo.Land.DisplayedName;
-            WriteLine(name + $"({map.SelectedTileX}; {map.SelectedTileY})");
+            // TODO:
         }
 
         private static void PrintLandtileAndUnitTitle(MaptileInfo tileInfo) {
-            Landtile landtile = tileInfo.Land;
-            Write("[");
-            WriteColored(landtile.ColoredCharPicture);
-            Write("]");
-            Unit unit = tileInfo.Unit;
-            Write("[");
-            WriteColored(tileInfo.Unit.ColoredChar);
-            Write("]");
-            string landtileName = tileInfo.Land.DisplayedName;
-            string unitName = tileInfo.Unit.DisplayedName;
-            WriteLine(" " + landtileName + "/" + unitName + $"({map.SelectedTileX}; {map.SelectedTileY})");
+            // TODO:
         }
         private static void PrintUnitInfo(Unit unit) {
             WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
@@ -212,5 +184,6 @@ namespace Core {
             WriteLine("Орудие:".PadRight(padConst) + unit.WeaponCondition.Weapon.DisplayedName);
             WriteLine("DebugTimeReserve:".PadRight(padConst) + unit.TimeReserve);
         }
+
     }
 }

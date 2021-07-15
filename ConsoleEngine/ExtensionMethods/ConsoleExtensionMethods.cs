@@ -5,7 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
-namespace ExtensionMethods {
+
+namespace ConsoleEngine {
     public static class ConsoleExtensionMethods {
         public static Point CursorPosition {
             get => new Point(CursorLeft, CursorTop);

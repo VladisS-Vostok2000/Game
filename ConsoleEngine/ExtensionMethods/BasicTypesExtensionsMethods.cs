@@ -7,70 +7,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+// REFACTORING: необходимо расчленить этот класс на несколько, потому что
+// в нём собраны методы расширения со всех библиотек.
+// Ожидается: ConsoleEngine.
 namespace ExtensionMethods {
     public static class BasicTypesExtensionsMethods {
-        // REFACTORING: необходимо расчленить этот класс на несколько, потому что
-        // в нём собраны методы расширения со всех библиотек.
-
-        #region ICollection, IReadOnlyCollection
-        /// <summary>
-        /// True, если коллекция пуста.
-        /// </summary>
-        public static bool Empty<T>(this ICollection<T> sourse) => sourse.Count == 0;
-
-        /// <summary>
-        /// True, если коллекция пуста.
-        /// </summary>
-        public static bool Empty<T>(this IReadOnlyCollection<T> sourse) => sourse.Count == 0;
-
-        /// <summary>
-        /// True, если содержит определяемое делегатом значение.
-        /// </summary>
-        public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
-            foreach (var item in colletion) {
-                if (predicate(item)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Возвращает первое с начала вхождение элемента в коллекции, соответствующего заданному предикату.
-        /// </summary>
-        public static bool TryGet<T1>(this ICollection<T1> collection, Predicate<T1> predicate, out T1 outItem) {
-            foreach (var item in collection) {
-                if (predicate(item)) {
-                    outItem = item;
-                    return true;
-                }
-            }
-            outItem = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Вставляет коллекцию элементов в конец текущей.
-        /// </summary>
-        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> input) {
-            foreach (var item in input) {
-                collection.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Удаляет последний элемент коллекции.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static void RemoveLastItem<T>(this ICollection<T> collection) {
-            if (collection.Empty()) { throw new InvalidOperationException("Коллекция пуста."); }
-            T removingItem = default;
-            foreach (var item in collection) {
-                removingItem = item;
-            }
-            collection.Remove(removingItem);
-        }
-        #endregion
 
         #region Int32
         /// <summary>
@@ -93,6 +34,13 @@ namespace ExtensionMethods {
         /// Возвращает 0, если число меньше нуля или само значение иначе.
         /// </summary>
         public static float NotNegative(in this float target) => target < 0 ? 0 : target;
+        #endregion
+
+        #region Point
+        /// <summary>
+        /// True, если заданный <see cref="Point"/> с четырёх сторон к объекту вплотную.
+        /// </summary>
+        public static bool CloseTo(this Point value, Point target) => !(Math.Abs(value.Y - target.Y) > 1 || Math.Abs(value.X - target.X) > 1);
         #endregion
 
         #region Dictionary
@@ -271,7 +219,7 @@ namespace ExtensionMethods {
         /// -1, если не найден.
         /// </summary>
         public static int IndexOfNewLine(this string value) => value.IndexOf(Environment.NewLine);
-        
+
         /// <summary>
         /// Возвращает индекс символа(-ов), относящихся к переносу строки.
         /// -1, если не найден.
@@ -288,7 +236,7 @@ namespace ExtensionMethods {
             if (length < 0) {
                 throw new ArgumentOutOfRangeException(nameof(length), "Длинна не может быть отрицательной.");
             }
-            
+
             if (length <= value.Length) {
                 return value.Substring(0, length);
             }
@@ -303,7 +251,7 @@ namespace ExtensionMethods {
         /// Заполнит массив заданными значениями.
         /// </summary>
         /// <returns> Ссылка на текущий массив. </returns>
-        public static T[] Fill<T>(this T[] array, T value) where T: struct {
+        public static T[] Fill<T>(this T[] array, T value) where T : struct {
             for (int i = 0; i < array.Length; i++) {
                 array[i] = value;
             }
@@ -312,7 +260,7 @@ namespace ExtensionMethods {
         /// <summary>
         /// Заполнит массив значением, возвращаемым заданным делегатом.
         /// </summary>
-        public static T[] Fill<T> (this T[] array, Func<T> action) {
+        public static T[] Fill<T>(this T[] array, Func<T> action) {
             for (int i = 0; i < array.Length; i++) {
                 array[i] = action.Invoke();
             }
@@ -322,6 +270,66 @@ namespace ExtensionMethods {
         /// Создаст нередактируемое отражение <see cref="Array"/>.
         /// </summary>
         public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
+        #endregion
+
+        #region ICollection, IReadOnlyCollection
+        /// <summary>
+        /// True, если коллекция пуста.
+        /// </summary>
+        public static bool Empty<T>(this ICollection<T> sourse) => sourse.Count == 0;
+
+        /// <summary>
+        /// True, если коллекция пуста.
+        /// </summary>
+        public static bool Empty<T>(this IReadOnlyCollection<T> sourse) => sourse.Count == 0;
+
+        /// <summary>
+        /// True, если содержит определяемое делегатом значение.
+        /// </summary>
+        public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
+            foreach (var item in colletion) {
+                if (predicate(item)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Возвращает первое с начала вхождение элемента в коллекции, соответствующего заданному предикату.
+        /// </summary>
+        public static bool TryGet<T1>(this ICollection<T1> collection, Predicate<T1> predicate, out T1 outItem) {
+            foreach (var item in collection) {
+                if (predicate(item)) {
+                    outItem = item;
+                    return true;
+                }
+            }
+            outItem = default;
+            return false;
+        }
+
+        /// <summary>
+        /// Вставляет коллекцию элементов в конец текущей.
+        /// </summary>
+        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> input) {
+            foreach (var item in input) {
+                collection.Add(item);
+            }
+        }
+
+        /// <summary>
+        /// Удаляет последний элемент коллекции.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
+        public static void RemoveLastItem<T>(this ICollection<T> collection) {
+            if (collection.Empty()) { throw new InvalidOperationException("Коллекция пуста."); }
+            T removingItem = default;
+            foreach (var item in collection) {
+                removingItem = item;
+            }
+            collection.Remove(removingItem);
+        }
         #endregion
 
     }

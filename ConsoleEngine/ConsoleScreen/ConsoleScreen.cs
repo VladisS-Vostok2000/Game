@@ -12,24 +12,27 @@ namespace ConsoleEngine {
     /// <summary>
     /// Инкапсулирует связь данных и консоли.
     /// </summary>
-    public static class ConsoleScreen {
-        private static Collection<IConsoleControl> windows;
-        public static ReadOnlyCollection<IConsoleControl> Windows { get; } = new ReadOnlyCollection<IConsoleControl>(windows);
+    public class ConsoleScreen {
+        private static Collection<IConsoleDrawable> controls;
+        public static ReadOnlyCollection<IConsoleDrawable> Controls { get; } = new ReadOnlyCollection<IConsoleDrawable>(controls);
 
 
 
-        public static void AddControl(IConsoleControl control) {
-            windows.Add(control);
+        public static void AddControl(IConsoleDrawable control) {
+            if (control == null) throw new ArgumentNullException(nameof(control));
+            controls.Add(control);
         }
-        //private static bool InBufferArea(params Point[] points) {
-        //    foreach (var point in points) {
-        //        if (!point.X.IsInRange(0, BufferWidth)
-        //            || !point.Y.IsInRange(0, BufferHeight)) {
-        //            return false;
-        //        }
-        //    }
-        //    return true;
-        //}
+
+
+        public void Render() {
+            foreach (var control in controls) {
+                // TODO:
+            }
+        }
+
+
+        private static void DrawColoredCharPicture(ColoredCharsPicture consolePicture) { }
+        private static void DrawColoredStringPicture(MulticoloredStringsPicture coloredStringsPicture) { }
 
     }
 }
