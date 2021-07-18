@@ -21,12 +21,12 @@ namespace ConsoleEngine {
 
 
 
-        public ColoredCharPanel(int windowWidth, int windowHeight) {
+        public ColoredCharPanel(int width, int height) : base(width, height) {
             // TODO: вынести в ColoredCharWindow
             //if (windowWidth < 3) { throw new ColoredCharPanelInvalidArgumentException($"Ширина обязана быть больше 2. {nameof(windowWidth)} был {windowWidth}.", windowWidth); }
             //if (windowHeight < 3) { throw new ColoredCharPanelInvalidArgumentException($"Высота обязана быть больше 2. {nameof(windowHeight)} был {windowHeight}.", windowHeight); }
-            Width = windowWidth;
-            Height = windowHeight;
+            Width = width;
+            Height = height;
             controls = new List<ConsoleControl>();
             coloredChars = new ColoredChar[Width, Height];
             ConsolePicture = new ColoredCharsPicture(coloredChars);

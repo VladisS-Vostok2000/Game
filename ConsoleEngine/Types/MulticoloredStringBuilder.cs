@@ -34,7 +34,7 @@ namespace ConsoleEngine {
 
 
 
-        MulticoloredStringBuilder() { }
+        public MulticoloredStringBuilder() { }
         public MulticoloredStringBuilder(string str) {
             ColoredStrings.Add(new ColoredString(str));
         }

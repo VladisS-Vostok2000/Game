@@ -45,9 +45,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConsoleEngine\BasicControls\ColoredCharPicture\ColoredCharPicture.cs" />
     <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleList.cs" />
     <Compile Include="ConsoleEngine\BasicControls\ConsoleList\ConsoleListColoredString.cs" />
     <Compile Include="ConsoleEngine\BasicControls\ConsoleMenu\ConsoleMenu.cs" />
+    <Compile Include="ConsoleEngine\BasicControls\ConsoleMenu\ConsoleMenuOption.cs" />
     <Compile Include="ConsoleEngine\StaticMethods\Geometry.cs" />
     <Compile Include="ConsoleEngine\Types\ConsoleContainer.cs" />
     <Compile Include="ConsoleEngine\Types\Pictures\MulticoloredStringsPicture.cs" />
@@ -73,7 +75,6 @@
     <Compile Include="ConsoleEngine\ConsoleScreen\ConsoleDrawing.cs" />
     <Compile Include="ConsoleEngine\ExtensionMethods\ConsoleExtensionMethods.cs" />
     <Compile Include="ConsoleEngine\ConsoleScreen\ConsoleWindowsList.cs" />
-    <Compile Include="Core\ConsoleEngineControls\ConsoleMenu.cs" />
     <Compile Include="ConsoleEngine\Types\Pictures\Picture.cs" />
     <Compile Include="Other\Dumb.cs" />
     <Compile Include="ConsoleEngine\ConsoleScreen\ConsoleScreen.cs" />

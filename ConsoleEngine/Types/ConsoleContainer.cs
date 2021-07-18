@@ -11,12 +11,16 @@ namespace ConsoleEngine {
 
 
 
+        public ConsoleContainer(int width, int height) : base(width, height) { }
+
+
+
         public abstract void AddControl(ConsoleControl control);
         public abstract bool RemoveControl(ConsoleControl control);
 
 
         /// <summary>
-        /// False, если заданный <see cref="ConsoleControl"/> не имеет пересечения с другими <see cref="ConsoleControl"/>.
+        /// False, если заданный <see cref="ConsoleControl"/> не имеет пересечения с внутренними <see cref="ConsoleControl"/>.
         /// </summary>
         public bool IntersectsWintControls(ConsoleControl control) {
             foreach (var internalControl in Controls) {

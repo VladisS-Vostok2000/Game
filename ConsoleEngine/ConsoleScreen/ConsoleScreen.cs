@@ -12,9 +12,9 @@ namespace ConsoleEngine {
     /// <summary>
     /// Инкапсулирует связь данных и консоли.
     /// </summary>
-    public class ConsoleScreen {
-        private static Collection<IConsoleDrawable> controls;
-        public static ReadOnlyCollection<IConsoleDrawable> Controls { get; } = new ReadOnlyCollection<IConsoleDrawable>(controls);
+    public static class ConsoleScreen {
+        private static List<IConsoleDrawable> controls = new List<IConsoleDrawable>();
+        public static IReadOnlyList<IConsoleDrawable> Controls { get; } = controls.AsReadOnly();
 
 
 
@@ -22,9 +22,10 @@ namespace ConsoleEngine {
             if (control == null) throw new ArgumentNullException(nameof(control));
             controls.Add(control);
         }
+        public static bool RemoveControl(IConsoleDrawable control) => controls.Remove(control);
 
 
-        public void Render() {
+        public static void Render() {
             foreach (var control in controls) {
                 // TODO:
             }
