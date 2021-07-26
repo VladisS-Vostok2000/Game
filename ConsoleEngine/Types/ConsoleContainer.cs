@@ -11,7 +11,7 @@ namespace ConsoleEngine {
 
 
 
-        public ConsoleContainer(int width, int height) : base(width, height) { }
+        public ConsoleContainer(int x, int y, int width, int height) : base(x, y, width, height) { }
 
 
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace ConsoleEngine {
     /// <summary>
@@ -6,6 +7,7 @@ namespace ConsoleEngine {
     /// </summary>
     public interface IColoredCharsDrawable {
         Picture ConsolePicture { get; }
+        Size Size { get; }
 
     }
 }

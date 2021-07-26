@@ -1,18 +1,13 @@
-﻿using ConsoleEngine;
-using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Drawing;
 
 namespace ConsoleEngine {
     /// <summary>
     /// Имеющий размеры и логику прорисовки консольный объект.
     /// </summary>
-    public abstract class ConsoleControl : IConsoleDrawable {
-        public int Width { get; set; }
-        public int Height { get; set; }
+    public abstract class ConsoleControl : IConsoleControl {
+        public int Width => Size.Width;
+        public int Height => Size.Height;
+        public Size Size => ConsolePicture.Size;
         public int X { get; set; }
         public int Y { get; set; }
         public Point Location { get => new Point(X, Y); set { X = value.X; Y = value.Y; } }
@@ -21,8 +16,9 @@ namespace ConsoleEngine {
         public abstract Picture ConsolePicture { get; protected set; }
 
 
-
-        public ConsoleControl(int width, int height) {
+        public ConsoleControl(Point location, Size size) {
+            X = x;
+            Y = y;
             Width = width;
             Height = height;
         }
@@ -36,7 +32,8 @@ namespace ConsoleEngine {
             var control1Area = new Rectangle(X, Y, Width, Height);
             var control2Area = new Rectangle(control.X, control.Y, control.Width, control.Height);
             if (control1Area.IntersectsWith(control2Area)) { return true; }
-            if (control.ContainsAreaOf(this)) return true;
+            if (control.ContainsAreaOf(this))
+                return true;
             return false;
         }
         /// <summary>

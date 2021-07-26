@@ -13,7 +13,7 @@ namespace ConsoleEngine {
     /// </summary>
     // REFACTORING: убрать Console? Тогда реализовывать консольные контролы отдельными классами.
     // Так-то по сути контролы с консолью не связаны.
-    public interface IConsoleDrawable : IColoredCharsDrawable {
+    public interface IConsoleControl : IColoredCharsDrawable {
         Point Location { get; set; }
         int X { get; set; }
         int Y { get; set; }

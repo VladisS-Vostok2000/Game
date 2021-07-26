@@ -38,7 +38,7 @@ namespace ConsoleEngine {
 
 
 
-        public ConsoleMenu(int width, int height, IList<MulticoloredStringBuilder> options) : base(width, height) {
+        public ConsoleMenu(int x, int y, int width, int height, IList<MulticoloredStringBuilder> options) : base(x, y, width, height) {
             if (options.Count == 0) {
                 throw new ArgumentException("Меню обязано содержать пункты.");
             }

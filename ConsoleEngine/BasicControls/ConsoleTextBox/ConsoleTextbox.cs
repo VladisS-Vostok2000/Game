@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using System.Xml;
 
 namespace ConsoleEngine {
-    public sealed class ColoredCharTextbox : IConsoleDrawable {
+    public sealed class ColoredCharTextbox : IConsoleControl {
         public Point Location {
             get => new Point(X, Y);
             set {
@@ -32,10 +32,10 @@ namespace ConsoleEngine {
 
         public ColoredCharTextbox(MulticoloredStringBuilder text, int width, int height) {
             if (width < 0) {
-                throw new TextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
+                throw new ConsoleTextBoxInvalidArgumentException($"Ширина должна быть больше нуля. {nameof(width)} был {width}.", width);
             }
             if (height < 0) {
-                throw new TextBoxInvalidArgumentException($"Высота должна быть больше нуля. {nameof(height)} был {height}.", height);
+                throw new ConsoleTextBoxInvalidArgumentException($"Высота должна быть больше нуля. {nameof(height)} был {height}.", height);
             }
 
             ConsolePicture = Render(text);
