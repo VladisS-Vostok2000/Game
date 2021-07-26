@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core {
+namespace Game {
     public sealed class ReadOnlyArray<T> : IReadOnlyList<T> {
         private T[] array;
         public int Count => array.Length;

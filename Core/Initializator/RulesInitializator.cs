@@ -4,12 +4,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using ExtensionMethods;
+using Game.ExtensionMethods;
 using System.Drawing;
 using Parser;
-using ConsoleEngine;
+using Game.ConsoleDrawingEngine;
 
-namespace Core {
+namespace Game.Core {
     /// <summary>
     /// Инкапсулирует инициализацию правил из соответствующих строк.
     /// </summary>

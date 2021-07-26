@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core {
+namespace Game.Core {
     public sealed class EngineCondition : PartCondition {
         public Engine Engine => (Engine)Part;
          

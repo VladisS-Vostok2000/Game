@@ -5,12 +5,17 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using ExtensionMethods;
-using static ConsoleEngine.ConsoleScreen;
+using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.ConsoleDrawingEngine.ConsoleScreen;
 using static System.Console;
-using ConsoleEngine;
+using Game.ConsoleDrawingEngine;
+using Game.ExtensionMethods;
+using Game.ColoredCharsEngine;
+using Game.ConsoleDrawingEngine.Controls;
+using Game.ConsoleDrawingEngine.Types;
 
-namespace Core {
+namespace Game.Core {
+    // NEXT: добавить класс Location вместо Point, и Location.Center как (0, 0).
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
@@ -30,43 +35,52 @@ namespace Core {
 
 
         public static void Main(string[] args) {
-            int mainMenuPointer = 0;
-            PrintMainMenu(mainMenuPointer);
-
+            // REFACTORING: вынести ToMulticoloredStringBuilders в конструктор ConsoleMenu.
+            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), menuOptions.ToMulticoloredStringBuilders());
+            AddControl(consoleMenu);
+            string selectedOption = ListenMenu(consoleMenu).StringOptionName;
+            if (selectedOption == menuOptions[0]) {
+                StartGame(rulesPath, mapPath);
+            }
+            else
+            if (selectedOption == menuOptions[1]) {
+                Environment.Exit(0);
+            }
+            else {
+                throw new Exception();
+            }
+        }
+        private static ConsoleMenuOption ListenMenu(ConsoleMenu menu) {
             do {
-                ConsoleKeyInfo input = ReadKey(true);
-                if (input.Key == ConsoleKey.Enter) {
-                    if (mainMenuPointer == 0) {
-                        StartGame(rulesPath, mapPath);
-                    }
-                    else {
-                        Environment.Exit(0);
-                    }
+                // WORKAROUND: Render будет выполняться сам.
+                Render();
+                ConsoleKey key = ListenKey();
+                if (key == ConsoleKey.Enter) {
+                    RemoveControl(menu);
+                    return menu.SelectedOption;
                 }
                 else {
-                    if (input.Key == ConsoleKey.DownArrow) {
-                        mainMenuPointer = Math.Abs(++mainMenuPointer) % menuOptions.Length;
+                    if (key == ConsoleKey.DownArrow) {
+                        menu.Down();
                     }
                     else
-                    if (input.Key == ConsoleKey.UpArrow) {
-                        mainMenuPointer = Math.Abs(--mainMenuPointer) % menuOptions.Length;
+                    if (key == ConsoleKey.UpArrow) {
+                        menu.Up();
                     }
-                    PrintMainMenu(mainMenuPointer);
                 }
             } while (true);
-        }
-        private static void PrintMainMenu(int optionHighlitedNumber) {
-            Clear();
-            // TODO:
         }
 
 
 
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
+
+            AddControl(new ConsoleImage(Point.Empty, new ConsoleColoredCharsPicture(map.ConsolePicture)));
+            Render();
+
+            throw new Exception();
             do {
-                Console.Clear();
-                PrintMapScreen();
                 PrintGameMenu();
                 ConsoleKeyInfo input = ReadKey(true);
                 MaptileInfo selectedTileInfo = map.SelectedTile;

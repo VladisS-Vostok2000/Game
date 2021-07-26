@@ -6,18 +6,19 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using Parser;
-using ExtensionMethods;
-using ConsoleEngine;
+using Game.ExtensionMethods;
+using Game.ColoredCharsEngine;
 
-namespace Core {
-    public sealed class Map : IColoredCharsDrawable {
+namespace Game.Core {
+    public sealed class Map {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
 
-        public int LengthX => Landtiles.GetUpperBound(0) + 1;
-        public int LengthY => Landtiles.GetUpperBound(1) + 1;
-        public int Square => LengthX * LengthY;
+        public int Width => Landtiles.GetUpperBound(0) + 1;
+        public int Height => Landtiles.GetUpperBound(1) + 1;
+        public int Square => Width * Height;
+        public Size Size => new Size(Width, Height);
 
 
         // REFACTORING: на самом деле класс, инкапсулирующий поле ниже
@@ -38,11 +39,11 @@ namespace Core {
         private int selectedTileY;
         public int SelectedTileX {
             get => selectedTileX;
-            set => selectedTileX = value.ToRange(0, LengthX);
+            set => selectedTileX = value.ToRange(0, Width);
         }
         public int SelectedTileY {
             get => selectedTileY;
-            set => selectedTileY = value.ToRange(0, LengthY);
+            set => selectedTileY = value.ToRange(0, Height);
         }
         private static readonly ConsoleColor selectedTileColor = ConsoleColor.Yellow;
         public MaptileInfo SelectedTile => this[SelectedTileX, SelectedTileY];
@@ -64,7 +65,7 @@ namespace Core {
 
 
         private ColoredChar[,] coloredCharsPicture;
-        public Picture ConsolePicture { get; }
+        public ColoredCharsPicture ConsolePicture { get; }
 
 
 
@@ -281,8 +282,8 @@ namespace Core {
 
 
         private void RefreshColoredCharPicture() {
-            for (int r = 0; r < LengthY; r++) {
-                for (int c = 0; c < LengthX; c++) {
+            for (int r = 0; r < Height; r++) {
+                for (int c = 0; c < Width; c++) {
                     // REFACTORING: сделать тут интерфейс и не обращаться к MaptileInfo?
                     coloredCharsPicture[c, r] = ToCharPicture(new Point(c, r));
                 }
@@ -312,7 +313,7 @@ namespace Core {
 
 
         private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {
-            bool correctIndexation = landtileX.IsInRange(0, LengthX - 1) && landtileY.IsInRange(0, LengthY - 1);
+            bool correctIndexation = landtileX.IsInRange(0, Width - 1) && landtileY.IsInRange(0, Height - 1);
             landtile = correctIndexation ? Landtiles[landtileX, landtileY] : default;
             return correctIndexation;
         }

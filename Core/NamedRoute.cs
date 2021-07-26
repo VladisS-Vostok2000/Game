@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ExtensionMethods;
+using Game.ExtensionMethods;
 
-namespace Core {
+namespace Game.Core {
     public sealed class NamedRoute {
         public string Name { get; private set; }
         public Route Route { get; set; }

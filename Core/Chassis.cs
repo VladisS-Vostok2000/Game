@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core {
+namespace Game.Core {
     public sealed class Chassis : Part {
         // FEATURE: добавить ограничение максимальной скорости на участке.
         public Passability Passability { get; set; }

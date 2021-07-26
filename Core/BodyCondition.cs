@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core {
+namespace Game.Core {
     public class BodyCondition : PartCondition {
         public Body Body => (Body)Part;
 

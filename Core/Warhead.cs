@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Core {
+namespace Game.Core {
     public sealed class Warhead {
         public string Name { get; private set; }
         public int Damage { get; set; }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ExtensionMethods;
+using Game.ExtensionMethods;
 
-namespace Core {
+namespace Game.Core {
     public sealed class Rules {
         // REFACTORING: рассмотреть возможность превратить в словари (классы?).
         public ICollection<Landtile> Landtiles { get; set; }

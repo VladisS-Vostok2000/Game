@@ -1,7 +1,7 @@
-﻿using ConsoleEngine;
+﻿using Game.ColoredCharsEngine;
 using System;
 
-namespace Core {
+namespace Game.Core {
     [Obsolete]
     public sealed class Projectile {
         private ColoredChar charPicture;
