@@ -1,4 +1,4 @@
-﻿using ConsoleEngine;
+﻿using Game.ConsoleEngine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Core {
+namespace Game.Core {
     public readonly struct MaptileInfo {
         public Unit Unit { get; }
         public Landtile Land { get; }

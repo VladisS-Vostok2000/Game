@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     /// <summary>
     /// Имеющий графическую интерпретацию объект.
     /// </summary>

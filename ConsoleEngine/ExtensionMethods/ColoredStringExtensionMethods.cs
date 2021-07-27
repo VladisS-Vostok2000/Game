@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     public static class ColoredStringExtensionMethods {
         /// <summary>
         /// Возвращает проходящий по строкам перечислитель заданного текста.

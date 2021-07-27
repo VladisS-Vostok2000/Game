@@ -5,9 +5,9 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ExtensionMethods;
+using Game.ExtensionMethods;
 
-namespace Core {
+namespace Game.Core {
     public class Route : IEnumerable<Point> {
         private IList<Point> route = new List<Point>();
         public bool Empty => route.Count == 0;

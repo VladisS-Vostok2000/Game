@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public class ConsoleTextBoxException : Exception {
         public ConsoleTextBoxException(string message) : base(message) { }
         public ConsoleTextBoxException(string message, Exception innerException) : base(message, innerException) { }

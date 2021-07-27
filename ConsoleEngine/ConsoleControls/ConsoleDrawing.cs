@@ -4,12 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ExtensionMethods;
+using Game.ExtensionMethods;
 using static System.Console;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public static class ConsoleDrawing {
         public static int Width => BufferWidth - 1;
+        public static int Height => BufferHeight;
 
 
 
@@ -33,7 +34,7 @@ namespace ConsoleEngine {
             }
             else
                 if (control.ConsolePicture is MulticoloredStringsPicture msp) {
-                DrawColoredStringPicture(control);
+                DrawColoredStringsPicture(control);
             }
             else {
                 throw new Exception();
@@ -41,10 +42,20 @@ namespace ConsoleEngine {
         }
         
         private static void DrawColoredCharPicture(IConsoleControl control) {
-            if (IntersectsWithBuffer(control.Location, control.Size)) {
-
+            if (!IntersectsWithBuffer(control.Location, control.Size)) {
+                return;
             }
-            // TODO: intersectsWith
+
+            int startIndex = control.Location.X > 0 ? control.Location.X : 0;
+
+        }
+        private static void DrawColoredStringsPicture(IConsoleControl control) {
+
+        }
+
+
+        private static bool IntersectsWithBuffer(Point location, Size size) {
+            // TODO: intersectsWithBuffer.
             //x = Width <= x ? x : Width;
             //y = BufferHeight <= y ? y : BufferHeight;
             //for (int r = 0; r < consolePicture.Height; r++) {
@@ -53,14 +64,6 @@ namespace ConsoleEngine {
 
             //    }
             //}
-        }
-        private static void DrawColoredStringPicture(IConsoleControl control) {
-
-        }
-
-
-        private static bool IntersectsWithBuffer(Point location, Size size) {
-            // TODO:
             return true;
         }
 

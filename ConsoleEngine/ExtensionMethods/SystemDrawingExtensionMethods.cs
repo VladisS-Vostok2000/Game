@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
 	public static class SystemDrawingExtensionMethods {
 		/// <summary>
 		/// True, если заданный <see cref="Rectangle"/> полностью лежит в прямоугольнике.

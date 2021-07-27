@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ConsoleEngine;
+using Game.ConsoleEngine;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     [Obsolete]
     internal sealed class ConsoleListColoredString {
         private bool @checked;

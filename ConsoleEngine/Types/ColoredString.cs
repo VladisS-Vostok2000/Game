@@ -1,11 +1,11 @@
-﻿using ExtensionMethods;
+﻿using Game.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     public sealed class ColoredString {
         public string Text { get; set; }
         public ConsoleColor Color { get; set; }

@@ -1,13 +1,14 @@
-﻿using ExtensionMethods;
+﻿using Game.ExtensionMethods;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Drawing.Printing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public sealed class ConsoleMenu : ConsoleControl {
         private List<MulticoloredStringBuilder> menuOptions;
         public IReadOnlyList<MulticoloredStringBuilder> MenuOptions { get; }
@@ -38,7 +39,8 @@ namespace ConsoleEngine {
 
 
 
-        public ConsoleMenu(int x, int y, int width, int height, IList<MulticoloredStringBuilder> options) : base(x, y, width, height) {
+        // REFACTORING: ICollection вместо IList?
+        public ConsoleMenu(Point location, Size size, IList<MulticoloredStringBuilder> options) : base(location, size) {
             if (options.Count == 0) {
                 throw new ArgumentException("Меню обязано содержать пункты.");
             }
@@ -52,10 +54,10 @@ namespace ConsoleEngine {
             MenuOptions = this.menuOptions.AsReadOnly();
             picture = Render(menuOptions);
             ConsolePicture = new MulticoloredStringsPicture(picture);
-            Width = width;
-            Height = height;
         }
+        public ConsoleMenu(int x, int y, int width, int height, IList<MulticoloredStringBuilder> options) : this(new Point(x,y), new Size(width,height), options) {
 
+        }
 
 
         /// <summary>

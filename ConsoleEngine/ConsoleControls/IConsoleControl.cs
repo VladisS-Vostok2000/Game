@@ -1,4 +1,5 @@
-﻿using Game;
+﻿using Game.ConsoleEngine;
+using Game;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     /// <summary>
     /// Объект, реализующий данный интерфейс, имеет графическую интерпритацию
     /// и чёткое местоположение в окне консоли.

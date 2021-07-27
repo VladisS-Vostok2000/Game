@@ -1,13 +1,13 @@
 ﻿using System.Drawing;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     /// <summary>
     /// Имеющий размеры и логику прорисовки консольный объект.
     /// </summary>
     public abstract class ConsoleControl : IConsoleControl {
         public int Width => Size.Width;
         public int Height => Size.Height;
-        public Size Size => ConsolePicture.Size;
+        public Size Size { get; }
         public int X { get; set; }
         public int Y { get; set; }
         public Point Location { get => new Point(X, Y); set { X = value.X; Y = value.Y; } }
@@ -16,13 +16,11 @@ namespace ConsoleEngine {
         public abstract Picture ConsolePicture { get; protected set; }
 
 
-        public ConsoleControl(Point location, Size size) {
-            X = x;
-            Y = y;
-            Width = width;
-            Height = height;
-        }
 
+        public ConsoleControl(Point location, Size size) {
+            Location = location;
+            Size = size;
+        }
 
 
         /// <summary>

@@ -1,14 +1,12 @@
-﻿using ExtensionMethods;
+﻿using Game.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using System.Xml;
+using Game.ConsoleEngine;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public sealed class ColoredCharTextbox : IConsoleControl {
         public Point Location {
             get => new Point(X, Y);
@@ -20,14 +18,13 @@ namespace ConsoleEngine {
         public int X { get; set; }
         public int Y { get; set; }
 
-
         public int Width { get; }
         public int Height { get; }
+        public Size Size => new Size(Width, Height);
 
-
-        
         public Picture ConsolePicture { get; }
 
+        
 
 
         public ColoredCharTextbox(MulticoloredStringBuilder text, int width, int height) {

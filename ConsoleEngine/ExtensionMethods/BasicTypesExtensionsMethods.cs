@@ -1,5 +1,5 @@
-﻿using ConsoleEngine;
-using Core;
+﻿using Game.ConsoleEngine;
+using Game.Core;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 // REFACTORING: необходимо расчленить этот класс на несколько, потому что
 // в нём собраны методы расширения со всех библиотек.
 // Ожидается: ConsoleEngine.
-namespace ExtensionMethods {
+namespace Game.ExtensionMethods {
     public static class BasicTypesExtensionsMethods {
 
         #region Int32

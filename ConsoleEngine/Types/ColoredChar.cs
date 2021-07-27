@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     public struct ColoredChar {
         public char Char { get; set; }
         public ConsoleColor Color { get; set; }

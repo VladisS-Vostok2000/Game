@@ -1,10 +1,11 @@
-﻿using System;
+﻿using Game.ConsoleEngine;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public sealed class ConsoleMenuOption {
         public MulticoloredStringBuilder MulticoloredStringBuilderOptionName { get; }
         public string StringOptionName { get; }

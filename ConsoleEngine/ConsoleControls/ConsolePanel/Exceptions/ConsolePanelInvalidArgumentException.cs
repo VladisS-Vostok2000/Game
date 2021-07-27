@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public class ColoredCharPanelInvalidArgumentException : ColoredCharPanelException {
         public object ActualValue { get; }
 

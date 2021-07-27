@@ -5,13 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using static ExtensionMethods.ConsoleExtensionMethods;
-using static ConsoleEngine.ConsoleScreen;
+using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.ConsoleEngine.ConsoleControls.ConsoleScreen;
 using static System.Console;
-using ConsoleEngine;
-using ExtensionMethods;
+using Game.ConsoleEngine;
+using Game.ExtensionMethods;
+using Game.ConsoleEngine.ConsoleControls;
 
-namespace Core {
+namespace Game.Core {
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;

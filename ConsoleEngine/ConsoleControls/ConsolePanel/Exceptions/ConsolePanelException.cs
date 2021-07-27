@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public class ColoredCharPanelException : Exception {
         public ColoredCharPanelException(string message) : base(message) { }
         public ColoredCharPanelException(string message, Exception innerException) : base(message, innerException) { }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     [Obsolete]
     public static class Geometry {
         public static bool PointInsideRectangle(Point point, Rectangle rectangle) {

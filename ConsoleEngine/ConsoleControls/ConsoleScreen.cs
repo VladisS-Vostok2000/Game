@@ -5,11 +5,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using static System.Console;
-using ExtensionMethods;
-using static ExtensionMethods.ConsoleExtensionMethods;
+using Game.ExtensionMethods;
+using static Game.ExtensionMethods.ConsoleExtensionMethods;
 using System.Collections.ObjectModel;
+using static Game.ConsoleEngine.ConsoleControls.ConsoleDrawing;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     /// <summary>
     /// Инкапсулирует связь данных и консоли.
     /// </summary>

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     // REFACTORING: Преобразовать в MulticoloredStringBuilder. При возвращении 
     // этого класса из листа я не ожидаю, что изменения снаружи коснуться отправителя.
     /// <summary>

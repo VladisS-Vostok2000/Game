@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using Parser;
-using ExtensionMethods;
-using ConsoleEngine;
+using Game.ExtensionMethods;
+using Game.ConsoleEngine;
 
-namespace Core {
+namespace Game.Core {
     public sealed class Map : IColoredCharsDrawable {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
@@ -18,6 +18,7 @@ namespace Core {
         public int Width => Landtiles.GetUpperBound(0) + 1;
         public int Height => Landtiles.GetUpperBound(1) + 1;
         public int Square => Width * Height;
+        public Size Size => new Size(Width, Height);
 
 
         // REFACTORING: на самом деле класс, инкапсулирующий поле ниже

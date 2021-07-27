@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine {
     class MuticoloredStringsPictureArgumentException : MulticoloredStringsPictureException {
         public object ActualValue { get; }
 

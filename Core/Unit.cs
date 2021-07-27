@@ -4,10 +4,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ExtensionMethods;
-using ConsoleEngine;
+using Game.ExtensionMethods;
+using Game.ConsoleEngine;
 
-namespace Core {
+namespace Game.Core {
     public sealed class Unit {
         public ColoredChar ColoredChar {
             get {

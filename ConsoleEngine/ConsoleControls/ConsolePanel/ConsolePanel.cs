@@ -4,13 +4,13 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static ExtensionMethods.ConsoleExtensionMethods;
-using static ExtensionMethods.BasicTypesExtensionsMethods;
-using static ConsoleEngine.Geometry;
-using static ConsoleEngine.SystemDrawingExtensionMethods;
+using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.ConsoleEngine.Geometry;
+using static Game.ConsoleEngine.SystemDrawingExtensionMethods;
 using System.Runtime.CompilerServices;
 
-namespace ConsoleEngine {
+namespace Game.ConsoleEngine.ConsoleControls {
     public sealed class ConsolePanel : ConsoleContainer {
         private List<ConsoleControl> controls;
         public override IReadOnlyList<ConsoleControl> Controls => controls.AsReadOnly();
@@ -21,12 +21,7 @@ namespace ConsoleEngine {
 
 
 
-        public ConsolePanel(int x, int y, int width, int height) : base(x, y, width, height) {
-            // TODO: вынести в ColoredCharWindow
-            //if (windowWidth < 3) { throw new ColoredCharPanelInvalidArgumentException($"Ширина обязана быть больше 2. {nameof(windowWidth)} был {windowWidth}.", windowWidth); }
-            //if (windowHeight < 3) { throw new ColoredCharPanelInvalidArgumentException($"Высота обязана быть больше 2. {nameof(windowHeight)} был {windowHeight}.", windowHeight); }
-            Width = width;
-            Height = height;
+        public ConsolePanel(Point location, Size size) : base(location, size) {
             controls = new List<ConsoleControl>();
             coloredChars = new ColoredChar[Width, Height];
             ConsolePicture = new ColoredCharsPicture(coloredChars);
