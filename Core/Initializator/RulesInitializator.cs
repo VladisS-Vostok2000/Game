@@ -7,7 +7,7 @@ using System.IO;
 using Game.ExtensionMethods;
 using System.Drawing;
 using Parser;
-using Game.ConsoleEngine;
+using Game.ConsoleDrawingEngine;
 
 namespace Game.Core {
     /// <summary>

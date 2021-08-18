@@ -9,112 +9,118 @@
 //using System.Windows.Forms;
 
 //namespace Dumb {
-//    public class A {
-//        public Point Z { get; set; }
-//        public B GetB;
-//        public void Method() {
-//            A a = new A();
-//            a.Z.X = 5;
-//            GetB.C.Height = 5;
-//        }
+//    public interface A {
+//        static Method();
 //    }
-//    public struct B {
-//        public Size C { get; set; }
+//    public class B : A {
+//        public static void Method();
+//    }
+//    public class C : B {
+//        public override void Method() {
+//            var c = new C();
+//            var b = (B)c;
+//            var ac = (A)c;
+//            var ab = (A)b;
+//            c.Method();
+//            b.Method();
+//            ac.Method();
+//            ab.Method();
+//        }
 //    }
 //}
 //namespace Core {
-//    //    public interface Chair { }
-//    //    public class VictorianChair : Chair { }
-//    //    public class ModernChair : Chair { }
+//    public interface Chair { }
+//    public class VictorianChair : Chair { }
+//    public class ModernChair : Chair { }
 
-//    //    public interface Sofa { }
-//    //    public class VictorianSofa : Sofa { }
-//    //    public class ModernSofa : Sofa { }
+//    public interface Sofa { }
+//    public class VictorianSofa : Sofa { }
+//    public class ModernSofa : Sofa { }
 
-//    //    public interface FurnitureFactory {
-//    //        Chair CreateChair();
-//    //        Sofa CreateSofa();
-//    //    }
+//    public interface FurnitureFactory {
+//        Chair CreateChair();
+//        Sofa CreateSofa();
+//    }
 
-//    //    public class VictorianFurnitureFactory : FurnitureFactory {
-//    //        public Chair CreateChair() => new VictorianChair();
-//    //        public Sofa CreateSofa() => new VictorianSofa();
-//    //    }
+//    public class VictorianFurnitureFactory : FurnitureFactory {
+//        public Chair CreateChair() => new VictorianChair();
+//        public Sofa CreateSofa() => new VictorianSofa();
+//    }
 
-//    //    public class ModernFurnitureFactory : FurnitureFactory {
-//    //        public Chair CreateChair() => new ModernChair();
-//    //        public Sofa CreateSofa() => new ModernSofa();
-//    //    }
+//    public class ModernFurnitureFactory : FurnitureFactory {
+//        public Chair CreateChair() => new ModernChair();
+//        public Sofa CreateSofa() => new ModernSofa();
+//    }
 
-//    //    public class Programm {
-//    //        public static void Main() {
-//    //            ICollection<Point> s;
-//    //            FurnitureFactory factory;
-//    //            string input = "modern";
-//    //            if (input == "modern") {
-//    //                factory = new ModernFurnitureFactory();
-//    //            }
-//    //            else {
-//    //                factory = new VictorianFurnitureFactory();
-//    //            }
+//    public class Programm {
+//        public static void Main() {
+//            ICollection<Point> s;
+//            FurnitureFactory factory;
+//            string input = "modern";
+//            if (input == "modern") {
+//                factory = new ModernFurnitureFactory();
+//            }
+//            else {
+//                factory = new VictorianFurnitureFactory();
+//            }
 
-//    //            Sofa sofa = factory.CreateSofa();
-//    //            Chair chair = factory.CreateChair();
+//            Sofa sofa = factory.CreateSofa();
+//            Chair chair = factory.CreateChair();
 
-//    //            // Без паттерна:
-//    //            Sofa sofa1;
-//    //            Chair chair1;
-//    //            if (input == "modern") {
-//    //                sofa1 = new ModernSofa();
-//    //                chair1 = new ModernChair();
-//    //            }
-//    //            else {
-//    //                sofa1 = new VictorianSofa();
-//    //                chair1 = new VictorianChair();
-//    //            }
+//            // Без паттерна:
+//            Sofa sofa1;
+//            Chair chair1;
+//            if (input == "modern") {
+//                sofa1 = new ModernSofa();
+//                chair1 = new ModernChair();
+//            }
+//            else {
+//                sofa1 = new VictorianSofa();
+//                chair1 = new VictorianChair();
+//            }
 
 
-//    //        }
+//        }
 
-//    //    }
-//    //    public class dumb {
-//    //        protected static int Field { get; set; }
-//    //    }
-//    //    public class dumb1 : dumb {
-//    //        public void Method() {
-//    //            //dumb1.Field
-//    //            List<int> s = new List<int>();
-//    //            s[0] = default;
-//    //            s.Fin
-//    //        }
-//    //    }
-//    //    public interface IList {
-//    //        int this[] {
-//    //            get {
+//    }
+//    public class dumb {
+//        protected static int Field { get; set; }
+//    }
+//    public class dumb1 : dumb {
+//        public void Method() {
+//            //dumb1.Field
+//            List<int> s = new List<int>();
+//            s[0] = default;
+//            s.Fin
+//        }
+//    }
+//    public interface IList {
+//        int this[] {
+//            get {
 
-//    //            }
-//    //        }
-//    //    }
-//    //    public static class Extensions {
-//    //        public static int AExtension(this A sourse) { return 5; }
-//    //        public static int BExtension(this B sourse) { return 10; }
-//    //    }
-//    //    public class A {
+//            }
+//        }
+//    }
+//    public static class Extensions {
+//        public static int AExtension(this A sourse) { return 5; }
+//        public static int BExtension(this B sourse) { return 10; }
+//    }
+//    public class A {
 
-//    //    }
-//    //    public class B : A {
+//    }
+//    public class B : A {
 
-//    //    }
-//    //    public class Programm1 {
-//    //        public static void Main() {
-//    //            var b = new B();
-//    //            var a = (A)b;
-//    //            //a.
+//    }
+//    public class Programm1 {
+//        public static void Main() {
+//            var b = new B();
+//            var a = (A)b;
+//            //a.
 
-//    //            var form = new Form();
-//    //            form.Controls[0] = null;
+//            var form = new Form();
+//            form.Controls[0] = null;
 
-//    //        }
-//    //    }
+//        }
+//    }
 
 //}

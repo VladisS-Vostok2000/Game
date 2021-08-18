@@ -7,10 +7,10 @@ using System.IO;
 using System.Drawing;
 using Parser;
 using Game.ExtensionMethods;
-using Game.ConsoleEngine;
+using Game.ColoredCharsEngine;
 
 namespace Game.Core {
-    public sealed class Map : IColoredCharsDrawable {
+    public sealed class Map {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
@@ -65,7 +65,7 @@ namespace Game.Core {
 
 
         private ColoredChar[,] coloredCharsPicture;
-        public Picture ConsolePicture { get; }
+        public ColoredCharsPicture ConsolePicture { get; }
 
 
 

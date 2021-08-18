@@ -6,13 +6,16 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
 using static Game.ExtensionMethods.ConsoleExtensionMethods;
-using static Game.ConsoleEngine.ConsoleControls.ConsoleScreen;
+using static Game.ConsoleDrawingEngine.ConsoleScreen;
 using static System.Console;
-using Game.ConsoleEngine;
+using Game.ConsoleDrawingEngine;
 using Game.ExtensionMethods;
-using Game.ConsoleEngine.ConsoleControls;
+using Game.ColoredCharsEngine;
+using Game.ConsoleDrawingEngine.Controls;
+using Game.ConsoleDrawingEngine.Types;
 
 namespace Game.Core {
+    // NEXT: добавить класс Location вместо Point, и Location.Center как (0, 0).
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
@@ -33,7 +36,7 @@ namespace Game.Core {
 
         public static void Main(string[] args) {
             // REFACTORING: вынести ToMulticoloredStringBuilders в конструктор ConsoleMenu.
-            var consoleMenu = new ConsoleMenu(0, 0, 15, 2, menuOptions.ToMulticoloredStringBuilders());
+            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), menuOptions.ToMulticoloredStringBuilders());
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).StringOptionName;
             if (selectedOption == menuOptions[0]) {
@@ -73,7 +76,7 @@ namespace Game.Core {
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
 
-            AddControl(new ColoredCharPicture(0, 0, map.ConsolePicture));
+            AddControl(new ConsoleImage(Point.Empty, new ConsoleColoredCharsPicture(map.ConsolePicture)));
             Render();
 
             throw new Exception();

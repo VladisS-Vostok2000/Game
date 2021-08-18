@@ -1,10 +1,11 @@
-﻿using Game.ConsoleEngine;
+﻿using Game.ConsoleDrawingEngine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Game.ColoredCharsEngine;
 
 namespace Game.Core {
     public readonly struct MaptileInfo {
@@ -18,6 +19,7 @@ namespace Game.Core {
         public bool ReachableForSelectedUnit { get; }
         public bool AvailableForSelectedUnitMove { get; }
         public bool SelectedUnitWay { get; }
+
 
 
         // REFACTORING: разделить конструктор на два, в котором
