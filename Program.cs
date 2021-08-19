@@ -15,7 +15,7 @@ using Game.ConsoleDrawingEngine.Controls;
 using Game.ConsoleDrawingEngine.Types;
 
 namespace Game.Core {
-    // NEXT: добавить класс Location вместо Point, и Location.Center как (0, 0).
+    // TASK: добавить класс Location вместо Point, и Location.Center как (0, 0).
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
@@ -35,8 +35,7 @@ namespace Game.Core {
 
 
         public static void Main(string[] args) {
-            // REFACTORING: вынести ToMulticoloredStringBuilders в конструктор ConsoleMenu.
-            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), menuOptions.ToMulticoloredStringBuilders());
+            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), menuOptions);
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).StringOptionName;
             if (selectedOption == menuOptions[0]) {

@@ -1,5 +1,4 @@
-﻿using Game.ExtensionMethods;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Printing;
@@ -7,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Game.ExtensionMethods;
 using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Types;
 
@@ -22,18 +22,19 @@ namespace Game.ConsoleDrawingEngine.Controls {
         public override ConsolePicture ConsolePicture { get; protected set; }
 
 
-        private readonly MulticoloredStringBuilder uncheckedBox = new MulticoloredStringBuilder("[*] ");
-        private readonly MulticoloredStringBuilder checkedBox = "[" + new ColoredString("*", ConsoleColor.Red) + "] ";
+        private static readonly MulticoloredStringBuilder uncheckedBox = new MulticoloredStringBuilder("[*] ");
+        private static readonly MulticoloredStringBuilder checkedBox = new MulticoloredStringBuilder("[") + new ColoredString("*", ConsoleColor.Red) + "] ";
 
 
         private int selectedOptionIndex = 0;
         public int SelectedOptionIndex {
             get => selectedOptionIndex;
             set {
-                if (value >= picture.Length) { throw new ArgumentOutOfRangeException(); }
+                if (value >= OptionsCount) { throw new ArgumentOutOfRangeException(); }
 
                 Uncheck(selectedOptionIndex);
-                Check(value);
+                selectedOptionIndex = value;
+                Check(selectedOptionIndex);
             }
         }
 
@@ -41,7 +42,6 @@ namespace Game.ConsoleDrawingEngine.Controls {
 
 
 
-        // REFACTORING: IEnumerable вместо IList?
         public ConsoleMenu(Point location, Size size, IList<MulticoloredStringBuilder> options) : base(location, size) {
             if (options.Count == 0) {
                 throw new ArgumentException("Меню обязано содержать пункты.");
@@ -56,6 +56,10 @@ namespace Game.ConsoleDrawingEngine.Controls {
             MenuOptions = this.menuOptions.AsReadOnly();
             picture = Render(menuOptions);
             ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
+            Check(selectedOptionIndex);
+        }
+        public ConsoleMenu(Point location, Size size, string[] options) : this(location, size, options.ToMulticoloredStringBuilder()) {
+
         }
 
 
@@ -64,13 +68,13 @@ namespace Game.ConsoleDrawingEngine.Controls {
         /// Смещает выделение пункта вверх, зацикленно.
         /// </summary>
         public void Up() {
-            SelectedOptionIndex = (SelectedOptionIndex + 1).ToRange(0, OptionsCount - 1);
+            SelectedOptionIndex = (SelectedOptionIndex + 1).ToRange(0, OptionsCount);
         }
         /// <summary>
         /// Смещает выделение пункта вниз, зацикленно.
         /// </summary>
         public void Down() {
-            SelectedOptionIndex = (SelectedOptionIndex - 1).ToRange(0, OptionsCount - 1);
+            SelectedOptionIndex = (SelectedOptionIndex - 1).ToRange(0, OptionsCount);
         }
 
 
@@ -89,7 +93,7 @@ namespace Game.ConsoleDrawingEngine.Controls {
             picture[option] = new MulticoloredStringBuilder(uncheckedBox + menuOptions[selectedOptionIndex]);
         }
         private void Check(int option) {
-            picture[option] = new MulticoloredStringBuilder(checkedBox + menuOptions[selectedOptionIndex]);
+            picture[option] = new MulticoloredStringBuilder(checkedBox + menuOptions[option]);
         }
 
     }
