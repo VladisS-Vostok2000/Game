@@ -6,8 +6,6 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game.ColoredCharsEngine {
-    // REFACTORING: Преобразовать в MulticoloredStringBuilder. При возвращении 
-    // этого класса из листа я не ожидаю, что изменения снаружи коснуться отправителя.
     /// <summary>
     /// Окрашенный в различные цвета текст.
     /// </summary>
@@ -48,15 +46,26 @@ namespace Game.ColoredCharsEngine {
             }
         }
 
-
-
-        public void Append(ColoredString coloredString) => ColoredStrings.Add(coloredString);
-        public void Append(MulticoloredStringBuilder multycoloredString) => ColoredStrings.AddRange(multycoloredString.ColoredStrings);
-        public void RemoveAt(int index) => ColoredStrings.RemoveAt(index);
+        /// <returns> Объект, к которому добавили строку. </returns>
+        public MulticoloredStringBuilder Append(ColoredString coloredString) {
+            ColoredStrings.Add(coloredString);
+            return this;
+        }
+        /// <returns> Объект, к которому добавили строку. </returns>
+        public MulticoloredStringBuilder Append(MulticoloredStringBuilder multicoloredString) {
+            ColoredStrings.AddRange(multicoloredString.ColoredStrings);
+            return this;
+        }
+        /// <returns> Объект, у которого удалили строку. </returns>
+        public MulticoloredStringBuilder RemoveAt(int index) {
+            ColoredStrings.RemoveAt(index);
+            return this;
+        }
 
 
         public IEnumerator<ColoredString> GetEnumerator() => ((IEnumerable<ColoredString>)ColoredStrings).GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)ColoredStrings).GetEnumerator();
+
         public void PadRight(int width) {
             int length = 0;
             foreach (var coloredString in ColoredStrings) {
@@ -71,6 +80,10 @@ namespace Game.ColoredCharsEngine {
             outMulticoloredString.Append(v1);
             outMulticoloredString.Append(v2);
             return outMulticoloredString;
+        }
+        public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, ColoredString v2) {
+            v1.Append(v2);
+            return v1;
         }
 
         public override string ToString() {

@@ -256,7 +256,7 @@ namespace Game.ExtensionMethods {
             }
             return outList;
         }
-        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuilders(this string[] array, ConsoleColor color = ConsoleColor.White) {
+        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuilder(this string[] array, ConsoleColor color = ConsoleColor.White) {
             var outList = new List<MulticoloredStringBuilder>();
             foreach (var str in array) {
                 outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
