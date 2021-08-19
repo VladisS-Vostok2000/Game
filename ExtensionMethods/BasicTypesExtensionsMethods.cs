@@ -45,6 +45,12 @@ namespace Game.ExtensionMethods {
         public static bool CloseTo(this Point value, Point target) => !(Math.Abs(value.Y - target.Y) > 1 || Math.Abs(value.X - target.X) > 1);
         #endregion
 
+        #region Size
+        public static bool IsEmptyOrFlat(this Size size) {
+            return size.Width == 0 || size.Height == 0;
+        }
+        #endregion
+
         #region Dictionary
         /// <summary>
         /// True, если пара из заданных ключа-значения содержится в заданном словаре.
@@ -289,6 +295,11 @@ namespace Game.ExtensionMethods {
         /// Создаст нередактируемое отражение <see cref="Array"/>.
         /// </summary>
         public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
+        public static bool Empty<T>(this T[] array) => array.Length == 0;
+
+        public static bool IsEmptyOrFlat<T>(this T[,] array) {
+            return array.GetUpperBound(0) == 0 || array.GetUpperBound(1) == 0;
+        }
         #endregion
 
         #region ICollection, IReadOnlyCollection

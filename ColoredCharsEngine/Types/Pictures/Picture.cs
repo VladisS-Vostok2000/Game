@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.ExtensionMethods;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,9 +11,21 @@ namespace Game.ColoredCharsEngine {
     /// Имеющий графическую интерпретацию объект.
     /// </summary>
     public abstract class Picture {
-        public Size Size { get; protected set; }
+        // ISSUE: Size должен быть private set, но нет возможности проверять null входных
+        // данных, не имеющих ISize.
+        public Size Size { get; private set; }
         public int Width => Size.Width;
         public int Height => Size.Height;
+
+
+
+        public Picture(Size size) {
+            if (size.IsEmptyOrFlat()) {
+                throw new ArgumentException("Изображение должно иметь адекватный размер.", nameof(size));
+            }
+
+            Size = size;
+        }
 
     }
 }
