@@ -21,7 +21,7 @@ namespace Game.Core {
         private static ConsoleColor defaultColor = ConsoleColor.White;
         private static ConsoleColor hightlitedMenuOptionColor = ConsoleColor.Red;
         private static string rulesPath = @"rules.ini";
-        private static string mapPath = @"map.txt";
+        private static string mapPath = @"map.ini";
 
         private static string buttonsArrows = @"[→] [←] [↑] [↓]";
         private static string buttonEnter = "[Enter]";
