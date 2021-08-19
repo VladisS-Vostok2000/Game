@@ -18,11 +18,18 @@ namespace Game.Core {
         public Route() { }
         ///
         /// <exception cref="ArgumentException"></exception>
-        public Route(IList<Point> sourse) { AddRange(sourse); }
+        public Route(IList<Point> sourse) {
+            try {
+                AddRange(sourse);
+            }
+            catch (RouteInvalidArgumentException riae) {
+                throw riae;
+            }
+        }
 
 
 
-        public Point this[int index] => route[index];
+        public Point this[int index] => Empty ? throw new InvalidOperationException("Маршрут пуст.") : route[index];
 
 
         /// 
@@ -42,23 +49,59 @@ namespace Game.Core {
         /// 
         /// <exception cref="RouteInvalidArgumentException"></exception>
         public void AddRange(IList<Point> points) {
-            for (int i = 0; i < points.Count - 1; i++) {
-                bool valid = points[i].CloseTo(points[i + 1]);
-                if (!valid) {
-                    throw new RouteInvalidArgumentException("Точки маршрута не представляют собой непрерывного пути.", points);
-                }
-            }
-        }
+            if (points.Empty()) { return; }
 
+            if (!Empty && !route.Last().CloseTo(points[0])) {
+                throw new RouteInvalidArgumentException("Маршруты не стыкуются.", points);
+            }
+
+            if (!PointsContinual(points)) {
+                throw new RouteInvalidArgumentException("Маршрут не последователен.", points);
+            }
+
+            route.AddRange(points);
+        }
+        /// <summary>
+        /// Возвращает, удаляя из списка, следующую точку маршрута.
+        /// </summary>
+        /// <exception cref="InvalidOperationException"></exception>
         public Point Pop() {
+            if (Empty) {
+                throw new InvalidOperationException("Маршрут пуст.");
+            }
+
             var out_value = route[0];
             route.RemoveAt(0);
             return out_value;
         }
-        public void Overwrite(Route newRoute) => route = newRoute.route.ToList();
-        internal void RemoveLast() {
+        /// <summary>
+        /// Копирует точки маршрута с заданного <see cref="Route"/>, удаляя прежние.
+        /// </summary>
+        public void Overwrite(Route newRoute) {
+            route.Clear();
+            route.AddRange(newRoute.route);
+        }
+        public void RemoveLast() {
             if (Empty) { throw new InvalidOperationException(); }
             route.RemoveLastItem();
+        }
+
+
+        // ISSUE: перенести в другое место?
+        /// <summary>
+        /// True, если все точки списка стоят вплотную друг к другу в одной из четырёх сторон.
+        /// </summary>
+        public static bool PointsContinual(IList<Point> points) {
+            if (points.Empty()) { return true; }
+
+            for (int i = 0; i < points.Count - 1; i++) {
+                bool valid = points[i].CloseTo(points[i + 1]);
+                if (!valid) {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
 
