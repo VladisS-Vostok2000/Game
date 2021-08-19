@@ -10,6 +10,8 @@ namespace Game.ColoredCharsEngine {
     /// Имеющий графическую интерпретацию объект.
     /// </summary>
     public abstract class Picture {
+        // ISSUE: Size должен быть private set, но нет возможности проверять null входных
+        // данных, не имеющих ISize.
         public Size Size { get; protected set; }
         public int Width => Size.Width;
         public int Height => Size.Height;
