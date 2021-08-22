@@ -13,17 +13,8 @@ namespace Game.ColoredCharsEngine {
 
 
 
-        public MulticoloredStringsPicture(MulticoloredStringBuilder[] picture) {
-            if (picture.Empty()) {
-                throw new ArgumentException("Изображение не может быть пустым.", nameof(picture));
-            }
-
-            if (!IsRectangular(picture)) {
-                throw new ArgumentException($"Заданный аргумент обязан быть прямоугольным.", nameof(picture));
-            }
-
+        public MulticoloredStringsPicture(MulticoloredStringBuilder[] picture) : base(GetSize(picture)) {
             this.picture = picture;
-            Size = new Size(picture[0].Length, picture.Length);
         }
 
 
@@ -52,6 +43,21 @@ namespace Game.ColoredCharsEngine {
 
             return true;
         }
+        public static Size GetSize(MulticoloredStringBuilder[] strings) {
+            // REFACTORNING: вынести исключения в базовый класс.
+            if (strings == null) {
+                throw new ArgumentNullException(nameof(strings));
+            }
+            if (strings.Empty()) {
+                throw new ArgumentException("Изображение не может быть пустым.", nameof(picture));
+            }
+            if (!IsRectangular(strings)) {
+                throw new ArgumentException($"Заданный аргумент обязан быть прямоугольным.", nameof(picture));
+            }
+
+            return new Size(strings[0].Length, strings.Length);
+        }
+
 
     }
 }

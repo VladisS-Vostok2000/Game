@@ -14,13 +14,12 @@ namespace Game.ColoredCharsEngine {
 
 
 
-        public ColoredCharsPicture(ColoredChar[,] picture) {
+        public ColoredCharsPicture(ColoredChar[,] picture) : base(GetSize(picture)) {
             if (picture.IsEmptyOrFlat()) {
                 throw new ArgumentException("Картинка обязана быть ненулевой.", nameof(picture));
             }
 
             this.picture = picture;
-            Size = new Size(picture.GetUpperBound(1) + 1, picture.GetUpperBound(0) + 1);
         }
 
 
@@ -32,6 +31,20 @@ namespace Game.ColoredCharsEngine {
 
                 return picture[x, y];
             }
+        }
+
+
+
+        public static Size GetSize(ColoredChar[,] chars) {
+            if (chars == null) {
+                throw new ArgumentNullException(nameof(chars));
+            }
+
+            if (chars.IsEmptyOrFlat()) {
+                throw new ArgumentException("Массив должен иметь корректные размеры.", nameof(chars));
+            }
+
+            return new Size(chars.GetUpperBound(1), chars.GetUpperBound(0));
         }
 
     }
