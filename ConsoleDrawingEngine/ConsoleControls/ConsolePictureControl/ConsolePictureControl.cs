@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
+using Game.ColoredCharsEngine.Types.Pictures;
 using Game.ConsoleDrawingEngine.Types;
+using Game.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Controls {
-    public sealed class ConsoleImage : ConsoleControl {
+    public class ConsolePictureControl : ConsoleControl {
         public override ConsolePicture ConsolePicture { get; protected set; }
 
 
 
-        public ConsoleImage(Point location, ConsolePicture consolePicture) : base(location, consolePicture.Picture.Size) {
+        public ConsolePictureControl(Point location, ConsolePicture consolePicture) : base(location, consolePicture.Picture.Size) {
             ConsolePicture = consolePicture;
         }
 

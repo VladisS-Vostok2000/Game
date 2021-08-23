@@ -14,6 +14,8 @@ namespace Game.ColoredCharsEngine {
         // ISSUE: Size должен быть private set, но нет возможности проверять null входных
         // данных, не имеющих ISize.
         public Size Size { get; private set; }
+
+
         public int Width => Size.Width;
         public int Height => Size.Height;
 

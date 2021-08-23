@@ -10,28 +10,42 @@ using static Game.ExtensionMethods.ConsoleExtensionMethods;
 using System.Collections.ObjectModel;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
 using Game.ConsoleDrawingEngine.Types;
+using Game.ConsoleDrawingEngine.ConsoleControls;
 
 namespace Game.ConsoleDrawingEngine {
     /// <summary>
     /// Инкапсулирует связь данных и консоли.
     /// </summary>
     public static class ConsoleScreen {
-        private static List<IConsoleDrawable> controls = new List<IConsoleDrawable>();
+        private static readonly List<IConsoleDrawable> controls = new List<IConsoleDrawable>();
         public static IReadOnlyList<IConsoleDrawable> Controls { get; } = controls.AsReadOnly();
+        private static readonly List<VoidPicture> removedControls = new List<VoidPicture>();
 
 
 
         public static void AddControl(ConsoleControl control) {
+            // TASK: проверка на пересечение контролов на экране.
             if (control == null) {
                 throw new ArgumentNullException(nameof(control));
             }
 
             controls.Add(control);
         }
-        public static bool RemoveControl(ConsoleControl control) => controls.Remove(control);
+        public static bool RemoveControl(ConsoleControl control) {
+            bool removed = controls.Remove(control);
+            if (!removed) {
+                return false;
+            }
 
+            removedControls.Add(new VoidPicture(control.Location, control.Size));
+            return true;
+        }
 
         public static void Render() {
+            foreach (var rControl in removedControls) {
+                rControl.VisualizeInConsole();
+            }
+
             foreach (var control in controls) {
                 control.VisualizeInConsole();
             }
