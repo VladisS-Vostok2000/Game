@@ -12,7 +12,16 @@ namespace Game.ColoredCharsEngine {
     // TODO: больше не принимает /r/n.
     public sealed class MulticoloredStringBuilder : IEnumerable<ColoredString> {
         private List<ColoredString> ColoredStrings { get; } = new List<ColoredString>();
-        public int Length { get; internal set; }
+        public int Length {
+            get {
+                int length = 0;
+                foreach (var str in ColoredStrings) {
+                    length += str.Length;
+                }
+                return length;
+            }
+        }
+
 
 
         public ColoredChar this[int index] {
@@ -46,33 +55,7 @@ namespace Game.ColoredCharsEngine {
             }
         }
 
-        /// <returns> Объект, к которому добавили строку. </returns>
-        public MulticoloredStringBuilder Append(ColoredString coloredString) {
-            ColoredStrings.Add(coloredString);
-            return this;
-        }
-        /// <returns> Объект, к которому добавили строку. </returns>
-        public MulticoloredStringBuilder Append(MulticoloredStringBuilder multicoloredString) {
-            ColoredStrings.AddRange(multicoloredString.ColoredStrings);
-            return this;
-        }
-        /// <returns> Объект, у которого удалили строку. </returns>
-        public MulticoloredStringBuilder RemoveAt(int index) {
-            ColoredStrings.RemoveAt(index);
-            return this;
-        }
 
-
-        public IEnumerator<ColoredString> GetEnumerator() => ((IEnumerable<ColoredString>)ColoredStrings).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)ColoredStrings).GetEnumerator();
-
-        public void PadRight(int width) {
-            int length = 0;
-            foreach (var coloredString in ColoredStrings) {
-                length += coloredString.Length;
-            }
-
-        }
 
         public static implicit operator MulticoloredStringBuilder(string v) => new MulticoloredStringBuilder(new ColoredString(v));
         public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, MulticoloredStringBuilder v2) {
@@ -85,6 +68,43 @@ namespace Game.ColoredCharsEngine {
             v1.Append(v2);
             return v1;
         }
+
+
+
+        public IEnumerator<ColoredString> GetEnumerator() => ((IEnumerable<ColoredString>)ColoredStrings).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)ColoredStrings).GetEnumerator();
+
+
+
+        ///
+        /// <returns> this. </returns>
+        public MulticoloredStringBuilder Append(ColoredString coloredString) {
+            ColoredStrings.Add(coloredString);
+            return this;
+        }
+        ///
+        /// <returns> this. </returns>
+        public MulticoloredStringBuilder Append(MulticoloredStringBuilder multicoloredString) {
+            ColoredStrings.AddRange(multicoloredString.ColoredStrings);
+            return this;
+        }
+        ///
+        /// <returns> this. </returns>
+        public MulticoloredStringBuilder RemoveAt(int index) {
+            ColoredStrings.RemoveAt(index);
+            return this;
+        }
+
+
+        public void PadRight(int width) {
+            int length = 0;
+            foreach (var coloredString in ColoredStrings) {
+                length += coloredString.Length;
+            }
+
+        }
+
+
 
         public override string ToString() {
             var sb = new StringBuilder();

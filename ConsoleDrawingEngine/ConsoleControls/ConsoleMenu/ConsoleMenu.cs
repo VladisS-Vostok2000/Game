@@ -11,6 +11,7 @@ using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Types;
 
 namespace Game.ConsoleDrawingEngine.Controls {
+    // ISSUE: убрать "console" из имён контролов?
     public sealed class ConsoleMenu : ConsoleControl {
         private List<MulticoloredStringBuilder> menuOptions;
         public IReadOnlyList<MulticoloredStringBuilder> MenuOptions { get; }

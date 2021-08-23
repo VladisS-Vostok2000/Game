@@ -85,7 +85,7 @@ namespace Game.Core {
 
 
 
-        public static Map InitializeMap(IDictionary<string, IDictionary<string, string>> rulesIni, IDictionary<string, IDictionary<string, string>> mapIni) {
+        public static GameMap InitializeMap(IDictionary<string, IDictionary<string, string>> rulesIni, IDictionary<string, IDictionary<string, string>> mapIni) {
             rulesIni.Remove(iniSectionMap);
             rulesIni.Remove((IDictionary<string, string> _section) => _section.TryGetValue(iniKeyType, out string type) && type == iniValueTypeUnit);
 
@@ -401,7 +401,7 @@ namespace Game.Core {
             }
             return outMap;
         }
-        private static Map InitializeMap(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
+        private static GameMap InitializeMap(IDictionary<string, IDictionary<string, string>> ini, Rules rules) {
             foreach (var section in ini) {
                 string sectionName = section.Key;
                 if (sectionName != iniSectionMap) {
@@ -412,13 +412,13 @@ namespace Game.Core {
 
                 // Обязательные параметры.
                 // REFACTORING: рассмотреть возможность сократить это.
-                Map map = default;
+                GameMap map = default;
                 try {
                     int width = int.Parse(mapSectionPairs[iniKeyMapWidth]);
                     int height = int.Parse(mapSectionPairs[iniKeyMapHeight]);
                     Landtile[,] mapLandtiles = ParseMap(mapSectionPairs[iniKeyMap], rules.Landtiles, width, height);
                     List<Unit> units = ParseUnits(ini, rules);
-                    map = new Map(mapLandtiles, rules, units);
+                    map = new GameMap(mapLandtiles, rules, units);
                 }
                 catch (KeyNotFoundException) { }
                 catch (FormatException) { }

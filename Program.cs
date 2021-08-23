@@ -7,15 +7,14 @@ using System.IO;
 using System.Drawing;
 using static Game.ExtensionMethods.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleScreen;
+using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using static System.Console;
 using Game.ConsoleDrawingEngine;
 using Game.ExtensionMethods;
-using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Controls;
 using Game.ConsoleDrawingEngine.Types;
 
 namespace Game.Core {
-    // TASK: добавить класс Location вместо Point, и Location.Center как (0, 0).
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static ConsoleColor defaultColor = ConsoleColor.White;
@@ -30,15 +29,22 @@ namespace Game.Core {
         private static string buttonDel = "[Del]";
 
         private const int padConst = 15;
-        private static Map map;
+        private static GameMap map;
+
+
+
+        static Program() {
+            menuOptions = PadRight(menuOptions);
+        }
 
 
 
         public static void Main(string[] args) {
-            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), menuOptions);
+            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), PadRight(menuOptions));
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).StringOptionName;
             if (selectedOption == menuOptions[0]) {
+                RemoveControl(consoleMenu);
                 StartGame(rulesPath, mapPath);
             }
             else
@@ -71,20 +77,16 @@ namespace Game.Core {
         }
 
 
-
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
 
-            AddControl(new ConsoleImage(Point.Empty, new ConsoleColoredCharsPicture(map.ConsolePicture)));
+            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(map.ConsolePicture)));
             Render();
 
-            throw new Exception();
             do {
-                PrintGameMenu();
+                // PrintGameMenu();
                 ConsoleKeyInfo input = ReadKey(true);
                 MaptileInfo selectedTileInfo = map.SelectedTile;
-                // Нет проверок на выделенный тайл,
-                // потому что играю от API.
                 if (input.Key == ConsoleKey.DownArrow) {
                     ++map.SelectedTileY;
                 }
@@ -131,13 +133,13 @@ namespace Game.Core {
                 }
             } while (true);
         }
-        private static Map InitializeMap(string rulesPath, string mapPath) {
+        private static GameMap InitializeMap(string rulesPath, string mapPath) {
             IDictionary<string, IDictionary<string, string>> rulesIni = Parser.IniParser.Parse(rulesPath);
             IDictionary<string, IDictionary<string, string>> mapIni = Parser.IniParser.Parse(mapPath);
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {
-            // TODO:
+            // TASK:
         }
         private static void PrintGameMenu() {
             MaptileInfo tileInfo = map.SelectedTile;

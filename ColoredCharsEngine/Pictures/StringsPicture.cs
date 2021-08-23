@@ -35,6 +35,12 @@ namespace Game.ColoredCharsEngine.Types.Pictures {
 
            return new Size(width, strings.Length);
         }
+        public IEnumerable<string> ToStrings() {
+            int i = 0;
+            foreach (var str in picture) {
+                yield return picture[i++];
+            }
+        }
 
     }
 }

@@ -10,7 +10,7 @@ using Game.ExtensionMethods;
 using Game.ColoredCharsEngine;
 
 namespace Game.Core {
-    public sealed class Map {
+    public sealed class GameMap {
         private const float speedPerTile = 20;
         private const float turnTimeTick = 1;
 
@@ -55,6 +55,7 @@ namespace Game.Core {
         public Unit SelectedUnit { get; private set; }
         public ICollection<Unit> Units { get; }
         public bool UnitSelected { get; private set; }
+        // TASK: public get только для IReadOnlyCollection.
         public ICollection<Point> SelectedUnitAvailableRoutes { get; private set; }
         private IList<Point> SelectedUnitTempRoute { get; set; }
         private float UnitTimeReservePerTurn = 5;
@@ -69,7 +70,7 @@ namespace Game.Core {
 
 
 
-        public Map(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
+        public GameMap(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
             Landtiles = landtiles;
             Rules = rules;
             Units = ExtractValidUnits(units).ToList();
