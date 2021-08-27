@@ -26,7 +26,7 @@ namespace Game.ExtensionMethods {
         }
 
         /// <summary>
-        /// True, если число лежит в заданном диапазоне включительно.
+        /// <see langword="true"/>, если число лежит в заданном диапазоне включительно.
         /// </summary>
         public static bool IsInRange(in this int target, in int lowerBound, in int upperBound) => target >= lowerBound && target <= upperBound;
         #endregion
@@ -40,7 +40,7 @@ namespace Game.ExtensionMethods {
 
         #region Point
         /// <summary>
-        /// True, если заданный <see cref="Point"/> с четырёх сторон к объекту вплотную.
+        /// <see langword="true"/>, если заданный <see cref="Point"/> с четырёх сторон к объекту вплотную.
         /// </summary>
         public static bool CloseTo(this Point value, Point target) => !(Math.Abs(value.Y - target.Y) > 1 || Math.Abs(value.X - target.X) > 1);
         #endregion
@@ -53,48 +53,48 @@ namespace Game.ExtensionMethods {
 
         #region Dictionary
         /// <summary>
-        /// True, если пара из заданных ключа-значения содержится в заданном словаре.
+        /// <see langword="true"/>, если пара из заданных ключа-значения содержится в заданном словаре.
         /// </summary>
         public static bool ContainsKeyValuePair<T1, T2>(this IDictionary<T1, T2> dic, T1 key, T2 value) where T1 : IEquatable<T1> where T2 : IEquatable<T1> =>
             dic.ContainsKey(key) && dic[key].Equals(value);
 
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out int result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && int.TryParse(strResult, out result);
         }
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out float result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && float.TryParse(strResult, out result);
         }
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out long result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && long.TryParse(strResult, out result);
         }
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out char result) {
             result = default;
             return pairs.TryGetValue(key, out string strResult) && char.TryParse(strResult, out result);
         }
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out string result) {
             result = default;
             return pairs.TryGetValue(key, out result);
         }
         /// <summary>
-        /// True, если элемент содержится в коллекции и удачно спарсен.
+        /// <see langword="true"/>, если элемент содержится в коллекции и удачно спарсен.
         /// </summary>
         public static bool TryParseValue<T>(this IDictionary<T, string> pairs, T key, out ConsoleColor result) {
             result = default;
@@ -132,7 +132,7 @@ namespace Game.ExtensionMethods {
         /// <summary>
         /// Удаляет определяемый делегатом элемент.
         /// </summary>
-        /// <returns> True, если элемент был удалён. </returns>
+        /// <returns> <see langword="true"/>, если элемент был удалён. </returns>
         public static bool Remove<T1, T2, T3>(this IDictionary<T1, IDictionary<T2, T3>> dictionary, Predicate<IDictionary<T2, T3>> predicate) {
             foreach (var pairs in dictionary) {
                 if (predicate(pairs.Value)) {
@@ -207,7 +207,7 @@ namespace Game.ExtensionMethods {
         /// Возвращает проходящий по строкам перечислитель заданного текста.
         /// </summary>
         public static IEnumerable<string> SplitToLines(this string input, StringSplitOptions stringSplitOptions = StringSplitOptions.None) {
-            if (input == null) { throw new ArgumentNullException($"{nameof(input)} был null."); }
+            if (input is null) { throw new ArgumentNullException($"{nameof(input)} был null."); }
 
 
             using (var reader = new StringReader(input)) {
@@ -304,17 +304,17 @@ namespace Game.ExtensionMethods {
 
         #region ICollection, IReadOnlyCollection
         /// <summary>
-        /// True, если коллекция пуста.
+        /// <see langword="true"/>, если коллекция пуста.
         /// </summary>
         public static bool Empty<T>(this ICollection<T> sourse) => sourse.Count == 0;
 
         /// <summary>
-        /// True, если коллекция пуста.
+        /// <see langword="true"/>, если коллекция пуста.
         /// </summary>
         public static bool Empty<T>(this IReadOnlyCollection<T> sourse) => sourse.Count == 0;
 
         /// <summary>
-        /// True, если содержит определяемое делегатом значение.
+        /// <see langword="true"/>, если содержит определяемое делегатом значение.
         /// </summary>
         public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
             foreach (var item in colletion) {
@@ -360,6 +360,27 @@ namespace Game.ExtensionMethods {
             }
             collection.Remove(removingItem);
         }
+
+        /// <summary>
+        /// <see langword="true"/>, если все элементы последовательности равны между собой.
+        /// </summary>
+        public static bool IsEven<T>(this IList<T> list) where T : IEquatable<T> {
+            if (list.Empty()) {
+                throw new ArgumentException("Коллекция пуста.");
+            }
+            if (list.Count == 1) {
+                return true;
+            }
+
+            for (int i = 0; i < list.Count - 1; i++) {
+                if (!list[i].Equals(list[i + 1])) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
         #endregion
 
     }

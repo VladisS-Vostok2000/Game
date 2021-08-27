@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 
 namespace Game.ColoredCharsEngine {
     public class MulticoloredStringsPicture : Picture {
@@ -26,26 +27,9 @@ namespace Game.ColoredCharsEngine {
         }
 
 
-        /// <summary>
-        /// True, если заданный массив на печати прямоуголен или пуст.
-        /// </summary>
-        public static bool IsRectangular(MulticoloredStringBuilder[] mSBs) {
-            if (mSBs.Empty()) {
-                return true;
-            }
-
-            int width = mSBs[0].Length;
-            foreach (var mSB in mSBs) {
-                if (mSB.Length != width) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
         public static Size GetSize(MulticoloredStringBuilder[] strings) {
             // REFACTORNING: вынести исключения в базовый класс.
-            if (strings == null) {
+            if (strings is null) {
                 throw new ArgumentNullException(nameof(strings));
             }
             if (strings.Empty()) {
@@ -57,7 +41,6 @@ namespace Game.ColoredCharsEngine {
 
             return new Size(strings[0].Length, strings.Length);
         }
-
 
     }
 }

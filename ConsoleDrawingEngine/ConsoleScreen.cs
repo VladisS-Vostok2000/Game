@@ -25,7 +25,7 @@ namespace Game.ConsoleDrawingEngine {
 
         public static void AddControl(ConsoleControl control) {
             // TASK: проверка на пересечение контролов на экране.
-            if (control == null) {
+            if (control is null) {
                 throw new ArgumentNullException(nameof(control));
             }
 

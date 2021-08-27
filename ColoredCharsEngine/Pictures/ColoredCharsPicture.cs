@@ -36,7 +36,7 @@ namespace Game.ColoredCharsEngine {
 
 
         public static Size GetSize(ColoredChar[,] chars) {
-            if (chars == null) {
+            if (chars is null) {
                 throw new ArgumentNullException(nameof(chars));
             }
 

@@ -13,7 +13,7 @@ namespace Game.ColoredCharsEngine {
         /// Возвращает проходящий по строкам перечислитель заданного текста.
         /// </summary>
         public static IEnumerable<MulticoloredStringBuilder> SplitToLines(this MulticoloredStringBuilder value) {
-            if (value == null) { throw new ArgumentNullException($"{nameof(value)} был null."); }
+            if (value is null) { throw new ArgumentNullException($"{nameof(value)} был null."); }
 
             var outColoredText = new MulticoloredStringBuilder();
             foreach (var coloredString in value) {

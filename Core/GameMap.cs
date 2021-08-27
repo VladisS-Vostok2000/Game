@@ -119,7 +119,7 @@ namespace Game.Core {
 
         public void SelectUnit() {
             Unit unit = GetUnitOrNull(SelectedTileLocation);
-            if (unit == null || unit.Team != CurrentTeam) { return; }
+            if (unit is null || unit.Team != CurrentTeam) { return; }
 
             SelectedUnit = unit;
             UnitSelected = true;

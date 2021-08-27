@@ -7,11 +7,11 @@ using Game.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Controls {
     public class ConsolePictureControl : ConsoleControl {
-        public override ConsolePicture ConsolePicture { get; protected set; }
+        public override ConsolePicture ConsolePicture { get; }
 
 
 
-        public ConsolePictureControl(Point location, ConsolePicture consolePicture) : base(location, consolePicture.Picture.Size) {
+        public ConsolePictureControl(Point location, ConsolePicture consolePicture) : base(location) {
             ConsolePicture = consolePicture;
         }
 

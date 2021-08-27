@@ -40,7 +40,7 @@ namespace Game.Core {
 
 
         public static void Main(string[] args) {
-            var consoleMenu = new ConsoleMenu(Point.Empty, new Size(15, 2), PadRight(menuOptions));
+            var consoleMenu = new ConsoleMenu(Point.Empty, PadRight(menuOptions));
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).StringOptionName;
             if (selectedOption == menuOptions[0]) {
