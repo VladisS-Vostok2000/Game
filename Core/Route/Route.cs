@@ -89,7 +89,7 @@ namespace Game.Core {
 
         // ISSUE: перенести в другое место?
         /// <summary>
-        /// True, если все точки списка стоят вплотную друг к другу в одной из четырёх сторон.
+        /// <see langword="true"/>, если все точки списка стоят вплотную друг к другу в одной из четырёх сторон.
         /// </summary>
         public static bool PointsContinual(IList<Point> points) {
             if (points.Empty()) { return true; }

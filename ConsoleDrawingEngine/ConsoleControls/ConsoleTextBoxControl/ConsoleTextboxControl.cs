@@ -8,27 +8,25 @@ using Game.ConsoleDrawingEngine.Types;
 using Game.ColoredCharsEngine;
 
 namespace Game.ConsoleDrawingEngine.Controls {
-    public sealed class ColoredCharTextbox : ConsoleControl {
+    public sealed class ConsoleTextboxControl : ConsoleControl {
+        public override ConsolePicture ConsolePicture { get; }
 
-        
 
-        public ColoredCharTextbox(Point location, Size size, MulticoloredStringBuilder text) : base(location, size) {
-            if (size.Width < 0 || size.Height < 0) {
-                throw new ConsoleTextBoxInvalidArgumentException($"Некорректные размеры контрола.", size);
-            }
+        private MulticoloredStringBuilder[] picture;
 
-            ConsolePicture = new ConsoleMulticoloredStringsPicture(Render(text));
+        public ConsoleTextboxControl(Point location, MulticoloredStringBuilder text) : base(location) {
+            picture = Render(text);
+            ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
         }
 
 
 
-        private MulticoloredStringsPicture Render(MulticoloredStringBuilder text) {
-            ColoredCharsPicture outPicture;
+        private MulticoloredStringBuilder[] Render(MulticoloredStringBuilder text) {
             MulticoloredStringBuilder[] arrangedText = new MulticoloredStringBuilder[Height];
             int lineIndex = 0;
             WriteMultycoloredText();
             PadArrangedText();
-            return new MulticoloredStringsPicture(arrangedText);
+            return arrangedText;
 
             void WriteMultycoloredText() {
                 foreach (var multycoloredLine in text.SplitToLines()) {

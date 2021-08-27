@@ -8,7 +8,7 @@
 //namespace Game.ConsoleDrawingEngine {
 //	public static class SystemDrawingExtensionMethods {
 //		/// <summary>
-//		/// True, если заданный <see cref="Rectangle"/> полностью лежит в прямоугольнике.
+//		/// <see langword="true"/>, если заданный <see cref="Rectangle"/> полностью лежит в прямоугольнике.
 //		/// </summary>
 //		/// <param name="rectangle"></param>
 //		/// <param name="target"></param>

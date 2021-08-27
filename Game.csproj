@@ -71,9 +71,9 @@
     <Compile Include="ColoredCharsEngine\Pictures\ColoredCharsPicture.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredChar.cs" />
     <Compile Include="ColoredCharsEngine\ExtensionMethods\ColoredStringExtensionMethods.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBox\ConsoleTextbox.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBox\Exceptions\ConsoleTextBoxException.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBox\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\ConsoleTextboxControl.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxException.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredString.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\Exceptions\ConsolePanelException.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\Exceptions\ConsolePanelInvalidArgumentException.cs" />

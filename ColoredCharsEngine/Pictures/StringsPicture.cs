@@ -19,7 +19,7 @@ namespace Game.ColoredCharsEngine.Types.Pictures {
 
 
         public static Size GetSize(string[] strings) {
-            if (strings == null) {
+            if (strings is null) {
                 throw new ArgumentNullException(nameof(strings));
             }
             if (strings.Empty()) {
