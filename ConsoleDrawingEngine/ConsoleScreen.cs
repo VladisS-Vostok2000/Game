@@ -19,7 +19,7 @@ namespace Game.ConsoleDrawingEngine {
     public static class ConsoleScreen {
         private static readonly List<IConsoleDrawable> controls = new List<IConsoleDrawable>();
         public static IReadOnlyList<IConsoleDrawable> Controls { get; } = controls.AsReadOnly();
-        private static readonly List<VoidPicture> removedControls = new List<VoidPicture>();
+        private static readonly List<ConsoleVoidControl> removedControls = new List<ConsoleVoidControl>();
 
 
 
@@ -37,7 +37,7 @@ namespace Game.ConsoleDrawingEngine {
                 return false;
             }
 
-            removedControls.Add(new VoidPicture(control.Location, control.Size));
+            removedControls.Add(new ConsoleVoidControl(control.Location, control.Size));
             return true;
         }
 

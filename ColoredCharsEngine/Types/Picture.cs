@@ -11,8 +11,6 @@ namespace Game.ColoredCharsEngine {
     /// Имеющий графическую интерпретацию объект.
     /// </summary>
     public abstract class Picture {
-        // ISSUE: Size должен быть private set, но нет возможности проверять null входных
-        // данных, не имеющих ISize.
         public Size Size { get; private set; }
 
 
@@ -21,7 +19,7 @@ namespace Game.ColoredCharsEngine {
 
 
 
-        public Picture(Size size) {
+        protected Picture(Size size) {
             if (size.IsEmptyOrFlat()) {
                 throw new ArgumentException("Изображение должно иметь адекватный размер.", nameof(size));
             }

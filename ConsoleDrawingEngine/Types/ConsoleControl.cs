@@ -18,10 +18,6 @@ namespace Game.ConsoleDrawingEngine.Types {
 
 
 
-        //protected ConsoleControl(Point location, ConsolePicture consolePicture) {
-        //    Location = location;
-        //    //ConsolePicture = consolePicture;
-        //}
         protected ConsoleControl(Point location) {
             Location = location;
         }
