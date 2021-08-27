@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ExtensionMethods;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.Core {
     public class Route : IEnumerable<Point> {

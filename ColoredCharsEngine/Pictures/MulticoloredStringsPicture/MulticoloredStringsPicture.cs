@@ -1,11 +1,12 @@
-﻿using Game.ConsoleDrawingEngine;
+﻿using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.ConsoleDrawingEngine;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 
 namespace Game.ColoredCharsEngine {

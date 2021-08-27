@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Game.ColoredCharsEngine.Types.Pictures;
 using Game.ConsoleDrawingEngine.Types;
-using Game.ExtensionMethods;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Controls {
     public class ConsolePictureControl : ConsoleControl {

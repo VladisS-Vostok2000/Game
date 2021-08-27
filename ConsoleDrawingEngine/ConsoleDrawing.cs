@@ -4,10 +4,10 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ExtensionMethods;
 using Game.ColoredCharsEngine;
 using static System.Console;
-using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine {
     public static class ConsoleDrawing {

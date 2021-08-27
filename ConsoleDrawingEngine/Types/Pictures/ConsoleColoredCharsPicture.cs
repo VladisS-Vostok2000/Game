@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using Game.ConsoleDrawingEngine;
-using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
 
 namespace Game.ConsoleDrawingEngine.Types {
@@ -25,6 +25,8 @@ namespace Game.ConsoleDrawingEngine.Types {
                 for (int c = 0; c < width; c++) {
                     WriteColored(s[r, c]);
                 }
+                CursorLeft = location.X;
+                CursorTop++;
             }
         }
 

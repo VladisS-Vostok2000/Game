@@ -12,7 +12,7 @@ using Game.ColoredCharsEngine;
 // REFACTORING: необходимо расчленить этот класс на несколько, потому что
 // в нём собраны методы расширения со всех библиотек.
 // Ожидается: ConsoleDrawingEngine.
-namespace Game.ExtensionMethods {
+namespace Game.BasicTypesLibrary.ExtensionMethods {
     public static class BasicTypesExtensionsMethods {
 
         #region Int32
@@ -295,6 +295,10 @@ namespace Game.ExtensionMethods {
         /// Создаст нередактируемое отражение <see cref="Array"/>.
         /// </summary>
         public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
+        /// <summary>
+        /// Создаст нередактируемое отражение <see cref="Array"/>.
+        /// </summary>
+        public static ReadOnlyDoubleDemensionArray<T> AsReadOnly<T>(this T[,] array) => new ReadOnlyDoubleDemensionArray<T>(array);
         public static bool Empty<T>(this T[] array) => array.Length == 0;
 
         public static bool IsEmptyOrFlat<T>(this T[,] array) {

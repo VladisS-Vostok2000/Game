@@ -6,10 +6,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Game.ExtensionMethods;
 using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Types;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Controls {
     // TASK: переименовать контролы в Console + name + Control.

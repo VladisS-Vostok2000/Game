@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game {
+namespace Game.BasicTypesLibrary {
     public sealed class ReadOnlyArray<T> : IReadOnlyList<T> {
         private T[] array;
         public int Count => array.Length;
@@ -20,7 +20,7 @@ namespace Game {
 
         public T this[int index] {
             get {
-                try {  return array[index]; }
+                try { return array[index]; }
                 catch (IndexOutOfRangeException) { throw; }
             }
         }
@@ -29,6 +29,6 @@ namespace Game {
 
         public IEnumerator<T> GetEnumerator() => (IEnumerator<T>)array.GetEnumerator();
         IEnumerator IEnumerable.GetEnumerator() => array.GetEnumerator();
-        
+
     }
 }

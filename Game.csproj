@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicTypesLibrary\ReadOnlyDoubleDemensionArray.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\SingleCharPicture.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\StringsPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
@@ -66,6 +67,7 @@
     <Compile Include="ConsoleDrawingEngine\Types\ConsoleControl.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleSingleCharPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleStringsPicture.cs" />
+    <Compile Include="Core\LandMap.cs" />
     <Compile Include="Core\Route\RouteException.cs" />
     <Compile Include="Core\Route\RouteInvalidArgumentException.cs" />
     <Compile Include="Core\Route\RouteInvalidOperationException.cs" />
@@ -83,12 +85,12 @@
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\ConsolePanel.cs" />
     <Compile Include="Core\Chassis.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleDrawing.cs" />
-    <Compile Include="ExtensionMethods\ConsoleExtensionMethods.cs" />
+    <Compile Include="BasicTypesLibrary\ExtensionMethods\ConsoleExtensionMethods.cs" />
     <Compile Include="ColoredCharsEngine\Types\Picture.cs" />
     <Compile Include="Other\Dumb.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleScreen.cs" />
     <Compile Include="Core\Engine.cs" />
-    <Compile Include="ExtensionMethods\BasicTypesExtensionsMethods.cs" />
+    <Compile Include="BasicTypesLibrary\ExtensionMethods\BasicTypesExtensionsMethods.cs" />
     <Compile Include="Parser\IniParser.cs" />
     <Compile Include="Parser\PointListParser.cs" />
     <Compile Include="Core\GameMap.cs" />
@@ -100,7 +102,7 @@
     <Compile Include="Core\Projectile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\NamedRoute.cs" />
-    <Compile Include="Other\Collections\ReadOnlyArray.cs" />
+    <Compile Include="BasicTypesLibrary\ReadOnlyArray.cs" />
     <Compile Include="Core\Route\Route.cs" />
     <Compile Include="Core\Rules.cs" />
     <Compile Include="Core\Initializator\RulesInitializator.cs" />
