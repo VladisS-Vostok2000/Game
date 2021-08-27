@@ -1,5 +1,4 @@
 ﻿using Game.ConsoleDrawingEngine.Types;
-using Game.ExtensionMethods;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,8 +7,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.ColoredCharsEngine.Pictures;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
-using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
-using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
 using static System.Console;
 using Game.ConsoleDrawingEngine.Types.Pictures;
 

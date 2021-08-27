@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Game.ExtensionMethods;
+using Game.BasicTypesLibrary.ExtensionMethods;
 using System.Drawing;
 
-namespace Parser {
+namespace Game.Parser {
     public static class PointListParser {
         /// <summary>
         /// Возвращает <see cref="List{T}}"/> <see cref="Point"/>.
@@ -15,7 +15,7 @@ namespace Parser {
         /// </summary>
         public static List<Point> ParsePouintList(string sourse) {
             var outList = new List<Point>();
-            
+
             var stringPoints = new List<string>();
             for (int levelIndex = sourse.IndexOf('{') + 1; levelIndex < sourse.Length; levelIndex++) {
                 char letter = sourse[levelIndex];

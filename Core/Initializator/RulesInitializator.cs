@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Game.ExtensionMethods;
 using System.Drawing;
-using Parser;
 using Game.ConsoleDrawingEngine;
+using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.Parser;
 
 namespace Game.Core {
     /// <summary>
@@ -418,7 +418,7 @@ namespace Game.Core {
                     int height = int.Parse(mapSectionPairs[iniKeyMapHeight]);
                     Landtile[,] mapLandtiles = ParseMap(mapSectionPairs[iniKeyMap], rules.Landtiles, width, height);
                     List<Unit> units = ParseUnits(ini, rules);
-                    map = new GameMap(mapLandtiles, rules, units);
+                    map = new GameMap(new LandMap(mapLandtiles), rules, units);
                 }
                 catch (KeyNotFoundException) { }
                 catch (FormatException) { }

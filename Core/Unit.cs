@@ -4,8 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ExtensionMethods;
 using Game.ColoredCharsEngine;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.Core {
     public sealed class Unit {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Game.ExtensionMethods;
 using System.Drawing;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
-namespace Parser {
+namespace Game.Parser {
     public static class IniParser {
         public static IDictionary<string, IDictionary<string, string>> Parse(string filePath) {
             var outIniData = new Dictionary<string, IDictionary<string, string>>();
@@ -74,7 +74,7 @@ namespace Parser {
 
             return outIniData;
         }
-            
+
         private static string RemoveComment(string line) {
             string outString = "";
             for (int i = 0; i < line.Length; i++) {
@@ -87,8 +87,8 @@ namespace Parser {
             return outString;
         }
         private static string ExtractIniSectionName(string _parcedLine) => _parcedLine.Substring(1, _parcedLine.Length - 2);
-        private static bool IsIniSection(string line) => line[0] == '[' && line.Count((char chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((char chr) => chr == ']') == 1 && !line.Contains('=');
-        private static bool IsIniKey(string line) => line.Count((char chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
+        private static bool IsIniSection(string line) => line[0] == '[' && line.Count((chr) => chr == '[') == 1 && line[line.Length - 1] == ']' && line.Count((chr) => chr == ']') == 1 && !line.Contains('=');
+        private static bool IsIniKey(string line) => line.Count((chr) => chr == '=') == 1 && !line.Contains('[') && !line.Contains(']');
         private static bool IsIniValue(string line) => !line.Contains('=') && !line.Contains('[') && !line.Contains(']');
 
     }

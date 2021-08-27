@@ -5,14 +5,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleScreen;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using static System.Console;
 using Game.ConsoleDrawingEngine;
-using Game.ExtensionMethods;
 using Game.ConsoleDrawingEngine.Controls;
 using Game.ConsoleDrawingEngine.Types;
+using Game.Parser;
 
 namespace Game.Core {
     public static class Program {
@@ -80,11 +80,10 @@ namespace Game.Core {
         private static void StartGame(string rulesPath, string mapPath) {
             map = InitializeMap(rulesPath, mapPath);
 
-            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(map.ConsolePicture)));
+            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(map.Picture)));
             Render();
 
             do {
-                // PrintGameMenu();
                 ConsoleKeyInfo input = ReadKey(true);
                 MaptileInfo selectedTileInfo = map.SelectedTile;
                 if (input.Key == ConsoleKey.DownArrow) {
@@ -134,8 +133,8 @@ namespace Game.Core {
             } while (true);
         }
         private static GameMap InitializeMap(string rulesPath, string mapPath) {
-            IDictionary<string, IDictionary<string, string>> rulesIni = Parser.IniParser.Parse(rulesPath);
-            IDictionary<string, IDictionary<string, string>> mapIni = Parser.IniParser.Parse(mapPath);
+            IDictionary<string, IDictionary<string, string>> rulesIni = IniParser.Parse(rulesPath);
+            IDictionary<string, IDictionary<string, string>> mapIni = IniParser.Parse(mapPath);
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
         private static void PrintMapScreen() {

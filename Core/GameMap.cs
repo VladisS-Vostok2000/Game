@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using Parser;
-using Game.ExtensionMethods;
+using Game.Parser;
 using Game.ColoredCharsEngine;
+using System.Windows.Forms;
+using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.Core {
     public sealed class GameMap {
@@ -15,16 +16,13 @@ namespace Game.Core {
         private const float turnTimeTick = 1;
 
 
-        public int Width => Landtiles.GetUpperBound(0) + 1;
-        public int Height => Landtiles.GetUpperBound(1) + 1;
+        public int Width => LandMap.Width;
+        public int Height => LandMap.Height;
         public int Square => Width * Height;
-        public Size Size => new Size(Width, Height);
+        public Size Size => LandMap.Size;
 
 
-        // REFACTORING: на самом деле класс, инкапсулирующий поле ниже
-        // это и есть Map.cs. Нужно расчленить этот, т.к. не очевидно,
-        // почему карта содержит огромную часть бизнес-логики.
-        public Landtile[,] Landtiles { get; }
+        public LandMap LandMap { get; }
         public Rules Rules { get; }
 
 
@@ -65,18 +63,19 @@ namespace Game.Core {
         public Team CurrentTeam { get; private set; }
 
 
-        private ColoredChar[,] coloredCharsPicture;
-        public ColoredCharsPicture ConsolePicture { get; }
+        private ColoredChar[,] picture;
+        public ColoredCharsPicture Picture { get; }
 
 
 
-        public GameMap(Landtile[,] landtiles, Rules rules, IList<Unit> units) {
-            Landtiles = landtiles;
+        public GameMap(LandMap landMap, Rules rules, IList<Unit> units) {
+            LandMap = landMap;
             Rules = rules;
             Units = ExtractValidUnits(units).ToList();
             CurrentTeam = rules.Teams[0];
-            coloredCharsPicture = new ColoredChar[landtiles.GetUpperBound(0), landtiles.GetUpperBound(1)];
-            ConsolePicture = new ColoredCharsPicture(coloredCharsPicture);
+            picture = new ColoredChar[landMap.Width, landMap.Height];
+            Picture = new ColoredCharsPicture(picture);
+            Render();
         }
 
 
@@ -86,7 +85,7 @@ namespace Game.Core {
                 // REFACTORING: повторяющийся код.
                 if (UnitSelected) {
                     return new MaptileInfo(
-                        Landtiles[x, y],
+                        LandMap[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
                         GetColoredChar(x, y),
@@ -97,7 +96,7 @@ namespace Game.Core {
                 }
                 else {
                     return new MaptileInfo(
-                        Landtiles[x, y],
+                        LandMap[x, y],
                         new Point(x, y),
                         null,
                         GetColoredChar(x, y),
@@ -231,7 +230,7 @@ namespace Game.Core {
 
                     lockedTiles.Add(nextWayLocation);
 
-                    Landtile nextTile = Landtiles[nextWayLocation.X, nextWayLocation.Y];
+                    Landtile nextTile = LandMap[nextWayLocation.X, nextWayLocation.Y];
                     float spentTimeToReachedTile = UnitTimeSpentOnTile(nextTile.Name, unit);
                     bool enoughtTime = unit.TimeReserve >= spentTimeToReachedTile;
                     if (!enoughtTime) { break; }
@@ -274,31 +273,36 @@ namespace Game.Core {
         #endregion
 
 
-        public ColoredChar ToCharPicture(Point location) => GetColoredChar(location.X, location.Y);
+        public ColoredChar GetColoredChar(Point location) => GetColoredChar(location.X, location.Y);
         public ColoredChar GetColoredChar(int x, int y) {
+            bool indexCorrect = LandMap.CorrectIndexation(x, y);
+            if (!indexCorrect) {
+                throw new ArgumentOutOfRangeException();
+            }
+
             var unit = GetUnitOrNull(x, y);
-            return unit != null ? unit.ColoredChar : Landtiles[x, y].ColoredChar;
+            return unit != null ? unit.ColoredChar : LandMap[x, y].ColoredChar;
         }
 
 
 
-        private void RefreshColoredCharPicture() {
+        private void Render() {
             for (int r = 0; r < Height; r++) {
                 for (int c = 0; c < Width; c++) {
-                    // REFACTORING: сделать тут интерфейс и не обращаться к MaptileInfo?
-                    coloredCharsPicture[c, r] = ToCharPicture(new Point(c, r));
+                    // ISSUE: сделать тут интерфейс и не обращаться к MaptileInfo?
+                    picture[c, r] = GetColoredChar(new Point(c, r));
                 }
             }
 
             if (UnitSelected) {
-                ChangeColors(coloredCharsPicture, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
-                ChangeColors(coloredCharsPicture, SelectedUnit.GetRoute(), unitRouteColor);
-                ChangeColors(coloredCharsPicture, SelectedUnitTempRoute, unitRouteColor);
-                coloredCharsPicture[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
+                ChangeColors(picture, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
+                ChangeColors(picture, SelectedUnit.GetRoute(), unitRouteColor);
+                ChangeColors(picture, SelectedUnitTempRoute, unitRouteColor);
+                picture[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
             }
 
             // Подсвеченный тайл.
-            coloredCharsPicture[SelectedTileX, SelectedTileY].Color = selectedTileColor;
+            picture[SelectedTileX, SelectedTileY].Color = selectedTileColor;
             return;
 
 
@@ -309,15 +313,7 @@ namespace Game.Core {
             }
         }
 
-
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
-
-
-        private bool TryGetLandtile(int landtileX, int landtileY, out Landtile landtile) {
-            bool correctIndexation = landtileX.IsInRange(0, Width - 1) && landtileY.IsInRange(0, Height - 1);
-            landtile = correctIndexation ? Landtiles[landtileX, landtileY] : default;
-            return correctIndexation;
-        }
 
 
         private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
@@ -333,7 +329,7 @@ namespace Game.Core {
 
             for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
                 Point way = route[i];
-                Landtile land = Landtiles[way.X, way.Y];
+                Landtile land = LandMap[way.X, way.Y];
                 remainingTime -= UnitTimeSpentOnTile(land.Name, unit);
             }
             return remainingTime;
@@ -360,7 +356,7 @@ namespace Game.Core {
             // Это довольно сложно реализовать, а также потребует память
             // и лишит преимущества простого распараллеливания.
             var outList = new List<Point>();
-            bool tileExists = TryGetLandtile(x, y, out Landtile landtile);
+            bool tileExists = LandMap.TryGetLandtile(x, y, out Landtile landtile);
             if (!tileExists) {
                 return outList;
             }

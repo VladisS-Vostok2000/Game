@@ -5,8 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
-using static Game.ExtensionMethods.BasicTypesExtensionsMethods;
-using static Game.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
 using Game.ColoredCharsEngine.Pictures;
 
