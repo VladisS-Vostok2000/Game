@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ColoredCharsEngine\Pictures\SingleCharPicture.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\StringsPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleList.cs" />
@@ -52,7 +53,7 @@
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenu\ConsoleMenu.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenu\ConsoleMenuOption.cs" />
     <Compile Include="ColoredCharsEngine\StaticMethods\GraphicsModificate.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\VoidPictureControl\VoidPicture.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\VoidPictureControl\ConsoleVoidControl.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleColoredCharsPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleMulticoloredStringsPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsolePicture.cs" />
@@ -63,6 +64,7 @@
     <Compile Include="ColoredCharsEngine\Pictures\MulticoloredStringsPicture\Exceptions\MuticoloredStringsPictureArgumentException.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\MulticoloredStringsPicture\MulticoloredStringsPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\ConsoleControl.cs" />
+    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleSingleCharPicture.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleStringsPicture.cs" />
     <Compile Include="Core\Route\RouteException.cs" />
     <Compile Include="Core\Route\RouteInvalidArgumentException.cs" />
