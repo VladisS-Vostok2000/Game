@@ -8,6 +8,11 @@ using Game.ColoredCharsEngine;
 using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.Core {
+    // REFACTORING: Подключить IDrawable, чтобы в GameMap использовать интерфейс, а не частный тип.
+    // Ну или как-то там наоборот, не ебу сейчас.
+    // ISSUE: сделать Unit отдельно от GameMap? А то как-то странно он прорисовывается.
+    // Сначала в GameMap, потом в буфере. Пусть живёт сам по себе?
+    // Тогда выделение тайла будет реализовано интересно точно.
     public sealed class Unit {
         public ColoredChar ColoredChar {
             get {
@@ -153,11 +158,16 @@ namespace Game.Core {
             route.RemoveLast();
         }
 
-        internal void GetAttacked(Warhead warhead) {
+        public void GetAttacked(Warhead warhead) {
             CurrentHP -= warhead.Damage;
             BodyCondition.CurrentHP -= warhead.Damage;
             ChassisCondition.CurrentHP -= warhead.Damage;
             FlashTimer += 2;
+        }
+
+
+        public override string ToString() {
+            return DisplayedName;
         }
 
     }

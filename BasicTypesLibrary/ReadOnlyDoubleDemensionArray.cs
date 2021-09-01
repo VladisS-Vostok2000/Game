@@ -11,7 +11,7 @@ namespace Game.BasicTypesLibrary {
 
 
 
-        public T this[int x, int y] => array[x, y];
+        public T this[int y, int x] => array[y, x];
 
 
 

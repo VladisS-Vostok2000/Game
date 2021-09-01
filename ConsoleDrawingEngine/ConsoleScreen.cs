@@ -45,6 +45,8 @@ namespace Game.ConsoleDrawingEngine {
                 rControl.VisualizeInConsole();
             }
 
+            removedControls.Clear();
+
             foreach (var control in controls) {
                 control.VisualizeInConsole();
             }

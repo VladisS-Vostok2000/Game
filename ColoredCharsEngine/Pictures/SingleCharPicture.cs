@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace Game.ColoredCharsEngine.Pictures {
+    // REFACTORING: переименовать в PlanePicture. SingleChar будет 1х1.
     public class SingleCharPicture : Picture {
         public char Char { get; }
         public SingleCharPicture(Size size, char character) : base(size) {

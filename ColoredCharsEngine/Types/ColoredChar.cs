@@ -16,5 +16,11 @@ namespace Game.ColoredCharsEngine {
             Color = color;
         }
 
+
+
+        public override string ToString() {
+            return Char.ToString();
+        }
+
     }
 }

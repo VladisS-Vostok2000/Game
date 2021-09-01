@@ -9,6 +9,9 @@ using Game.Parser;
 using Game.ColoredCharsEngine;
 using System.Windows.Forms;
 using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary;
+using System.Net.Http.Headers;
+using System.Runtime.InteropServices;
 
 namespace Game.Core {
     public sealed class GameMap {
@@ -27,17 +30,19 @@ namespace Game.Core {
 
 
         public Point SelectedTileLocation {
-            get => new Point(SelectedTileX, SelectedTileY);
+            get => new Point(selectedTileX, selectedTileY);
             set {
-                SelectedTileX = value.X;
-                SelectedTileY = value.Y;
+                selectedTileX = value.X.ToRange(0, Width);
+                selectedTileY = value.Y.ToRange(0, Height);
             }
         }
         private int selectedTileX;
         private int selectedTileY;
         public int SelectedTileX {
             get => selectedTileX;
-            set => selectedTileX = value.ToRange(0, Width);
+            set {
+                selectedTileX = value.ToRange(0, Width);
+            }
         }
         public int SelectedTileY {
             get => selectedTileY;
@@ -60,7 +65,21 @@ namespace Game.Core {
 
 
         private int currentTeamIndex;
-        public Team CurrentTeam { get; private set; }
+        private int CurrentTeamIndex {
+            get => currentTeamIndex;
+            set => currentTeamIndex = value.ToRange(0, Rules.Teams.Count());
+        }
+        public Team CurrentTeam {
+            get => Rules.Teams[currentTeamIndex];
+            private set {
+                var teamIndex = Rules.Teams.IndexOf(value);
+                if (teamIndex == -1) {
+                    throw new ArgumentException(nameof(value), "Заданная команда не найдена.");
+                }
+
+                currentTeamIndex = teamIndex;
+            }
+        }
 
 
         private ColoredChar[,] picture;
@@ -73,9 +92,9 @@ namespace Game.Core {
             Rules = rules;
             Units = ExtractValidUnits(units).ToList();
             CurrentTeam = rules.Teams[0];
-            picture = new ColoredChar[landMap.Width, landMap.Height];
+            picture = new ColoredChar[Height, Width];
             Picture = new ColoredCharsPicture(picture);
-            Render();
+            HardRender();
         }
 
 
@@ -83,12 +102,13 @@ namespace Game.Core {
         public MaptileInfo this[int x, int y] {
             get {
                 // REFACTORING: повторяющийся код.
+                // Преобразовать в immutable класс с наследованием?
                 if (UnitSelected) {
                     return new MaptileInfo(
                         LandMap[x, y],
                         new Point(x, y),
                         GetUnitOrNull(x, y),
-                        GetColoredChar(x, y),
+                        picture[y, x],
                         MaptileReachableForSelectedUnit(new Point(x, y)),
                         MaptileLocationAvailableForSelectedUnitTempMove(new Point(x, y)),
                         MaptileIsSelectedUnitWay(new Point(x, y))
@@ -99,7 +119,7 @@ namespace Game.Core {
                         LandMap[x, y],
                         new Point(x, y),
                         null,
-                        GetColoredChar(x, y),
+                        picture[y, x],
                         false,
                         false,
                         false
@@ -118,7 +138,9 @@ namespace Game.Core {
 
         public void SelectUnit() {
             Unit unit = GetUnitOrNull(SelectedTileLocation);
-            if (unit is null || unit.Team != CurrentTeam) { return; }
+            if (unit is null || unit.Team != CurrentTeam) {
+                return;
+            }
 
             SelectedUnit = unit;
             UnitSelected = true;
@@ -199,10 +221,9 @@ namespace Game.Core {
 
 
         #region Turn
-        public void PassTurn() {
+        public void ChangeTeam() {
             UnselectUnit();
-            currentTeamIndex = (currentTeamIndex + 1) % Rules.Teams.Count;
-            CurrentTeam = Rules.Teams[currentTeamIndex];
+            CurrentTeamIndex++;
         }
         public void MakeTurn() {
             MoveUnits(turnTimeTick);
@@ -273,68 +294,60 @@ namespace Game.Core {
         #endregion
 
 
-        public ColoredChar GetColoredChar(Point location) => GetColoredChar(location.X, location.Y);
-        public ColoredChar GetColoredChar(int x, int y) {
-            bool indexCorrect = LandMap.CorrectIndexation(x, y);
-            if (!indexCorrect) {
-                throw new ArgumentOutOfRangeException();
-            }
-
-            var unit = GetUnitOrNull(x, y);
-            return unit != null ? unit.ColoredChar : LandMap[x, y].ColoredChar;
-        }
-
-
-
-        private void Render() {
+        public void HardRender() {
             for (int r = 0; r < Height; r++) {
                 for (int c = 0; c < Width; c++) {
-                    // ISSUE: сделать тут интерфейс и не обращаться к MaptileInfo?
-                    picture[c, r] = GetColoredChar(new Point(c, r));
+                    picture[r, c] = LandMap[c, r].ColoredChar;
                 }
+            }
+
+            foreach (var unit in Units) {
+                picture[unit.Y, unit.X] = unit.ColoredChar;
             }
 
             if (UnitSelected) {
                 ChangeColors(picture, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
                 ChangeColors(picture, SelectedUnit.GetRoute(), unitRouteColor);
                 ChangeColors(picture, SelectedUnitTempRoute, unitRouteColor);
-                picture[SelectedUnit.Location.X, SelectedUnit.Location.Y].Color = selectedUnitRoutingColor;
+                picture[SelectedUnit.Location.Y, SelectedUnit.Location.X].Color = selectedUnitRoutingColor;
             }
 
-            // Подсвеченный тайл.
-            picture[SelectedTileX, SelectedTileY].Color = selectedTileColor;
+            picture[SelectedTileY, SelectedTileX].Color = selectedTileColor;
             return;
 
 
             void ChangeColors(ColoredChar[,] CharPictures, IEnumerable<Point> coordList, ConsoleColor color) {
                 foreach (var coord in coordList) {
-                    CharPictures[coord.X, coord.Y].Color = color;
+                    CharPictures[coord.Y, coord.X].Color = color;
                 }
             }
         }
+
 
         private IEnumerable<Unit> ExtractValidUnits(IEnumerable<Unit> units) => units.Distinct(new UnitLocationEqualsComparer());
 
 
         private List<Point> GetSelectedUnitAvailableRoutesPerTime(float timeReserve) {
-            timeReserve = GetSelectedUnitRemainingTempTime(SelectedUnit, timeReserve);
-            if (timeReserve <= 0) { return new List<Point>(); }
+            timeReserve = GetSelectedUnitRemainingTempTime(timeReserve);
+            if (timeReserve <= 0) {
+                return new List<Point>();
+            }
             Point unitTempLocation = GetSelectedUnitLastRoutePosition();
             return FindUnitAvailableRoutesPerTime(unitTempLocation, SelectedUnit, timeReserve);
         }
-        private float GetSelectedUnitRemainingTempTime(Unit unit, float timeReserve) {
-            float remainingTime = unit.TimeReserve + timeReserve;
-            var route = new List<Point>(unit.GetRoute());
+        private float GetSelectedUnitRemainingTempTime(float timeReserve) {
+            float remainingTime = SelectedUnit.TimeReserve + timeReserve;
+            var route = new List<Point>(SelectedUnit.GetRoute());
             route.AddRange(SelectedUnitTempRoute);
 
             for (int i = 0; i < route.Count() && remainingTime > 0; i++) {
                 Point way = route[i];
-                Landtile land = LandMap[way.X, way.Y];
-                remainingTime -= UnitTimeSpentOnTile(land.Name, unit);
+                Landtile land = LandMap[way];
+                remainingTime -= UnitTimeSpentOnTile(land.Name, SelectedUnit);
             }
             return remainingTime;
         }
-        private List<Point> FindUnitAvailableRoutesPerTime(in Point unitStartLocation, Unit unit, float timeReserve) {
+        private List<Point> FindUnitAvailableRoutesPerTime(Point unitStartLocation, Unit unit, float timeReserve) {
             var outList = new List<Point>();
             // REFACTORING: подключить многопоточность?
             outList.AddRange(GetUnitAvailableRoutesPerTimeWithTile(unitStartLocation.X + 1, unitStartLocation.Y, unit, timeReserve));
@@ -380,7 +393,9 @@ namespace Game.Core {
             return outList;
         }
         private void RefreshSelectedUnitAwailableRoutes() {
-            if (!UnitSelected) { throw new Exception(); }
+            if (!UnitSelected) {
+                throw new Exception();
+            }
             SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
 
         }

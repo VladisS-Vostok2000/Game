@@ -16,21 +16,26 @@ namespace Game.ColoredCharsEngine {
 
 
         public ColoredCharsPicture(ColoredChar[,] picture) : base(GetSize(picture)) {
+            if (picture is null) {
+                throw new ArgumentNullException(nameof(picture));
+            }
             if (picture.IsEmptyOrFlat()) {
-                throw new ArgumentException("Картинка обязана быть ненулевой.", nameof(picture));
+                throw new ArgumentException("Массив обязан быть ненулевым.", nameof(picture));
             }
 
             this.picture = picture;
         }
 
 
-
+        /// <summary>
+        /// Возвращает <see cref="ColoredChar"/> в декартовых координатах.
+        /// </summary>
         public ColoredChar this[int x, int y] {
             get {
                 if (x >= Width) { throw new ArgumentOutOfRangeException(nameof(x)); }
                 if (y >= Height) { throw new ArgumentOutOfRangeException(nameof(y)); }
 
-                return picture[x, y];
+                return picture[y, x];
             }
         }
 
@@ -45,7 +50,7 @@ namespace Game.ColoredCharsEngine {
                 throw new ArgumentException("Массив должен иметь корректные размеры.", nameof(chars));
             }
 
-            return new Size(chars.GetUpperBound(1), chars.GetUpperBound(0));
+            return new Size(chars.GetUpperBound(1) + 1, chars.GetUpperBound(0) + 1);
         }
 
     }

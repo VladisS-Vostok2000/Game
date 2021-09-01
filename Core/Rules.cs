@@ -17,6 +17,7 @@ namespace Game.Core {
         public ICollection<Projectile> Projectiles { get; set; }
         public ICollection<Weapon> Weapons { get; set; }
         public ICollection<NamedRoute> Routes { get; set; }
+        // FEATURE: комманды заполняются рандомно; можно задать функцию первой команды.
         public IList<Team> Teams { get; set; }
 
 

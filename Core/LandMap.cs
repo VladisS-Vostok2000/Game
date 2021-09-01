@@ -19,7 +19,13 @@ namespace Game.Core {
 
 
 
+        /// <summary>
+        /// <see cref="Landtile"/> на координатах X - вправо, Y - вниз.
+        /// </summary>
         public Landtile this[Point location] => this[location.X, location.Y];
+        /// /// <summary>
+        /// <see cref="Landtile"/> на координатах X - вправо, Y - вниз.
+        /// </summary>
         public Landtile this[int x, int y] {
             get {
                 bool correct = CorrectIndexation(x, y);
@@ -27,7 +33,7 @@ namespace Game.Core {
                     throw new ArgumentOutOfRangeException();
                 }
 
-                return landtiles[x, y];
+                return landtiles[y, x];
             }
         }
 
@@ -37,12 +43,12 @@ namespace Game.Core {
             if (landtiles is null) {
                 throw new ArgumentNullException(nameof(landtiles));
             }
-            if (landtiles.GetUpperBound(0) == 0 || landtiles.GetUpperBound(0) == 0) {
+            if (landtiles.GetUpperBound(0) == 0 || landtiles.GetUpperBound(1) == 0) {
                 throw new ArgumentException("Массив обязан иметь размер.");
             }
 
             this.landtiles = landtiles;
-            Size = new Size(landtiles.GetUpperBound(1), landtiles.GetUpperBound(0));
+            Size = new Size(landtiles.GetUpperBound(1) + 1, landtiles.GetUpperBound(0) + 1);
         }
 
 
@@ -54,6 +60,9 @@ namespace Game.Core {
         public bool CorrectIndexation(int x, int y) => x.IsInRange(0, Width - 1) && y.IsInRange(0, Height - 1);
 
 
+        /// <summary>
+        /// Возвращает <see cref="Landtile"/> на координатах X - право, Y - вниз.
+        /// </summary>
         public bool TryGetLandtile(int x, int y, out Landtile landtile) {
             bool correct = CorrectIndexation(x, y);
             if (!correct) {
@@ -61,8 +70,19 @@ namespace Game.Core {
                 return false;
             }
 
-            landtile = this[x, y];
+            landtile = this[y, x];
             return true;
+        }
+
+
+        public ColoredChar[,] AsColoredChars() {
+            ColoredChar[,] outArray = new ColoredChar[Height, Width];
+            for (int r = 0; r < Height; r++) {
+                for (int c = 0; c < Width; c++) {
+                    outArray[r, c] = landtiles[r, c].ColoredChar;
+                }
+            }
+            return outArray;
         }
 
     }
