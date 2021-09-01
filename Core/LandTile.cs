@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
 
 namespace Game.Core {
-    // REFACTORING: Разве это не должен быть класс?
-    // Я должен быть уверен в том, что, если я что-то в нём изменю,
-    // это отразится везде.
+    // TASK: Пусть это станет классом.
+    // Если появится необходимость добавить тайлу состояние,
+    // будем использовать агрегирование.
     public struct Landtile {
         public string Name { get; set; }
         public string DisplayedName { get; set; }

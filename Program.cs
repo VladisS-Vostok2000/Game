@@ -29,7 +29,7 @@ namespace Game.Core {
         private static string buttonDel = "[Del]";
 
         private const int padConst = 15;
-        private static GameMap map;
+        private static GameMap gameMap;
 
 
 
@@ -78,58 +78,64 @@ namespace Game.Core {
 
 
         private static void StartGame(string rulesPath, string mapPath) {
-            map = InitializeMap(rulesPath, mapPath);
+            gameMap = InitializeMap(rulesPath, mapPath);
 
-            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(map.Picture)));
+            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(gameMap.Picture)));
             Render();
 
             do {
                 ConsoleKeyInfo input = ReadKey(true);
-                MaptileInfo selectedTileInfo = map.SelectedTile;
+                MaptileInfo selectedTileInfo = gameMap.SelectedTile;
                 if (input.Key == ConsoleKey.DownArrow) {
-                    ++map.SelectedTileY;
+                    ++gameMap.SelectedTileY;
                 }
                 else
                 if (input.Key == ConsoleKey.UpArrow) {
-                    --map.SelectedTileY;
+                    --gameMap.SelectedTileY;
                 }
                 else
                 if (input.Key == ConsoleKey.LeftArrow) {
-                    --map.SelectedTileX;
+                    --gameMap.SelectedTileX;
                 }
                 else
                 if (input.Key == ConsoleKey.RightArrow) {
-                    ++map.SelectedTileX;
+                    ++gameMap.SelectedTileX;
                 }
                 else
                 if (input.Key == ConsoleKey.Enter) {
-                    if (map.UnitSelected) {
-                        map.ConfirmSelectedUnitRoute();
+                    if (gameMap.UnitSelected) {
+                        gameMap.ConfirmSelectedUnitRoute();
                     }
-                    else { map.SelectUnit(); }
+                    else {
+                        gameMap.SelectUnit();
+                    }
                 }
                 else
                 if (input.Key == ConsoleKey.Spacebar) {
-                    map.AddSelectedUnitWay();
+                    gameMap.AddSelectedUnitWay();
                 }
                 else
                 if (input.Key == ConsoleKey.Escape) {
-                    map.UnselectUnit();
+                    gameMap.UnselectUnit();
                 }
                 else
                 if (input.Key == ConsoleKey.T) {
-                    map.MakeTurn();
+                    gameMap.MakeTurn();
                 }
                 else
                 if (input.Key == ConsoleKey.P) {
-                    map.PassTurn();
+                    gameMap.ChangeTeam();
                 }
                 else
                 if (input.Key == ConsoleKey.Delete) {
                     if (selectedTileInfo.SelectedUnitWay) {
-                        map.DeleteSelectedUnitLastWay();
+                        gameMap.DeleteSelectedUnitLastWay();
                     }
                 }
+                CursorPosition = new Point(25, 25);
+                WriteLine(gameMap.CurrentTeam.DisplayedName);
+                gameMap.HardRender();
+                Render();
             } while (true);
         }
         private static GameMap InitializeMap(string rulesPath, string mapPath) {
@@ -137,22 +143,11 @@ namespace Game.Core {
             IDictionary<string, IDictionary<string, string>> mapIni = IniParser.Parse(mapPath);
             return RulesInitializator.InitializeMap(rulesIni, mapIni);
         }
-        private static void PrintMapScreen() {
-            // TASK:
-        }
-        private static void PrintGameMenu() {
-            MaptileInfo tileInfo = map.SelectedTile;
-            string keys = GetStringPossibleKeys(tileInfo);
-            WriteLine(keys);
-
-            PrintCurrentTeamInfo(map.CurrentTeam);
-            PrintTileInformation(tileInfo);
-        }
 
 
         private static string GetStringPossibleKeys(MaptileInfo maptileInfo) {
             string outString = buttonsArrows;
-            if (map.UnitSelected) {
+            if (gameMap.UnitSelected) {
                 outString += " " + buttonEnter;
                 if (maptileInfo.AvailableForSelectedUnitMove) { outString += " " + buttonsSpace; }
 

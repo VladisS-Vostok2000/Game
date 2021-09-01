@@ -395,7 +395,7 @@ namespace Game.Core {
             int i = 0;
             for (int r = 0; r < height; r++) {
                 for (int c = 0; c < width; c++) {
-                    outMap[c, r] = landtiles.First((Landtile landtile) => landtile.Char == landtilesChars[i]);
+                    outMap[r, c] = landtiles.First((Landtile landtile) => landtile.Char == landtilesChars[i]);
                     i++;
                 }
             }
