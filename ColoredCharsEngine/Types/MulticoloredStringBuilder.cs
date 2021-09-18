@@ -9,7 +9,7 @@ namespace Game.ColoredCharsEngine {
     /// <summary>
     /// Окрашенный в различные цвета текст.
     /// </summary>
-    // TODO: больше не принимает /r/n.
+    // TASK: больше не принимает /r/n.
     public sealed class MulticoloredStringBuilder : IEnumerable<ColoredString> {
         private List<ColoredString> ColoredStrings { get; } = new List<ColoredString>();
         public int Length {
@@ -93,6 +93,35 @@ namespace Game.ColoredCharsEngine {
         public MulticoloredStringBuilder RemoveAt(int index) {
             ColoredStrings.RemoveAt(index);
             return this;
+        }
+
+        /// <summary>
+        /// Возвращает проходящий по строкам перечислитель заданного текста.
+        /// </summary>
+        public IEnumerable<MulticoloredStringBuilder> SplitToLines() {
+            var outColoredText = new MulticoloredStringBuilder();
+            foreach (var coloredString in ColoredStrings) {
+                int newLineIndex = coloredString.IndexOfNewLine();
+                if (newLineIndex == -1) {
+                    outColoredText.Append(coloredString);
+                    continue;
+                }
+
+                int startIndex = 0;
+                while (newLineIndex != -1) {
+                    var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
+                    outColoredText.Append(coloredSubstring);
+                    yield return outColoredText;
+                    outColoredText = new MulticoloredStringBuilder();
+                    startIndex = newLineIndex + 1;
+                    if (startIndex > coloredString.Length) { break; }
+
+                    newLineIndex = coloredString.IndexOfNewLine(startIndex);
+                }
+
+            }
+
+            yield return outColoredText;
         }
 
 
