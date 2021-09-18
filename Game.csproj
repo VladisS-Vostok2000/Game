@@ -51,8 +51,8 @@
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleList.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleListColoredString.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenu\ConsoleMenu.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenu\ConsoleMenuOption.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuControl.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuOption.cs" />
     <Compile Include="ColoredCharsEngine\StaticMethods\GraphicsModificate.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\VoidPictureControl\ConsoleVoidControl.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleColoredCharsPicture.cs" />

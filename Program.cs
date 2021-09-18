@@ -17,8 +17,6 @@ using Game.Parser;
 namespace Game.Core {
     public static class Program {
         private static string[] menuOptions = { "Начать игру", "Выйти" };
-        private static ConsoleColor defaultColor = ConsoleColor.White;
-        private static ConsoleColor hightlitedMenuOptionColor = ConsoleColor.Red;
         private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.ini";
 
@@ -40,7 +38,7 @@ namespace Game.Core {
 
 
         public static void Main(string[] args) {
-            var consoleMenu = new ConsoleMenu(Point.Empty, PadRight(menuOptions));
+            var consoleMenu = new ConsoleMenuControl(Point.Empty, PadRight(menuOptions));
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).StringOptionName;
             if (selectedOption == menuOptions[0]) {
@@ -55,7 +53,7 @@ namespace Game.Core {
                 throw new Exception();
             }
         }
-        private static ConsoleMenuOption ListenMenu(ConsoleMenu menu) {
+        private static ConsoleMenuOption ListenMenu(ConsoleMenuControl menu) {
             do {
                 // WORKAROUND: Render будет выполняться сам.
                 Render();
@@ -132,8 +130,11 @@ namespace Game.Core {
                         gameMap.DeleteSelectedUnitLastWay();
                     }
                 }
+
                 CursorPosition = new Point(25, 25);
+                // TEMP:
                 WriteLine(gameMap.CurrentTeam.DisplayedName);
+
                 gameMap.HardRender();
                 Render();
             } while (true);
@@ -163,25 +164,7 @@ namespace Game.Core {
             //WriteLineColored(currentTeam.DisplayedName, currentTeam.Color);
         }
 
-        private static void PrintTileInformation(MaptileInfo tileInfo) {
-            if (tileInfo.ContainsUnit) {
-                PrintLandtileAndUnitTitle(tileInfo);
-            }
-            else {
-                PrintLandtileTitle(tileInfo);
-            }
 
-            if (tileInfo.ContainsUnit) {
-                PrintUnitInfo(tileInfo.Unit);
-            }
-        }
-        private static void PrintLandtileTitle(MaptileInfo tileInfo) {
-            // TODO:
-        }
-
-        private static void PrintLandtileAndUnitTitle(MaptileInfo tileInfo) {
-            // TODO:
-        }
         private static void PrintUnitInfo(Unit unit) {
             WriteLine("Имя:".PadRight(padConst) + unit.DisplayedName);
             WriteLine("Целостность:".PadRight(padConst) + unit.CurrentHP + "/" + unit.MaxHP);

@@ -12,8 +12,7 @@ using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using Game.BasicTypesLibrary.ExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Controls {
-    // TASK: переименовать контролы в Console + name + Control.
-    public sealed class ConsoleMenu : ConsoleControl {
+    public sealed class ConsoleMenuControl : ConsoleControl {
         public override ConsolePicture ConsolePicture { get; }
         private MulticoloredStringBuilder[] picture;
 
@@ -42,7 +41,7 @@ namespace Game.ConsoleDrawingEngine.Controls {
 
 
 
-        public ConsoleMenu(Point location, IList<MulticoloredStringBuilder> options) : base(location) {
+        public ConsoleMenuControl(Point location, IList<MulticoloredStringBuilder> options) : base(location) {
             picture = Render(options);
             ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
 
@@ -54,7 +53,7 @@ namespace Game.ConsoleDrawingEngine.Controls {
 
             Check(selectedOptionIndex);
         }
-        public ConsoleMenu(Point location, string[] options) : this(location, options.ToMulticoloredStringBuilder()) {
+        public ConsoleMenuControl(Point location, string[] options) : this(location, options.ToMulticoloredStringBuilder()) {
 
         }
 
@@ -79,19 +78,15 @@ namespace Game.ConsoleDrawingEngine.Controls {
             if (options.Count == 0) {
                 throw new ArgumentException("Меню обязано содержать пункты.");
             }
-
-            // TASK: вынести повторяющиеся исключения в throwHelper.
             if (!IsRectangular(options)) {
                 throw new ArgumentException("Строки должны прорисовываться как прямоугольник.");
             }
-
 
             var picture = new MulticoloredStringBuilder[options.Count];
             picture[0] = checkedBox + options[0];
             for (int i = 1; i < picture.Length; i++) {
                 picture[i] = uncheckedBox + options[i];
             }
-
 
             return picture;
         }
