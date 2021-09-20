@@ -236,6 +236,11 @@ namespace Game.BasicTypesLibrary.ExtensionMethods {
         public static int IndexOfNewLine(this string value, int startIndex) => value.IndexOf(Environment.NewLine, startIndex);
 
         /// <summary>
+        /// <see langword="true"/>, если содержит символ переноса строки.
+        /// </summary>
+        public static bool ContainsNewLine(this string value) => value.IndexOfNewLine() != -1;
+
+        /// <summary>
         /// Возвращает подстроку заданной длинны. Вернётся полная строка при избыточной длинне.
         /// Вернётся пустая строка при длинне 0.
         /// </summary>

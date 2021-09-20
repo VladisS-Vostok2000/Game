@@ -194,7 +194,7 @@ namespace Game.Core {
         public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
 
         public void ConfirmSelectedUnitRoute() {
-            SelectedUnit.AppendRoute(SelectedUnitTempRoute);
+            SelectedUnit.AddRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
 

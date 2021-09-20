@@ -12,7 +12,7 @@ namespace Game.ColoredCharsEngine {
     /// Не может принимать перенос строки.
     /// </summary>
     public sealed class ColoredString {
-        public readonly string text;
+        private readonly string text;
         public string Text { get; }
         public ConsoleColor Color { get; set; }
         public int Length => Text.Length;

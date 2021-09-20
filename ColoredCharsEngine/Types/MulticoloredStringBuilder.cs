@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.BasicTypesLibrary.ExtensionMethods;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Game.ColoredCharsEngine {
     /// </summary>
     // TASK: больше не принимает /r/n.
     public sealed class MulticoloredStringBuilder : IEnumerable<ColoredString> {
-        private List<ColoredString> ColoredStrings { get; } = new List<ColoredString>();
+        private List<ColoredString> ColoredStrings { get; }
         public int Length {
             get {
                 int length = 0;
@@ -42,14 +43,40 @@ namespace Game.ColoredCharsEngine {
 
 
 
+        /// <summary>
+        /// Создаст новый экземпляр класса.
+        /// Не принимает символ перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredStringBuilder() { }
+        /// <summary>
+        /// Создаст новый экземпляр класса.
+        /// Не принимает символ перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredStringBuilder(string str) {
+            ColoredStrings = new List<ColoredString>();
+
             ColoredStrings.Add(new ColoredString(str));
         }
+        /// <summary>
+        /// Создаст новый экземпляр класса.
+        /// Не принимает символ перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredStringBuilder(ColoredString coloredString) {
+            ColoredStrings = new List<ColoredString>();
+
             ColoredStrings.Add(coloredString);
         }
+        /// <summary>
+        /// Создаст новый экземпляр класса.
+        /// Не принимает символ перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredStringBuilder(params IEnumerable<ColoredString>[] coloredStringsArray) {
+            ColoredStrings = new List<ColoredString>();
+
             foreach (var coloredStrings in coloredStringsArray) {
                 foreach (var coloredString in coloredStrings) {
                     ColoredStrings.Add(coloredString);
@@ -61,12 +88,12 @@ namespace Game.ColoredCharsEngine {
         public static implicit operator MulticoloredStringBuilder(string v) => new MulticoloredStringBuilder(new ColoredString(v));
         public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, MulticoloredStringBuilder v2) {
             var outMulticoloredString = new MulticoloredStringBuilder();
-            outMulticoloredString.Append(v1);
-            outMulticoloredString.Append(v2);
+            outMulticoloredString.Add(v1);
+            outMulticoloredString.Add(v2);
             return outMulticoloredString;
         }
         public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, ColoredString v2) {
-            v1.Append(v2);
+            v1.Add(v2);
             return v1;
         }
 
@@ -76,16 +103,16 @@ namespace Game.ColoredCharsEngine {
         IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)ColoredStrings).GetEnumerator();
 
 
-
+        // TASK: добавить Add(string str).
         ///
         /// <returns> this. </returns>
-        public MulticoloredStringBuilder Append(ColoredString coloredString) {
+        public MulticoloredStringBuilder Add(ColoredString coloredString) {
             ColoredStrings.Add(coloredString);
             return this;
         }
         ///
         /// <returns> this. </returns>
-        public MulticoloredStringBuilder Append(MulticoloredStringBuilder multicoloredString) {
+        public MulticoloredStringBuilder Add(MulticoloredStringBuilder multicoloredString) {
             ColoredStrings.AddRange(multicoloredString.ColoredStrings);
             return this;
         }

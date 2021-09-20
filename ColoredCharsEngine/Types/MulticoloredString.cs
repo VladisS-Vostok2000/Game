@@ -32,27 +32,44 @@ namespace Game.ColoredCharsEngine {
 
 
 
+        /// <summary>
+        /// Создаст экземпляр класса.
+        /// Не принимает символы перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredString(IEnumerable<ColoredString> coloredStrings) {
             this.coloredStrings = new List<ColoredString>();
             foreach (var str in coloredStrings) {
+                CheckString(str.Text);
+
                 this.coloredStrings.Add(str);
                 Length += str.Length;
             }
 
-            if (this.coloredStrings.Count == 0) {
-                Empty = true;
-            }
-            Empty = false;
+            Empty = this.coloredStrings.Count == 0;
         }
+        /// <summary>
+        /// Создаст экземпляр класса.
+        /// Не принимает символы перевода строки.
+        /// </summary>
+        /// <exception cref="FormatException"></exception>
         public MulticoloredString(ColoredString cs) {
-            this.coloredStrings = new List<ColoredString>();
+            CheckString(cs.Text);
+
+            coloredStrings = new List<ColoredString>();
             coloredStrings.Add(cs);
             Length = cs.Length;
         }
         /// <summary>
         /// Создаст экземпляр класса из единственной строки, переведённой в <see cref="ColoredString"></see>/>.
+        /// Не принимает символы перевода строки.
         /// </summary>
-        public MulticoloredString(string str) : this(str.ToColoredString()) {
+        /// <exception cref="FormatException"></exception>
+        public MulticoloredString(string str) {
+            CheckString(str);
+
+            coloredStrings = new List<ColoredString>();
+            coloredStrings.Add(str.ToColoredString());
         }
 
 
@@ -93,13 +110,21 @@ namespace Game.ColoredCharsEngine {
 
 
         public static MulticoloredString operator +(MulticoloredString v1, ColoredString v2) {
-            return new MulticoloredStringBuilder(v1).Append(v2).ToMulticoloredString();
+            return new MulticoloredStringBuilder(v1).Add(v2).ToMulticoloredString();
         }
         public static MulticoloredString operator +(MulticoloredString v1, string v2) {
             return v1 + v2.ToColoredString();
         }
         public static MulticoloredString operator +(MulticoloredString v1, MulticoloredString v2) {
             return new MulticoloredStringBuilder(v1, v2).ToMulticoloredString();
+        }
+
+
+
+        private static void CheckString(string str) {
+            if (str.ContainsNewLine()) {
+                throw new FormatException("Строка содержала символ перевода строки.");
+            }
         }
 
     }

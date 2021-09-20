@@ -147,8 +147,8 @@ namespace Game.Core {
 
         /// Дополнит марштрут <see cref="Unit"/>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AppendRoute(IEnumerable<Point> appendedRoute) {
-            foreach (var way in appendedRoute) {
+        public void AddRoute(IEnumerable<Point> addingRoute) {
+            foreach (var way in addingRoute) {
                 AddWay(way);
             }
         }

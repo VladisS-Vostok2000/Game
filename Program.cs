@@ -41,8 +41,6 @@ namespace Game.Core {
 
 
         public static void Main(string[] args) {
-            var s = new MulticoloredString("[*] ".ToColoredString());
-
             var consoleMenu = new ConsoleMenuControl(Point.Empty, PadRight(menuOptions));
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).Text;
