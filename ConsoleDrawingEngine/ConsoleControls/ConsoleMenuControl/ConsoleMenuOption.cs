@@ -1,22 +1,20 @@
-﻿using Game.ConsoleDrawingEngine;
+﻿using Game.ColoredCharsEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ColoredCharsEngine;
 
-namespace Game.ConsoleDrawingEngine.Controls {
-    // TASK: удалить ненужный класс.
-    public sealed class ConsoleMenuOption {
-        public MulticoloredString MulticoloredStringOptionName { get; }
-        public string StringOptionName { get; }
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
+    public readonly struct ConsoleMenuOption {
+        public readonly string Text;
+        public readonly MulticoloredString MulticoloredText;
 
 
 
-        public ConsoleMenuOption(MulticoloredString option) {
-            MulticoloredStringOptionName = option;
-            StringOptionName = option.ToString();
+        public ConsoleMenuOption(MulticoloredString multicoloredText) {
+            Text = multicoloredText.ToString();
+            MulticoloredText = multicoloredText;
         }
 
     }

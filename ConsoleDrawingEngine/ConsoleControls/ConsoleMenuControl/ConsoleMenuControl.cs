@@ -12,7 +12,7 @@ using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using Game.BasicTypesLibrary.ExtensionMethods;
 using Game.ColoredCharsEngine.Types;
 
-namespace Game.ConsoleDrawingEngine.Controls {
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
     public sealed class ConsoleMenuControl : ConsoleControl {
         public override ConsolePicture ConsolePicture { get; }
         private MulticoloredString[] picture;
@@ -45,6 +45,8 @@ namespace Game.ConsoleDrawingEngine.Controls {
         public ConsoleMenuControl(Point location, string[] options) : this(location, options.ToMulticoloredStrings()) {
 
         }
+        /// 
+        /// <exception cref="ArgumentException"></exception>
         public ConsoleMenuControl(Point location, IList<MulticoloredString> options) : base(location) {
             if (options.Count == 0) {
                 throw new ArgumentException("Меню обязано содержать пункты.");

@@ -25,7 +25,7 @@ namespace Game.ColoredCharsEngine {
         /// </summary>
         /// <exception cref="FormatException"></exception>
         public ColoredString(string text, ConsoleColor color = ConsoleColor.White) {
-            if (text.IndexOfNewLine() == -1) {
+            if (text.IndexOfNewLine() != -1) {
                 throw new FormatException($"{nameof(ColoredString)} не может содержать перенос строки.");
             }
 

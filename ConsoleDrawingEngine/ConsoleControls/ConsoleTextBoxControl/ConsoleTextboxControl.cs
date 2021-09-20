@@ -10,7 +10,7 @@ using Game.ColoredCharsEngine.Types;
 using System.Runtime.InteropServices.ComTypes;
 using Game.ColoredCharsEngine.StaticMethods;
 
-namespace Game.ConsoleDrawingEngine.Controls {
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
     public sealed class ConsoleTextboxControl : ConsoleControl {
         private MulticoloredString[] picture;
         public override ConsolePicture ConsolePicture { get; }
