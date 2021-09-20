@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
 
 namespace Game.ConsoleDrawingEngine.Controls {
+    // TASK: удалить ненужный класс.
     public sealed class ConsoleMenuOption {
-        // TASK: MSB заменить на MS, CMO сделать структурой.
-        public MulticoloredStringBuilder MulticoloredStringBuilderOptionName { get; }
+        public MulticoloredString MulticoloredStringOptionName { get; }
         public string StringOptionName { get; }
 
 
 
-        public ConsoleMenuOption(MulticoloredStringBuilder option) {
-            MulticoloredStringBuilderOptionName = option;
+        public ConsoleMenuOption(MulticoloredString option) {
+            MulticoloredStringOptionName = option;
             StringOptionName = option.ToString();
         }
 

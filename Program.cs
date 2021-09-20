@@ -16,6 +16,8 @@ using Game.Parser;
 
 namespace Game.Core {
     public static class Program {
+        // TASK: Проверить, где используется MulticoloredString, ColoredString как коллекции, чтобы
+        // они присваивались полям напрямую, а не через дубликат памяти! MS и CS - record-классы.
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.ini";

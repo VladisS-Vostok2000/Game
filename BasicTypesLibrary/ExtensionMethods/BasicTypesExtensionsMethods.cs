@@ -262,10 +262,10 @@ namespace Game.BasicTypesLibrary.ExtensionMethods {
             }
             return outList;
         }
-        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuilder(this string[] array, ConsoleColor color = ConsoleColor.White) {
-            var outList = new List<MulticoloredStringBuilder>();
+        public static List<MulticoloredString> ToMulticoloredStrings(this string[] array, ConsoleColor color = ConsoleColor.White) {
+            var outList = new List<MulticoloredString>();
             foreach (var str in array) {
-                outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
+                outList.Add(new MulticoloredString(new ColoredString(str, color)));
             }
             return outList;
         }

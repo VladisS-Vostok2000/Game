@@ -8,6 +8,7 @@ using Game.ColoredCharsEngine;
 using static System.Console;
 using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
 using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.ColoredCharsEngine.Types;
 
 namespace Game.ConsoleDrawingEngine {
     public static class ConsoleDrawing {
@@ -35,7 +36,7 @@ namespace Game.ConsoleDrawingEngine {
         /// <summary>
         /// Печатает элемент и переводит каретку вправо, но не до границы буфера.
         /// </summary>
-        public static void WriteColored(MulticoloredStringBuilder multicoloredString) {
+        public static void WriteColored(MulticoloredString multicoloredString) {
             foreach (var coloredString in multicoloredString) {
                 WriteColored(coloredString);
             }

@@ -48,6 +48,7 @@
     <Compile Include="BasicTypesLibrary\ReadOnlyDoubleDemensionArray.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\SingleCharPicture.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\StringsPicture.cs" />
+    <Compile Include="ColoredCharsEngine\Types\MulticoloredString.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleList.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleListColoredString.cs" />
@@ -74,7 +75,7 @@
     <Compile Include="ColoredCharsEngine\Types\MulticoloredStringBuilder.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\ColoredCharsPicture.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredChar.cs" />
-    <Compile Include="ColoredCharsEngine\ExtensionMethods\ColoredStringExtensionMethods.cs" />
+    <Compile Include="ColoredCharsEngine\ExtensionMethods\BasicTypesExtensionMethods.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\ConsoleTextboxControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxException.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />

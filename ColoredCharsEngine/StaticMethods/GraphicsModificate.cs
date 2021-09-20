@@ -1,4 +1,5 @@
 ﻿using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.ColoredCharsEngine.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,17 @@ namespace Game.ColoredCharsEngine.StaticMethods {
         /// <summary>
         /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
         /// </summary>
+        public static bool IsRectangular(MulticoloredString[] mSs) {
+            bool single = CheckNullOrEmptyOrSingle(mSs);
+            if (single) {
+                return true;
+            }
+
+            return IsRectangular((MulticoloredString mS) => mS.Length, mSs);
+        }
+        /// <summary>
+        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
+        /// </summary>
         public static bool IsRectangular(IList<MulticoloredStringBuilder> mSBs) {
             bool single = CheckNullOrEmptyOrSingle(mSBs);
             if (single) {
@@ -46,6 +58,17 @@ namespace Game.ColoredCharsEngine.StaticMethods {
             }
 
             return IsRectangular((MulticoloredStringBuilder mSB) => mSB.Length, mSBs);
+        }
+        /// <summary>
+        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
+        /// </summary>
+        public static bool IsRectangular(IList<MulticoloredString> ms) {
+            bool single = CheckNullOrEmptyOrSingle(ms);
+            if (single) {
+                return true;
+            }
+
+            return IsRectangular((MulticoloredString mss) => mss.Length, ms);
         }
         /// <summary>
         /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.

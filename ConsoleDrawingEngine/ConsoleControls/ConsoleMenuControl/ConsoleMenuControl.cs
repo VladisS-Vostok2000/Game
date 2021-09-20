@@ -10,20 +10,21 @@ using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Types;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.ColoredCharsEngine.Types;
 
 namespace Game.ConsoleDrawingEngine.Controls {
     public sealed class ConsoleMenuControl : ConsoleControl {
         public override ConsolePicture ConsolePicture { get; }
-        private MulticoloredStringBuilder[] picture;
+        private MulticoloredString[] picture;
 
 
-        private List<MulticoloredStringBuilder> menuOptions;
-        public IReadOnlyList<MulticoloredStringBuilder> MenuOptions => menuOptions.AsReadOnly();
+        private List<MulticoloredString> menuOptions;
+        public IReadOnlyList<MulticoloredString> MenuOptions => menuOptions.AsReadOnly();
 
         public int OptionsCount => menuOptions.Count;
 
-        private static readonly MulticoloredStringBuilder uncheckedBox = new MulticoloredStringBuilder("[*] ");
-        private static readonly MulticoloredStringBuilder checkedBox = new MulticoloredStringBuilder("[") + new ColoredString("*", ConsoleColor.Red) + "] ";
+        private static readonly MulticoloredString uncheckedBox = new MulticoloredString("[*] ".ToColoredString());
+        private static readonly MulticoloredString checkedBox = new MulticoloredString("[") + new ColoredString("*", ConsoleColor.Red) + "] ";
 
         private int selectedOptionIndex = 0;
         public int SelectedOptionIndex {
@@ -41,22 +42,34 @@ namespace Game.ConsoleDrawingEngine.Controls {
 
 
 
-        public ConsoleMenuControl(Point location, IList<MulticoloredStringBuilder> options) : base(location) {
-            picture = Render(options);
-            ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
+        public ConsoleMenuControl(Point location, string[] options) : this(location, options.ToMulticoloredStrings()) {
 
-            var menuOptions = new List<MulticoloredStringBuilder>();
-            foreach (var option in options) {
-                menuOptions.Add(option);
+        }
+        public ConsoleMenuControl(Point location, IList<MulticoloredString> options) : base(location) {
+            if (options.Count == 0) {
+                throw new ArgumentException("Меню обязано содержать пункты.");
             }
-            this.menuOptions = menuOptions;
+
+            // ISSUE: Сделать поле IList?
+            menuOptions = new List<MulticoloredString>();
+            menuOptions.AddRange(options);
+            picture = HardRender(options);
+            ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
 
             Check(selectedOptionIndex);
         }
-        public ConsoleMenuControl(Point location, string[] options) : this(location, options.ToMulticoloredStringBuilder()) {
 
+
+
+        private static MulticoloredString[] HardRender(IList<MulticoloredString> options) {
+            MulticoloredString[] picture = new MulticoloredString[options.Count];
+            // REFACTORING: вынести делегат в отдельный метод?
+            int maxLength = options.Max((MulticoloredString ms) => ms.Length);
+            for (int i = 0; i < picture.Length; i++) {
+                picture[i] = (uncheckedBox + options[i]).PadRight(maxLength);
+            }
+            return picture;
         }
-
 
 
         /// <summary>
@@ -74,29 +87,11 @@ namespace Game.ConsoleDrawingEngine.Controls {
 
 
 
-        private static MulticoloredStringBuilder[] Render(IList<MulticoloredStringBuilder> options) {
-            if (options.Count == 0) {
-                throw new ArgumentException("Меню обязано содержать пункты.");
-            }
-            if (!IsRectangular(options)) {
-                throw new ArgumentException("Строки должны прорисовываться как прямоугольник.");
-            }
-
-            var picture = new MulticoloredStringBuilder[options.Count];
-            picture[0] = checkedBox + options[0];
-            for (int i = 1; i < picture.Length; i++) {
-                picture[i] = uncheckedBox + options[i];
-            }
-
-            return picture;
-        }
-
-
         private void Uncheck(int option) {
-            picture[option] = new MulticoloredStringBuilder(uncheckedBox + menuOptions[selectedOptionIndex]);
+            picture[option] = new MulticoloredString(uncheckedBox + menuOptions[selectedOptionIndex]);
         }
         private void Check(int option) {
-            picture[option] = new MulticoloredStringBuilder(checkedBox + menuOptions[option]);
+            picture[option] = new MulticoloredString(checkedBox + menuOptions[option]);
         }
 
     }

@@ -49,12 +49,13 @@ namespace Game.ColoredCharsEngine {
         public MulticoloredStringBuilder(ColoredString coloredString) {
             ColoredStrings.Add(coloredString);
         }
-        public MulticoloredStringBuilder(IEnumerable<ColoredString> coloredStrings) {
-            foreach (var coloredString in coloredStrings) {
-                ColoredStrings.Add(coloredString);
+        public MulticoloredStringBuilder(params IEnumerable<ColoredString>[] coloredStringsArray) {
+            foreach (var coloredStrings in coloredStringsArray) {
+                foreach (var coloredString in coloredStrings) {
+                    ColoredStrings.Add(coloredString);
+                }
             }
         }
-
 
 
         public static implicit operator MulticoloredStringBuilder(string v) => new MulticoloredStringBuilder(new ColoredString(v));
@@ -95,34 +96,34 @@ namespace Game.ColoredCharsEngine {
             return this;
         }
 
-        /// <summary>
-        /// Возвращает проходящий по строкам перечислитель заданного текста.
-        /// </summary>
-        public IEnumerable<MulticoloredStringBuilder> SplitToLines() {
-            var outColoredText = new MulticoloredStringBuilder();
-            foreach (var coloredString in ColoredStrings) {
-                int newLineIndex = coloredString.IndexOfNewLine();
-                if (newLineIndex == -1) {
-                    outColoredText.Append(coloredString);
-                    continue;
-                }
+        ///// <summary>
+        ///// Возвращает проходящий по строкам перечислитель заданного текста.
+        ///// </summary>
+        //public IEnumerable<MulticoloredStringBuilder> SplitToLines() {
+        //    var outColoredText = new MulticoloredStringBuilder();
+        //    foreach (var coloredString in ColoredStrings) {
+        //        int newLineIndex = coloredString.IndexOfNewLine();
+        //        if (newLineIndex == -1) {
+        //            outColoredText.Append(coloredString);
+        //            continue;
+        //        }
 
-                int startIndex = 0;
-                while (newLineIndex != -1) {
-                    var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
-                    outColoredText.Append(coloredSubstring);
-                    yield return outColoredText;
-                    outColoredText = new MulticoloredStringBuilder();
-                    startIndex = newLineIndex + 1;
-                    if (startIndex > coloredString.Length) { break; }
+        //        int startIndex = 0;
+        //        while (newLineIndex != -1) {
+        //            var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
+        //            outColoredText.Append(coloredSubstring);
+        //            yield return outColoredText;
+        //            outColoredText = new MulticoloredStringBuilder();
+        //            startIndex = newLineIndex + 1;
+        //            if (startIndex > coloredString.Length) { break; }
 
-                    newLineIndex = coloredString.IndexOfNewLine(startIndex);
-                }
+        //            newLineIndex = coloredString.IndexOfNewLine(startIndex);
+        //        }
 
-            }
+        //    }
 
-            yield return outColoredText;
-        }
+        //    yield return outColoredText;
+        //}
 
 
         public void PadRight(int width) {
@@ -134,7 +135,6 @@ namespace Game.ColoredCharsEngine {
         }
 
 
-
         public override string ToString() {
             var sb = new StringBuilder();
             foreach (var coloredString in ColoredStrings) {
@@ -142,6 +142,7 @@ namespace Game.ColoredCharsEngine {
             }
             return sb.ToString();
         }
+        public MulticoloredString ToMulticoloredString() => new MulticoloredString(ColoredStrings);
 
     }
 }
