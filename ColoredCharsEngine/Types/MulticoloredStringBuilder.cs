@@ -10,7 +10,6 @@ namespace Game.ColoredCharsEngine {
     /// <summary>
     /// Окрашенный в различные цвета текст.
     /// </summary>
-    // TASK: больше не принимает /r/n.
     public sealed class MulticoloredStringBuilder : IEnumerable<ColoredString> {
         private List<ColoredString> ColoredStrings { get; }
         public int Length {
