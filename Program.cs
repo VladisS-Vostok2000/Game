@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleScreen;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
 using static System.Console;
@@ -14,11 +14,11 @@ using Game.ConsoleDrawingEngine.ConsoleControls;
 using Game.ConsoleDrawingEngine.Types;
 using Game.Parser;
 using Game.ColoredCharsEngine;
+using Game.BasicTypesLibrary.Extensions;
+using static Game.ColoredCharsEngine.TypesExtensions;
 
 namespace Game.Core {
     public static class Program {
-        // TASK: Проверить, где используется MulticoloredString, ColoredString как коллекции, чтобы
-        // они присваивались полям напрямую, а не через дубликат памяти! MS и CS - record-классы.
         private static string[] menuOptions = { "Начать игру", "Выйти" };
         private static string rulesPath = @"rules.ini";
         private static string mapPath = @"map.ini";
@@ -41,7 +41,7 @@ namespace Game.Core {
 
 
         public static void Main(string[] args) {
-            var consoleMenu = new ConsoleMenuControl(Point.Empty, PadRight(menuOptions));
+            var consoleMenu = new ConsoleMenuControl(Point.Empty, menuOptions.ToMulticoloredStringsEnum());
             AddControl(consoleMenu);
             string selectedOption = ListenMenu(consoleMenu).Text;
             if (selectedOption == menuOptions[0]) {

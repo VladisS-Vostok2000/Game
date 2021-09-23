@@ -1,4 +1,4 @@
-﻿using Game.BasicTypesLibrary.ExtensionMethods;
+﻿using Game.BasicTypesLibrary.Extensions;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,6 +20,39 @@ namespace Game.ColoredCharsEngine {
 
 
 
+        public MulticoloredString(params IEnumerable<ColoredString>[] coloredStringsEnums) {
+            coloredStrings = new List<ColoredString>();
+            foreach (var coloredStringsEnum in coloredStringsEnums) {
+                coloredStrings.AddRange(coloredStringsEnum);
+            }
+
+            Length = 0;
+            Empty = coloredStrings.Count == 0;
+            if (Empty) {
+                return;
+            }
+
+            foreach (var coloredString in coloredStrings) {
+                Length += coloredString.Length;
+            }
+        }
+        public MulticoloredString(params ColoredString[] coloredStrings) {
+            this.coloredStrings = new List<ColoredString>();
+            this.coloredStrings.AddRange(coloredStrings);
+
+            Length = 0;
+            Empty = this.coloredStrings.Empty();
+            if (Empty) {
+                return;
+            }
+
+            foreach (var coloredString in coloredStrings) {
+                Length += coloredString.Length;
+            }
+        }
+
+
+
         public ColoredString this[int index] {
             get {
                 if (coloredStrings.Count() <= index) {
@@ -32,44 +65,20 @@ namespace Game.ColoredCharsEngine {
 
 
 
-        /// <summary>
-        /// Создаст экземпляр класса.
-        /// Не принимает символы перевода строки.
-        /// </summary>
-        /// <exception cref="FormatException"></exception>
-        public MulticoloredString(IEnumerable<ColoredString> coloredStrings) {
-            this.coloredStrings = new List<ColoredString>();
-            foreach (var str in coloredStrings) {
-                CheckString(str.Text);
-
-                this.coloredStrings.Add(str);
-                Length += str.Length;
-            }
-
-            Empty = this.coloredStrings.Count == 0;
+        // TASK: Append и prepend.
+        public static explicit operator MulticoloredString(ColoredString cs) {
+            return new MulticoloredString(cs);
         }
-        /// <summary>
-        /// Создаст экземпляр класса.
-        /// Не принимает символы перевода строки.
-        /// </summary>
-        /// <exception cref="FormatException"></exception>
-        public MulticoloredString(ColoredString cs) {
-            CheckString(cs.Text);
-
-            coloredStrings = new List<ColoredString>();
-            coloredStrings.Add(cs);
-            Length = cs.Length;
+        public static MulticoloredString operator +(MulticoloredString v1, ColoredString v2) {
+            return new MulticoloredString(v1.coloredStrings.Append(v2));
         }
-        /// <summary>
-        /// Создаст экземпляр класса из единственной строки, переведённой в <see cref="ColoredString"></see>/>.
-        /// Не принимает символы перевода строки.
-        /// </summary>
-        /// <exception cref="FormatException"></exception>
-        public MulticoloredString(string str) {
-            CheckString(str);
-
-            coloredStrings = new List<ColoredString>();
-            coloredStrings.Add(str.ToColoredString());
+        public static MulticoloredString operator +(MulticoloredString v1, MulticoloredString v2) {
+            return new MulticoloredString(v1.ColoredStrings, v2.ColoredStrings);
+        }
+        public static MulticoloredString operator +(ColoredString v1, MulticoloredString v2) {
+            var coloredStrings = new List<ColoredString>(v2.coloredStrings);
+            coloredStrings.AddHead(v1);
+            return new MulticoloredString(coloredStrings);
         }
 
 
@@ -92,9 +101,11 @@ namespace Game.ColoredCharsEngine {
 
 
         /// <summary>
-        /// Вернёт новый экземпляр <see cref="MulticoloredString"/>, чья длинна, с учётом добавленных справа пробелов, будет увеличена по заданное число.
+        /// Вернёт новый экземпляр <see cref="MulticoloredString"/>, чья длинна,
+        /// с учётом добавленных справа пробелов, будет увеличена по заданное число.
         /// </summary>
-        /// <remarks> Новый экземпляр не будет создан при большей длинне строки. </remarks>
+        /// <remarks> Будет возвращён текущий <see cref="MulticoloredString"/>
+        /// при достаточной длинне строки. </remarks>
         public MulticoloredString PadRight(int length) {
             if (Length >= length) {
                 return this;
@@ -105,26 +116,6 @@ namespace Game.ColoredCharsEngine {
             outStrings.AddRange(coloredStrings);
             outStrings.Add(new ColoredString(' ', dif));
             return new MulticoloredString(outStrings);
-        }
-
-
-
-        public static MulticoloredString operator +(MulticoloredString v1, ColoredString v2) {
-            return new MulticoloredStringBuilder(v1).Add(v2).ToMulticoloredString();
-        }
-        public static MulticoloredString operator +(MulticoloredString v1, string v2) {
-            return v1 + v2.ToColoredString();
-        }
-        public static MulticoloredString operator +(MulticoloredString v1, MulticoloredString v2) {
-            return new MulticoloredStringBuilder(v1, v2).ToMulticoloredString();
-        }
-
-
-
-        private static void CheckString(string str) {
-            if (str.ContainsNewLine()) {
-                throw new FormatException("Строка содержала символ перевода строки.");
-            }
         }
 
     }

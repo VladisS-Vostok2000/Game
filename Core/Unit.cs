@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 
 namespace Game.Core {
     // REFACTORING: Подключить IDrawable, чтобы в GameMap использовать интерфейс, а не частный тип.

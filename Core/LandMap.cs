@@ -1,5 +1,5 @@
 ﻿using Game.BasicTypesLibrary;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 using Game.ColoredCharsEngine;
 using System;
 using System.Collections.Generic;

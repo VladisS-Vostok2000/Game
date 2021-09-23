@@ -1,5 +1,5 @@
 ﻿using Game;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -7,7 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
 
 namespace Game.ColoredCharsEngine {
     public class ColoredCharsPicture : Picture {

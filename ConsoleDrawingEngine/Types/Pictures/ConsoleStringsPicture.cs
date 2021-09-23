@@ -6,8 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
-using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
+using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
 using static System.Console;
 
 namespace Game.ConsoleDrawingEngine.Types.Pictures {

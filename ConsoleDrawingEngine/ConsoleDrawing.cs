@@ -6,8 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
 using static System.Console;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
+using Game.BasicTypesLibrary.Extensions;
 using Game.ColoredCharsEngine.Types;
 
 namespace Game.ConsoleDrawingEngine {

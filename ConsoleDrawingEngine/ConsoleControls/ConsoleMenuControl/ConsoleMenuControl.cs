@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Game.ColoredCharsEngine;
 using Game.ConsoleDrawingEngine.Types;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 using Game.ColoredCharsEngine.Types;
 
 namespace Game.ConsoleDrawingEngine.ConsoleControls {
@@ -19,12 +19,11 @@ namespace Game.ConsoleDrawingEngine.ConsoleControls {
 
 
         private List<MulticoloredString> menuOptions;
-        public IReadOnlyList<MulticoloredString> MenuOptions => menuOptions.AsReadOnly();
 
         public int OptionsCount => menuOptions.Count;
 
-        private static readonly MulticoloredString uncheckedBox = new MulticoloredString("[*] ".ToColoredString());
-        private static readonly MulticoloredString checkedBox = new MulticoloredString("[") + new ColoredString("*", ConsoleColor.Red) + "] ";
+        private static readonly MulticoloredString uncheckedBox = (MulticoloredString)(ColoredString)"[*] ";
+        private static readonly MulticoloredString checkedBox = (MulticoloredString)(ColoredString)"[" + new ColoredString("*", ConsoleColor.Red) + (ColoredString)"] ";
 
         private int selectedOptionIndex = 0;
         public int SelectedOptionIndex {
@@ -42,20 +41,19 @@ namespace Game.ConsoleDrawingEngine.ConsoleControls {
 
 
 
-        public ConsoleMenuControl(Point location, string[] options) : this(location, options.ToMulticoloredStrings()) {
-
-        }
-        /// 
+        /// <summary>
+        /// Создаст экземпляр <see cref="ConsoleMenuControl"/> из непустого списка опций.
+        /// </summary>
         /// <exception cref="ArgumentException"></exception>
-        public ConsoleMenuControl(Point location, IList<MulticoloredString> options) : base(location) {
-            if (options.Count == 0) {
+        public ConsoleMenuControl(Point location, IEnumerable<MulticoloredString> options) : base(location) {
+            if (options.Empty()) {
                 throw new ArgumentException("Меню обязано содержать пункты.");
             }
 
             // ISSUE: Сделать поле IList?
             menuOptions = new List<MulticoloredString>();
             menuOptions.AddRange(options);
-            picture = HardRender(options);
+            picture = HardRender(menuOptions);
             ConsolePicture = new ConsoleMulticoloredStringsPicture(new MulticoloredStringsPicture(picture));
 
             Check(selectedOptionIndex);
@@ -65,11 +63,11 @@ namespace Game.ConsoleDrawingEngine.ConsoleControls {
 
         private static MulticoloredString[] HardRender(IList<MulticoloredString> options) {
             MulticoloredString[] picture = new MulticoloredString[options.Count];
-            // REFACTORING: вынести делегат в отдельный метод?
-            int maxLength = options.Max((MulticoloredString ms) => ms.Length);
+            int maxLength = options.FindLongerLength();
             for (int i = 0; i < picture.Length; i++) {
                 picture[i] = (uncheckedBox + options[i]).PadRight(maxLength);
             }
+
             return picture;
         }
 

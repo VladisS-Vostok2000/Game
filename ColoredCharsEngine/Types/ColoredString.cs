@@ -1,10 +1,12 @@
-﻿using Game.BasicTypesLibrary.ExtensionMethods;
+﻿using Game.BasicTypesLibrary.Extensions;
 using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using System.Windows.Forms;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
 
 namespace Game.ColoredCharsEngine {
     /// <summary>
@@ -12,10 +14,9 @@ namespace Game.ColoredCharsEngine {
     /// Не может принимать перенос строки.
     /// </summary>
     public sealed class ColoredString {
-        private readonly string text;
         public string Text { get; }
         public ConsoleColor Color { get; set; }
-        public int Length => Text.Length;
+        public int Length { get; }
 
 
 
@@ -31,6 +32,7 @@ namespace Game.ColoredCharsEngine {
 
             Text = text;
             Color = color;
+            Length = text.Length;
         }
         /// <summary>
         /// Создаст экземпляр <see cref="ColoredString"/>.
@@ -44,6 +46,24 @@ namespace Game.ColoredCharsEngine {
 
 
         public ColoredChar this[int index] => new ColoredChar(Text[index], Color);
+
+
+
+        public static explicit operator ColoredString(string v1) {
+            return v1.ToColoredString();
+        }
+        /// <summary>
+        /// Создаст экземпляр, элементы заданного <see cref="string"/> которые будут в начале возвращаемого <see cref="ColoredString"/>.
+        /// </summary>
+        public static ColoredString operator +(string v1, ColoredString v2) {
+            return new ColoredString(v1 + v2.Text);
+        }
+        /// <summary>
+        /// Создаст экземпляр, элементы заданного <see cref="string"/> которые будут в конце возвращаемого <see cref="ColoredString"/>.
+        /// </summary>
+        public static ColoredString operator +(ColoredString v2, string v1) {
+            return new ColoredString(v2.Text + v1);
+        }
 
 
 

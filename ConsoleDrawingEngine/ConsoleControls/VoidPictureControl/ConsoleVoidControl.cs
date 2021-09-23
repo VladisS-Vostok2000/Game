@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Game.ColoredCharsEngine.Pictures;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
 using static System.Console;
 using Game.ConsoleDrawingEngine.Types.Pictures;
 

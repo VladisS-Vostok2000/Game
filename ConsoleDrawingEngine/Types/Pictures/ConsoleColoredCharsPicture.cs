@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 using Game.ConsoleDrawingEngine;
-using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
 
 namespace Game.ConsoleDrawingEngine.Types {
