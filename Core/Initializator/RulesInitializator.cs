@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using Game.ConsoleDrawingEngine;
+using Game.ConsoleControlsEngine;
 using Game.BasicTypesLibrary.Extensions;
 using Game.Parser;
 
