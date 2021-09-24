@@ -23,7 +23,7 @@ namespace Game.ConsoleDrawingEngine.ConsoleControls {
         public int OptionsCount => menuOptions.Count;
 
         private static readonly MulticoloredString uncheckedBox = (MulticoloredString)(ColoredString)"[*] ";
-        private static readonly MulticoloredString checkedBox = (MulticoloredString)(ColoredString)"[" + new ColoredString("*", ConsoleColor.Red) + (ColoredString)"] ";
+        private static readonly MulticoloredString checkedBox = (new MulticoloredStringBuilder((ColoredString)"[") + new ColoredString("*", ConsoleColor.Red) + (ColoredString)"] ").ToMulticoloredString();
 
         private int selectedOptionIndex = 0;
         public int SelectedOptionIndex {

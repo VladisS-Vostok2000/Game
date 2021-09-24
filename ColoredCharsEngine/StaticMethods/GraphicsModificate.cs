@@ -2,6 +2,7 @@
 using Game.ColoredCharsEngine.Types;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
@@ -22,88 +23,57 @@ namespace Game.ColoredCharsEngine.StaticMethods {
 
             return outArray;
         }
-        // TASK: объеденить это под enumerable.
         /// <summary>
         /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
         /// </summary>
-        public static bool IsRectangular(MulticoloredStringBuilder[] mSBs) {
-            bool single = CheckNullOrEmptyOrSingle(mSBs);
-            if (single) {
+        public static bool IsRectangular(IEnumerable<MulticoloredString> ms) {
+            CheckNullOrEmpty(ms);
+            if (ms.Count() == 1) {
                 return true;
             }
 
-            return IsRectangular((MulticoloredStringBuilder mSB) => mSB.Length, mSBs);
+            return IsRectangular((MulticoloredString _ms) => _ms.Length, ms);
         }
+        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
+        /// </summary>
         /// <summary>
         /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
         /// </summary>
-        public static bool IsRectangular(MulticoloredString[] mSs) {
-            bool single = CheckNullOrEmptyOrSingle(mSs);
-            if (single) {
-                return true;
-            }
-
-            return IsRectangular((MulticoloredString mS) => mS.Length, mSs);
-        }
-        /// <summary>
-        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
-        /// </summary>
-        public static bool IsRectangular(IList<MulticoloredStringBuilder> mSBs) {
-            bool single = CheckNullOrEmptyOrSingle(mSBs);
-            if (single) {
-                return true;
-            }
-
-            return IsRectangular((MulticoloredStringBuilder mSB) => mSB.Length, mSBs);
-        }
-        /// <summary>
-        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
-        /// </summary>
-        public static bool IsRectangular(IList<MulticoloredString> ms) {
-            bool single = CheckNullOrEmptyOrSingle(ms);
-            if (single) {
-                return true;
-            }
-
-            return IsRectangular((MulticoloredString mss) => mss.Length, ms);
-        }
-        /// <summary>
-        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
-        /// </summary>
-        public static bool IsRectangular(string[] strings) {
-            return IsRectangular(new List<string>(strings));
-        }
-        /// <summary>
-        /// <see langword="true"/>, если заданный массив на печати прямоуголен или пуст.
-        /// </summary>
-        public static bool IsRectangular(IList<string> strings) {
-            bool single = CheckNullOrEmptyOrSingle(strings);
-            if (single) {
+        public static bool IsRectangular(IEnumerable<string> strings) {
+            CheckNullOrEmpty(strings);
+            if (strings.Count() == 1) {
                 return true;
             }
 
             return IsRectangular((string str) => str.Length, strings);
         }
-        private static bool CheckNullOrEmptyOrSingle<T>(ICollection<T> collection) {
-            if (collection is null) {
-                throw new ArgumentNullException(nameof(collection));
+
+
+
+        private static bool IsRectangular<T>(Func<T, int> func, IEnumerable<T> enm) {
+            if (enm.Empty()) {
+                throw new InvalidEnumArgumentException("Перечисление пустое.");
             }
-            if (collection.Count() == 0) {
-                throw new ArgumentException("Массив пуст.");
-            }
-            if (collection.Count() == 1) {
-                return true;
-            }
-            return false;
-        }
-        private static bool IsRectangular<T>(Func<T, int> func, IList<T> list) {
-            int width = func(list[0]);
-            for (int i = 1; i < list.Count; i++) {
-                if (func(list[i]) != width) {
+
+            var width = func(enm.First());
+            foreach (var item in enm) {
+                int itemWidth = func(item);
+                if (itemWidth != width) {
                     return false;
                 }
             }
+
             return true;
+        }
+
+
+        private static void CheckNullOrEmpty<T>(IEnumerable<T> collection) {
+            if (collection is null) {
+                throw new ArgumentNullException(nameof(collection));
+            }
+            if (collection.Empty()) {
+                throw new ArgumentException("Массив пуст.");
+            }
         }
 
     }

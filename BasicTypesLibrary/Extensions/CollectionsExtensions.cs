@@ -18,13 +18,13 @@ namespace Game.BasicTypesLibrary.Extensions {
             }
             return outList;
         }
-        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuildersList(this string[] array, ConsoleColor color = ConsoleColor.White) {
-            var outList = new List<MulticoloredStringBuilder>();
-            foreach (var str in array) {
-                outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
-            }
-            return outList;
-        }
+        //public static List<MulticoloredStringBuilder> ToMulticoloredStringBuildersList(this string[] array, ConsoleColor color = ConsoleColor.White) {
+        //    var outList = new List<MulticoloredStringBuilder>();
+        //    foreach (var str in array) {
+        //        outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
+        //    }
+        //    return outList;
+        //}
         
         #endregion
 

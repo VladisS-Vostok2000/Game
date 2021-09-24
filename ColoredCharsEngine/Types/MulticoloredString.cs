@@ -20,14 +20,12 @@ namespace Game.ColoredCharsEngine {
 
 
 
-        public MulticoloredString(params IEnumerable<ColoredString>[] coloredStringsEnums) {
-            coloredStrings = new List<ColoredString>();
-            foreach (var coloredStringsEnum in coloredStringsEnums) {
-                coloredStrings.AddRange(coloredStringsEnum);
-            }
+        public MulticoloredString(params ColoredString[] coloredStrings) {
+            this.coloredStrings = new List<ColoredString>();
+            this.coloredStrings.AddRange(coloredStrings);
 
             Length = 0;
-            Empty = coloredStrings.Count == 0;
+            Empty = this.coloredStrings.Empty();
             if (Empty) {
                 return;
             }
@@ -36,12 +34,14 @@ namespace Game.ColoredCharsEngine {
                 Length += coloredString.Length;
             }
         }
-        public MulticoloredString(params ColoredString[] coloredStrings) {
-            this.coloredStrings = new List<ColoredString>();
-            this.coloredStrings.AddRange(coloredStrings);
+        public MulticoloredString(params IEnumerable<ColoredString>[] coloredStringsEnums) {
+            coloredStrings = new List<ColoredString>();
+            foreach (var coloredStringsEnum in coloredStringsEnums) {
+                coloredStrings.AddRange(coloredStringsEnum);
+            }
 
             Length = 0;
-            Empty = this.coloredStrings.Empty();
+            Empty = coloredStrings.Count == 0;
             if (Empty) {
                 return;
             }
@@ -62,6 +62,7 @@ namespace Game.ColoredCharsEngine {
                 return coloredStrings[index];
             }
         }
+
 
 
 
