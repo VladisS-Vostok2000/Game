@@ -124,3 +124,18 @@
 //    }
 
 //}
+//using System;
+//namespace Main {
+//    public class A {
+//        public static A operator +(A v1, B v2) { return v1; }
+//        public static B operator +(B v1, A v2) { return v1; }
+//        public static void Method() {
+//            A a;
+//            B b;
+//            A s = a + b;
+//            B ss = b + a;
+//        } 
+//    }
+//    public class B { }
+
+//}

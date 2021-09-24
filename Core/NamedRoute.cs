@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 
 namespace Game.Core {
     public sealed class NamedRoute {

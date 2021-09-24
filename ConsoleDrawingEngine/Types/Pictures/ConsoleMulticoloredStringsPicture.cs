@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
 using static System.Console;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
-using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
 
 namespace Game.ConsoleDrawingEngine.Types {
     public class ConsoleMulticoloredStringsPicture : ConsolePicture {

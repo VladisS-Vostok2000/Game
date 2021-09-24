@@ -8,7 +8,7 @@ using System.Drawing;
 using Game.Parser;
 using Game.ColoredCharsEngine;
 using System.Windows.Forms;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 using Game.BasicTypesLibrary;
 using System.Net.Http.Headers;
 using System.Runtime.InteropServices;
@@ -25,7 +25,7 @@ namespace Game.Core {
         public Size Size => LandMap.Size;
 
 
-        public LandMap LandMap { get; }
+        public LandMap LandMap { get; } 
         public Rules Rules { get; }
 
 
@@ -58,8 +58,8 @@ namespace Game.Core {
         public Unit SelectedUnit { get; private set; }
         public ICollection<Unit> Units { get; }
         public bool UnitSelected { get; private set; }
-        // TASK: public get только для IReadOnlyCollection.
-        public ICollection<Point> SelectedUnitAvailableRoutes { get; private set; }
+        private ICollection<Point> selectedUnitAvailableRoutes { get; set; }
+        public IReadOnlyCollection<Point> SelectedUnitAvailableRoutes;
         private IList<Point> SelectedUnitTempRoute { get; set; }
         private float UnitTimeReservePerTurn = 5;
 
@@ -191,10 +191,10 @@ namespace Game.Core {
             return tempUnitPosition;
         }
 
-        public bool MaptileReachableForSelectedUnit(Point tileLocation) => SelectedUnitAvailableRoutes.Contains(tileLocation);
+        public bool MaptileReachableForSelectedUnit(Point tileLocation) => selectedUnitAvailableRoutes.Contains(tileLocation);
 
         public void ConfirmSelectedUnitRoute() {
-            SelectedUnit.AppendRoute(SelectedUnitTempRoute);
+            SelectedUnit.AddRoute(SelectedUnitTempRoute);
             UnselectUnit();
         }
 
@@ -306,7 +306,7 @@ namespace Game.Core {
             }
 
             if (UnitSelected) {
-                ChangeColors(picture, SelectedUnitAvailableRoutes, unitAvailableRoutesColor);
+                ChangeColors(picture, selectedUnitAvailableRoutes, unitAvailableRoutesColor);
                 ChangeColors(picture, SelectedUnit.GetRoute(), unitRouteColor);
                 ChangeColors(picture, SelectedUnitTempRoute, unitRouteColor);
                 picture[SelectedUnit.Location.Y, SelectedUnit.Location.X].Color = selectedUnitRoutingColor;
@@ -396,7 +396,7 @@ namespace Game.Core {
             if (!UnitSelected) {
                 throw new Exception();
             }
-            SelectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
+            selectedUnitAvailableRoutes = GetSelectedUnitAvailableRoutesPerTime(UnitTimeReservePerTurn);
 
         }
 

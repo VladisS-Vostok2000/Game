@@ -2,23 +2,50 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Game.BasicTypesLibrary.Extensions;
+using static Game.BasicTypesLibrary.Extensions.CollectionsExtensions;
 
 namespace Game.ColoredCharsEngine {
     /// <summary>
     /// Окрашенный в различные цвета текст.
     /// </summary>
-    // TASK: больше не принимает /r/n.
     public sealed class MulticoloredStringBuilder : IEnumerable<ColoredString> {
-        private List<ColoredString> ColoredStrings { get; } = new List<ColoredString>();
+        private List<ColoredString> coloredStrings;
+        public IReadOnlyCollection<ColoredString> ColoredStrings;
+        // REFACTORING: сделать length полем, потому что легко контроллируется.
         public int Length {
             get {
                 int length = 0;
-                foreach (var str in ColoredStrings) {
+                foreach (var str in coloredStrings) {
                     length += str.Length;
                 }
                 return length;
+            }
+        }
+        public bool Empty => coloredStrings.Count == 0;
+
+
+
+        public MulticoloredStringBuilder() {
+            coloredStrings = new List<ColoredString>();
+        }
+        public MulticoloredStringBuilder(params ColoredString[] coloredStrings) {
+            this.coloredStrings = coloredStrings.ToList();
+        }
+        public MulticoloredStringBuilder(params MulticoloredString[] multicoloredStringsArray) {
+            coloredStrings = new List<ColoredString>();
+            foreach (var multicoloredString in multicoloredStringsArray) {
+                coloredStrings.AddRange(multicoloredString.ColoredStrings);
+            }
+        }
+        public MulticoloredStringBuilder(params IEnumerable<ColoredString>[] coloredStringsEnumerables) {
+            coloredStrings = new List<ColoredString>();
+
+            foreach (var coloredStrings in coloredStringsEnumerables) {
+                this.coloredStrings.AddRange(coloredStrings);
             }
         }
 
@@ -28,120 +55,139 @@ namespace Game.ColoredCharsEngine {
             get {
                 int lineIndex = 0;
                 int globalIndex = 0;
-                while (index > ColoredStrings[lineIndex].Length + globalIndex - 1) {
-                    globalIndex += ColoredStrings[lineIndex].Length;
+                while (index > coloredStrings[lineIndex].Length + globalIndex - 1) {
+                    globalIndex += coloredStrings[lineIndex].Length;
                     lineIndex++;
-                    if (lineIndex > ColoredStrings.Count) {
+                    if (lineIndex > coloredStrings.Count) {
                         throw new ArgumentOutOfRangeException(nameof(index));
                     }
                 }
 
-                return ColoredStrings[lineIndex][index - globalIndex];
+                return coloredStrings[lineIndex][index - globalIndex];
             }
         }
 
 
 
-        public MulticoloredStringBuilder() { }
-        public MulticoloredStringBuilder(string str) {
-            ColoredStrings.Add(new ColoredString(str));
-        }
-        public MulticoloredStringBuilder(ColoredString coloredString) {
-            ColoredStrings.Add(coloredString);
-        }
-        public MulticoloredStringBuilder(IEnumerable<ColoredString> coloredStrings) {
-            foreach (var coloredString in coloredStrings) {
-                ColoredStrings.Add(coloredString);
-            }
-        }
-
-
-
-        public static implicit operator MulticoloredStringBuilder(string v) => new MulticoloredStringBuilder(new ColoredString(v));
-        public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, MulticoloredStringBuilder v2) {
-            var outMulticoloredString = new MulticoloredStringBuilder();
-            outMulticoloredString.Append(v1);
-            outMulticoloredString.Append(v2);
-            return outMulticoloredString;
+        public static MulticoloredStringBuilder operator +(ColoredString v1, MulticoloredStringBuilder v2) {
+            return v2.Prepend(v1);
         }
         public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, ColoredString v2) {
-            v1.Append(v2);
-            return v1;
+            return v1.Append(v2);
+        }
+        public static MulticoloredStringBuilder operator +(MulticoloredString v1, MulticoloredStringBuilder v2) {
+            return v2.PrependRange(v1.ColoredStrings);
+        }
+        public static MulticoloredStringBuilder operator +(MulticoloredStringBuilder v1, MulticoloredString v2) {
+            return v1.AppendRange(v2.ColoredStrings);
         }
 
 
 
-        public IEnumerator<ColoredString> GetEnumerator() => ((IEnumerable<ColoredString>)ColoredStrings).GetEnumerator();
-        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)ColoredStrings).GetEnumerator();
+        public IEnumerator<ColoredString> GetEnumerator() => ((IEnumerable<ColoredString>)coloredStrings).GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)coloredStrings).GetEnumerator();
 
 
-
-        ///
-        /// <returns> this. </returns>
-        public MulticoloredStringBuilder Append(ColoredString coloredString) {
-            ColoredStrings.Add(coloredString);
+        /// <summary>
+        /// Добавит заданныe <see cref="ColoredString"/> в конец <see cref="MulticoloredStringBuilder"/>.
+        /// </summary>
+        /// <returns> Ссылка на текущий экземпляр. </returns>
+        public MulticoloredStringBuilder Append(params ColoredString[] coloredStrings) {
+            this.coloredStrings.AddRange(coloredStrings);
             return this;
         }
-        ///
-        /// <returns> this. </returns>
-        public MulticoloredStringBuilder Append(MulticoloredStringBuilder multicoloredString) {
-            ColoredStrings.AddRange(multicoloredString.ColoredStrings);
+        /// <summary>
+        /// Добавит заданныe <see cref="IEnumerable{ColoredString}"/> в конец <see cref="MulticoloredStringBuilder"/>.
+        /// </summary>
+        /// <returns> Ссылка на текущий экземпляр. </returns>
+        public MulticoloredStringBuilder AppendRange(IEnumerable<ColoredString> coloredStringEnums) {
+            coloredStrings.AddRange(coloredStringEnums);
             return this;
         }
-        ///
-        /// <returns> this. </returns>
-        public MulticoloredStringBuilder RemoveAt(int index) {
-            ColoredStrings.RemoveAt(index);
+        /// <summary>
+        /// Добавит заданный <see cref="ColoredString"/> в начало <see cref="MulticoloredStringBuilder"/>.
+        /// </summary>
+        /// <returns> Ссылка на текущий экземпляр. </returns>
+        public MulticoloredStringBuilder Prepend(params ColoredString[] coloredStrings) {
+            this.coloredStrings.PrependRange(coloredStrings);
+            return this;
+        }
+        /// <summary>
+        /// Добавит заданный <see cref="IEnumerable{ColoredString}"/> в начало <see cref="MulticoloredStringBuilder"/>.
+        /// </summary>
+        /// <returns> Ссылка на текущий экземпляр. </returns>
+        public MulticoloredStringBuilder PrependRange(IEnumerable<ColoredString> coloredStringsEnumerables) {
+            coloredStringsEnumerables.PrependRange(coloredStringsEnumerables);
             return this;
         }
 
         /// <summary>
-        /// Возвращает проходящий по строкам перечислитель заданного текста.
+        /// Удалит <see cref="ColoredString"/> с заданным индексом.
         /// </summary>
-        public IEnumerable<MulticoloredStringBuilder> SplitToLines() {
-            var outColoredText = new MulticoloredStringBuilder();
-            foreach (var coloredString in ColoredStrings) {
-                int newLineIndex = coloredString.IndexOfNewLine();
-                if (newLineIndex == -1) {
-                    outColoredText.Append(coloredString);
-                    continue;
-                }
-
-                int startIndex = 0;
-                while (newLineIndex != -1) {
-                    var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
-                    outColoredText.Append(coloredSubstring);
-                    yield return outColoredText;
-                    outColoredText = new MulticoloredStringBuilder();
-                    startIndex = newLineIndex + 1;
-                    if (startIndex > coloredString.Length) { break; }
-
-                    newLineIndex = coloredString.IndexOfNewLine(startIndex);
-                }
-
-            }
-
-            yield return outColoredText;
+        /// <returns> Ссылка на текущий экземпляр. </returns>
+        public MulticoloredStringBuilder RemoveAt(int index) {
+            // TASK: AOORException.
+            coloredStrings.RemoveAt(index);
+            return this;
         }
 
+        ///// <summary>
+        ///// Возвращает проходящий по строкам перечислитель заданного текста.
+        ///// </summary>
+        //public IEnumerable<MulticoloredStringBuilder> SplitToLines() {
+        //    var outColoredText = new MulticoloredStringBuilder();
+        //    foreach (var coloredString in ColoredStrings) {
+        //        int newLineIndex = coloredString.IndexOfNewLine();
+        //        if (newLineIndex == -1) {
+        //            outColoredText.Append(coloredString);
+        //            continue;
+        //        }
 
+        //        int startIndex = 0;
+        //        while (newLineIndex != -1) {
+        //            var coloredSubstring = coloredString.ColoredSubstring(startIndex, newLineIndex - startIndex);
+        //            outColoredText.Append(coloredSubstring);
+        //            yield return outColoredText;
+        //            outColoredText = new MulticoloredStringBuilder();
+        //            startIndex = newLineIndex + 1;
+        //            if (startIndex > coloredString.Length) { break; }
+
+        //            newLineIndex = coloredString.IndexOfNewLine(startIndex);
+        //        }
+
+        //    }
+
+        //    yield return outColoredText;
+        //}
+
+
+        /// <summary>
+        /// Добавляет к последней строке столько пробелов, чтобы общая длинна строки была
+        /// не ниже заданной.
+        /// </summary>
         public void PadRight(int width) {
-            int length = 0;
-            foreach (var coloredString in ColoredStrings) {
-                length += coloredString.Length;
+            if (Empty) {
+                coloredStrings.Add(new ColoredString(' ', width));
+                return;
+            }
+            if (Length >= width) {
+                return;
             }
 
+            int diff = width - Length;
+            ColoredString lastItem = coloredStrings.Last();
+            coloredStrings[coloredStrings.Count - 1] = lastItem + new string(' ', diff);
         }
-
 
 
         public override string ToString() {
             var sb = new StringBuilder();
-            foreach (var coloredString in ColoredStrings) {
+            foreach (var coloredString in coloredStrings) {
                 sb.Append(coloredString.Text);
             }
             return sb.ToString();
         }
+        public MulticoloredString ToMulticoloredString() => new MulticoloredString(coloredStrings);
 
     }
 }

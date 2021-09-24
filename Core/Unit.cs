@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Game.ColoredCharsEngine;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 
 namespace Game.Core {
     // REFACTORING: Подключить IDrawable, чтобы в GameMap использовать интерфейс, а не частный тип.
@@ -147,8 +147,8 @@ namespace Game.Core {
 
         /// Дополнит марштрут <see cref="Unit"/>
         /// <exception cref="InvalidOperationException"></exception>
-        public void AppendRoute(IEnumerable<Point> appendedRoute) {
-            foreach (var way in appendedRoute) {
+        public void AddRoute(IEnumerable<Point> addingRoute) {
+            foreach (var way in addingRoute) {
                 AddWay(way);
             }
         }

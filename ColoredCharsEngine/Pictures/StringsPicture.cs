@@ -1,4 +1,4 @@
-﻿using Game.BasicTypesLibrary.ExtensionMethods;
+﻿using Game.BasicTypesLibrary.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;

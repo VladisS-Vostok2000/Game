@@ -12,8 +12,8 @@ using Game.ColoredCharsEngine;
 // REFACTORING: необходимо расчленить этот класс на несколько, потому что
 // в нём собраны методы расширения со всех библиотек.
 // Ожидается: ConsoleDrawingEngine.
-namespace Game.BasicTypesLibrary.ExtensionMethods {
-    public static class BasicTypesExtensionsMethods {
+namespace Game.BasicTypesLibrary.Extensions {
+    public static class BasicTypesExtensions {
 
         #region Int32
         /// <summary>
@@ -236,6 +236,11 @@ namespace Game.BasicTypesLibrary.ExtensionMethods {
         public static int IndexOfNewLine(this string value, int startIndex) => value.IndexOf(Environment.NewLine, startIndex);
 
         /// <summary>
+        /// <see langword="true"/>, если содержит символ переноса строки.
+        /// </summary>
+        public static bool ContainsNewLine(this string value) => value.IndexOfNewLine() != -1;
+
+        /// <summary>
         /// Возвращает подстроку заданной длинны. Вернётся полная строка при избыточной длинне.
         /// Вернётся пустая строка при длинне 0.
         /// </summary>
@@ -250,139 +255,6 @@ namespace Game.BasicTypesLibrary.ExtensionMethods {
             }
 
             return value.Substring(0, value.Length);
-        }
-
-        #endregion
-
-        #region String[]
-        public static List<ColoredString> ToColoredStrings(this string[] array, ConsoleColor color = ConsoleColor.White) {
-            var outList = new List<ColoredString>();
-            foreach (var str in array) {
-                outList.Add(new ColoredString(str, color));
-            }
-            return outList;
-        }
-        public static List<MulticoloredStringBuilder> ToMulticoloredStringBuilder(this string[] array, ConsoleColor color = ConsoleColor.White) {
-            var outList = new List<MulticoloredStringBuilder>();
-            foreach (var str in array) {
-                outList.Add(new MulticoloredStringBuilder(new ColoredString(str, color)));
-            }
-            return outList;
-        }
-        #endregion
-
-        #region Array
-        /// <summary>
-        /// Заполнит массив заданными значениями.
-        /// </summary>
-        /// <returns> Ссылка на текущий массив. </returns>
-        public static T[] Fill<T>(this T[] array, T value) where T : struct {
-            for (int i = 0; i < array.Length; i++) {
-                array[i] = value;
-            }
-            return array;
-        }
-        /// <summary>
-        /// Заполнит массив значением, возвращаемым заданным делегатом.
-        /// </summary>
-        public static T[] Fill<T>(this T[] array, Func<T> action) {
-            for (int i = 0; i < array.Length; i++) {
-                array[i] = action.Invoke();
-            }
-            return array;
-        }
-        /// <summary>
-        /// Создаст нередактируемое отражение <see cref="Array"/>.
-        /// </summary>
-        public static ReadOnlyArray<T> AsReadOnly<T>(this T[] array) => new ReadOnlyArray<T>(array);
-        /// <summary>
-        /// Создаст нередактируемое отражение <see cref="Array"/>.
-        /// </summary>
-        public static ReadOnlyDoubleDemensionArray<T> AsReadOnly<T>(this T[,] array) => new ReadOnlyDoubleDemensionArray<T>(array);
-        public static bool Empty<T>(this T[] array) => array.Length == 0;
-
-        public static bool IsEmptyOrFlat<T>(this T[,] array) {
-            return array.GetUpperBound(0) == 0 || array.GetUpperBound(1) == 0;
-        }
-        #endregion
-
-        #region ICollection, IReadOnlyCollection
-        /// <summary>
-        /// <see langword="true"/>, если коллекция пуста.
-        /// </summary>
-        public static bool Empty<T>(this ICollection<T> sourse) => sourse.Count == 0;
-
-        /// <summary>
-        /// <see langword="true"/>, если коллекция пуста.
-        /// </summary>
-        public static bool Empty<T>(this IReadOnlyCollection<T> sourse) => sourse.Count == 0;
-
-        /// <summary>
-        /// <see langword="true"/>, если содержит определяемое делегатом значение.
-        /// </summary>
-        public static bool Contains<T1>(this ICollection<T1> colletion, Predicate<T1> predicate) {
-            foreach (var item in colletion) {
-                if (predicate(item)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Возвращает первое с начала вхождение элемента в коллекции, соответствующего заданному предикату.
-        /// </summary>
-        public static bool TryGet<T1>(this ICollection<T1> collection, Predicate<T1> predicate, out T1 outItem) {
-            foreach (var item in collection) {
-                if (predicate(item)) {
-                    outItem = item;
-                    return true;
-                }
-            }
-            outItem = default;
-            return false;
-        }
-
-        /// <summary>
-        /// Вставляет коллекцию элементов в конец текущей.
-        /// </summary>
-        public static void AddRange<T>(this ICollection<T> collection, IEnumerable<T> input) {
-            foreach (var item in input) {
-                collection.Add(item);
-            }
-        }
-
-        /// <summary>
-        /// Удаляет последний элемент коллекции.
-        /// </summary>
-        /// <exception cref="InvalidOperationException"></exception>
-        public static void RemoveLastItem<T>(this ICollection<T> collection) {
-            if (collection.Empty()) { throw new InvalidOperationException("Коллекция пуста."); }
-            T removingItem = default;
-            foreach (var item in collection) {
-                removingItem = item;
-            }
-            collection.Remove(removingItem);
-        }
-
-        /// <summary>
-        /// <see langword="true"/>, если все элементы последовательности равны между собой.
-        /// </summary>
-        public static bool IsEven<T>(this IList<T> list) where T : IEquatable<T> {
-            if (list.Empty()) {
-                throw new ArgumentException("Коллекция пуста.");
-            }
-            if (list.Count == 1) {
-                return true;
-            }
-
-            for (int i = 0; i < list.Count - 1; i++) {
-                if (!list[i].Equals(list[i + 1])) {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         #endregion

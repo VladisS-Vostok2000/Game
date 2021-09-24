@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 
-namespace Game.BasicTypesLibrary.ExtensionMethods {
+namespace Game.BasicTypesLibrary.Extensions {
     public static class ConsoleExtensionMethods {
         public static Point CursorPosition {
             get => new Point(CursorLeft, CursorTop);

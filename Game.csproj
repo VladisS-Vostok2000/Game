@@ -45,14 +45,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BasicTypesLibrary\Extensions\CollectionsExtensions.cs" />
     <Compile Include="BasicTypesLibrary\ReadOnlyDoubleDemensionArray.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\SingleCharPicture.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\StringsPicture.cs" />
+    <Compile Include="ColoredCharsEngine\Types\MulticoloredString.cs" />
+    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuOption.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleList.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleListColoredString.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuControl.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuOption.cs" />
     <Compile Include="ColoredCharsEngine\StaticMethods\GraphicsModificate.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\VoidPictureControl\ConsoleVoidControl.cs" />
     <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleColoredCharsPicture.cs" />
@@ -74,7 +76,7 @@
     <Compile Include="ColoredCharsEngine\Types\MulticoloredStringBuilder.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\ColoredCharsPicture.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredChar.cs" />
-    <Compile Include="ColoredCharsEngine\ExtensionMethods\ColoredStringExtensionMethods.cs" />
+    <Compile Include="ColoredCharsEngine\ExtensionMethods\TypesExtensions.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\ConsoleTextboxControl.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxException.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />
@@ -85,12 +87,12 @@
     <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\ConsolePanel.cs" />
     <Compile Include="Core\Chassis.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleDrawing.cs" />
-    <Compile Include="BasicTypesLibrary\ExtensionMethods\ConsoleExtensionMethods.cs" />
+    <Compile Include="BasicTypesLibrary\Extensions\ConsoleExtensionMethods.cs" />
     <Compile Include="ColoredCharsEngine\Types\Picture.cs" />
     <Compile Include="Other\Dumb.cs" />
     <Compile Include="ConsoleDrawingEngine\ConsoleScreen.cs" />
     <Compile Include="Core\Engine.cs" />
-    <Compile Include="BasicTypesLibrary\ExtensionMethods\BasicTypesExtensionsMethods.cs" />
+    <Compile Include="BasicTypesLibrary\Extensions\BasicTypesExtensions.cs" />
     <Compile Include="Parser\IniParser.cs" />
     <Compile Include="Parser\PointListParser.cs" />
     <Compile Include="Core\GameMap.cs" />

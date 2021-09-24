@@ -1,22 +1,20 @@
-﻿using Game.ConsoleDrawingEngine;
+﻿using Game.ColoredCharsEngine;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ColoredCharsEngine;
 
-namespace Game.ConsoleDrawingEngine.Controls {
-    public sealed class ConsoleMenuOption {
-        // TASK: MSB заменить на MS, CMO сделать структурой.
-        public MulticoloredStringBuilder MulticoloredStringBuilderOptionName { get; }
-        public string StringOptionName { get; }
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
+    public readonly struct ConsoleMenuOption {
+        public readonly string Text;
+        public readonly MulticoloredString MulticoloredText;
 
 
 
-        public ConsoleMenuOption(MulticoloredStringBuilder option) {
-            MulticoloredStringBuilderOptionName = option;
-            StringOptionName = option.ToString();
+        public ConsoleMenuOption(MulticoloredString multicoloredText) {
+            Text = multicoloredText.ToString();
+            MulticoloredText = multicoloredText;
         }
 
     }

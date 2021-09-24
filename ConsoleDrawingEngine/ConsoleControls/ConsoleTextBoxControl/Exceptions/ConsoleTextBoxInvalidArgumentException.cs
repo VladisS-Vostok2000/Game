@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.ConsoleDrawingEngine.Controls {
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
     public class ConsoleTextBoxInvalidArgumentException : ConsoleTextBoxException {
         public object ActualValue { get; }
 

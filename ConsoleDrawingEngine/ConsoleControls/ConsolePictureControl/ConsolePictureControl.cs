@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using Game.ColoredCharsEngine.Types.Pictures;
 using Game.ConsoleDrawingEngine.Types;
-using Game.BasicTypesLibrary.ExtensionMethods;
+using Game.BasicTypesLibrary.Extensions;
 
-namespace Game.ConsoleDrawingEngine.Controls {
+namespace Game.ConsoleDrawingEngine.ConsoleControls {
     public class ConsolePictureControl : ConsoleControl {
         public override ConsolePicture ConsolePicture { get; }
 

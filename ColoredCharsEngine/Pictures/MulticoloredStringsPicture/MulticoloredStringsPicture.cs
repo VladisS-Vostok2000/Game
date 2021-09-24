@@ -1,34 +1,34 @@
-﻿using Game.BasicTypesLibrary.ExtensionMethods;
-using Game.ConsoleDrawingEngine;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using static Game.BasicTypesLibrary.ExtensionMethods.BasicTypesExtensionsMethods;
+using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
 using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
+using Game.BasicTypesLibrary.Extensions;
+using Game.ColoredCharsEngine.Types;
 
 namespace Game.ColoredCharsEngine {
     public class MulticoloredStringsPicture : Picture {
-        private MulticoloredStringBuilder[] picture;
+        private MulticoloredString[] picture;
 
 
 
-        public MulticoloredStringsPicture(MulticoloredStringBuilder[] picture) : base(GetSize(picture)) {
+        public MulticoloredStringsPicture(MulticoloredString[] picture) : base(GetSize(picture)) {
             this.picture = picture;
         }
 
 
 
-        public IEnumerable<MulticoloredStringBuilder> ToMulticoloredStrings() {
-            foreach (var multicoloredString in picture) {
-                yield return multicoloredString;
+        public IEnumerable<MulticoloredString> ToMulticoloredStrings() {
+            for (int i = 0; i < picture.Length; i++) {
+                yield return picture[i];
             }
         }
 
 
-        public static Size GetSize(MulticoloredStringBuilder[] strings) {
+        public static Size GetSize(MulticoloredString[] strings) {
             // REFACTORNING: вынести исключения в базовый класс.
             if (strings is null) {
                 throw new ArgumentNullException(nameof(strings));

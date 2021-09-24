@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
 using static System.Console;
-using static Game.BasicTypesLibrary.ExtensionMethods.ConsoleExtensionMethods;
+using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
 using System.Collections.ObjectModel;
 using static Game.ConsoleDrawingEngine.ConsoleDrawing;
 using Game.ConsoleDrawingEngine.Types;
