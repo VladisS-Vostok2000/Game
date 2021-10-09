@@ -4,21 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Drawing;
+
 using static System.Console;
-using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
-using System.Collections.ObjectModel;
 using static Game.ConsoleControlsEngine.ConsoleDrawing;
-using Game.ConsoleControlsEngine.Types;
-using Game.ConsoleControlsEngine.Controls;
 
 namespace Game.ConsoleControlsEngine {
     /// <summary>
     /// Инкапсулирует связь данных и консоли.
     /// </summary>
     public static class ConsoleScreen {
-        private static readonly List<IConsoleDrawable> controls = new List<IConsoleDrawable>();
-        public static IReadOnlyList<IConsoleDrawable> Controls { get; } = controls.AsReadOnly();
-        private static readonly List<ConsoleVoidControl> removedControls = new List<ConsoleVoidControl>();
+        private static readonly List<ConsoleControl> controls = new List<ConsoleControl>();
+        public static IReadOnlyList<ConsoleControl> Controls { get; } = controls.AsReadOnly();
+        private static readonly List<ConsoleControl> removedControls = new List<ConsoleControl>();
 
 
 
@@ -36,7 +33,7 @@ namespace Game.ConsoleControlsEngine {
                 return false;
             }
 
-            removedControls.Add(new ConsoleVoidControl(control.Location, control.Size));
+            removedControls.Add(ConsoleSingleCharPictureControl.CreateVoidConsolePicture(control.Size));
             return true;
         }
 

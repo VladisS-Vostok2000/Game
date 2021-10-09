@@ -1,12 +1,12 @@
-﻿using Game.BasicTypesLibrary.Extensions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Game.ColoredCharsEngine.Types.Pictures {
+using Game.BasicTypesLibrary;
+
+namespace Game.ColoredCharsEngine {
     public sealed class StringsPicture : Picture {
         private readonly string[] picture;
 
@@ -33,7 +33,7 @@ namespace Game.ColoredCharsEngine.Types.Pictures {
                 }
             }
 
-           return new Size(width, strings.Length);
+            return new Size(width, strings.Length);
         }
         public IEnumerable<string> ToStrings() {
             int i = 0;

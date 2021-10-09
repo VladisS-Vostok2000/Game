@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using Game.BasicTypesLibrary.Extensions;
 using System.Drawing;
 
 namespace Game.Parser {

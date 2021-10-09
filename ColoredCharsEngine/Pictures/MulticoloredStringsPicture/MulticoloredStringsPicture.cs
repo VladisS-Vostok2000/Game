@@ -2,12 +2,8 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
-using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
-using Game.BasicTypesLibrary.Extensions;
-using Game.ColoredCharsEngine.Types;
+using Game.BasicTypesLibrary;
+using static Game.ColoredCharsEngine.GraphicsModificate;
 
 namespace Game.ColoredCharsEngine {
     public class MulticoloredStringsPicture : Picture {

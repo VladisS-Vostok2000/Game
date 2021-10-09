@@ -6,7 +6,8 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.Console;
 
-namespace Game.BasicTypesLibrary.Extensions {
+namespace Game.BasicTypesLibrary {
+    // REFACTORING: консоль в библиотеке базовых типов...?
     public static class ConsoleExtensionMethods {
         public static Point CursorPosition {
             get => new Point(CursorLeft, CursorTop);

@@ -2,11 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
-using Game.BasicTypesLibrary.Extensions;
-using static Game.BasicTypesLibrary.Extensions.CollectionsExtensions;
+using Game.BasicTypesLibrary;
 
 namespace Game.ColoredCharsEngine {
     /// <summary>

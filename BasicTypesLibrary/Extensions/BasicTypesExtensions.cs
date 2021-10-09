@@ -1,18 +1,15 @@
-﻿using Game.ConsoleControlsEngine;
-using Game.Core;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Game.ColoredCharsEngine;
 
 // REFACTORING: необходимо расчленить этот класс на несколько, потому что
 // в нём собраны методы расширения со всех библиотек.
 // Ожидается: ConsoleDrawingEngine.
-namespace Game.BasicTypesLibrary.Extensions {
+namespace Game.BasicTypesLibrary {
     public static class BasicTypesExtensions {
 
         #region Int32

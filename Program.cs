@@ -5,17 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Drawing;
-using static Game.BasicTypesLibrary.Extensions.ConsoleExtensionMethods;
-using static Game.ConsoleControlsEngine.ConsoleScreen;
-using static Game.ColoredCharsEngine.StaticMethods.GraphicsModificate;
-using static System.Console;
-using Game.ConsoleControlsEngine;
-using Game.ConsoleControlsEngine.Controls;
-using Game.ConsoleControlsEngine.Types;
+
 using Game.Parser;
 using Game.ColoredCharsEngine;
-using Game.BasicTypesLibrary.Extensions;
+using Game.ColoredCharsControlsLibrary;
+using Game.ConsoleControlsEngine;
+using static System.Console;
+using static Game.BasicTypesLibrary.ConsoleExtensionMethods;
 using static Game.ColoredCharsEngine.TypesExtensions;
+using static Game.ConsoleControlsEngine.ConsoleScreen;
 
 namespace Game.Core {
     public static class Program {
@@ -35,17 +33,18 @@ namespace Game.Core {
 
 
         static Program() {
-            menuOptions = PadRight(menuOptions);
+
         }
 
 
 
         public static void Main(string[] args) {
-            var consoleMenu = new ConsoleMenuControl(Point.Empty, menuOptions.ToMulticoloredStringsEnum());
+            MulticoloredStringsMenuControl menuControl = new MulticoloredStringsMenuControl(menuOptions.ToMulticoloredStringsEnum());
+            var consoleMenu = new ConsoleMulticoloredStringsPictureControl(menuControl.Picture, Point.Empty);
             AddControl(consoleMenu);
-            string selectedOption = ListenMenu(consoleMenu).Text;
+            string selectedOption = ListenMenu(menuControl).Text;
+            RemoveControl(consoleMenu);
             if (selectedOption == menuOptions[0]) {
-                RemoveControl(consoleMenu);
                 StartGame(rulesPath, mapPath);
             }
             else
@@ -56,22 +55,21 @@ namespace Game.Core {
                 throw new Exception();
             }
         }
-        private static ConsoleMenuOption ListenMenu(ConsoleMenuControl menu) {
+        private static ColoredCharsMenuOption ListenMenu(MulticoloredStringsMenuControl consoleMenu) {
             do {
                 // WORKAROUND: Render будет выполняться сам.
                 Render();
                 ConsoleKey key = ListenKey();
                 if (key == ConsoleKey.Enter) {
-                    RemoveControl(menu);
-                    return menu.SelectedOption;
+                    return consoleMenu.SelectedOption;
                 }
                 else {
                     if (key == ConsoleKey.DownArrow) {
-                        menu.Down();
+                        consoleMenu.Down();
                     }
                     else
                     if (key == ConsoleKey.UpArrow) {
-                        menu.Up();
+                        consoleMenu.Up();
                     }
                 }
             } while (true);
@@ -81,7 +79,7 @@ namespace Game.Core {
         private static void StartGame(string rulesPath, string mapPath) {
             gameMap = InitializeMap(rulesPath, mapPath);
 
-            AddControl(new ConsolePictureControl(Point.Empty, new ConsoleColoredCharsPicture(gameMap.Picture)));
+            AddControl(new ConsoleColoredCharsPictureControl(gameMap.Picture, Point.Empty));
             Render();
 
             do {

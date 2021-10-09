@@ -3,9 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.BasicTypesLibrary.Extensions;
+
+using Game.BasicTypesLibrary;
 
 namespace Game.Core {
     public class Route : IEnumerable<Point> {

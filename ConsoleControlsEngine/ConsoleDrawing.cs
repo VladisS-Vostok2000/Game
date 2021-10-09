@@ -2,13 +2,10 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
+using Game.BasicTypesLibrary;
 using Game.ColoredCharsEngine;
 using static System.Console;
-using static Game.BasicTypesLibrary.Extensions.BasicTypesExtensions;
-using Game.BasicTypesLibrary.Extensions;
-using Game.ColoredCharsEngine.Types;
 
 namespace Game.ConsoleControlsEngine {
     public static class ConsoleDrawing {

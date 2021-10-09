@@ -1,15 +1,11 @@
-﻿using Game.BasicTypesLibrary.Extensions;
-using Game.ColoredCharsEngine.Types;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
-namespace Game.ColoredCharsEngine.StaticMethods {
+using Game.BasicTypesLibrary;
+
+namespace Game.ColoredCharsEngine {
     public static class GraphicsModificate {
         /// <summary>
         /// Все строки становятся одинаковой длинны, равной самой большой строке.
@@ -52,7 +48,7 @@ namespace Game.ColoredCharsEngine.StaticMethods {
 
         private static bool IsRectangular<T>(Func<T, int> func, IEnumerable<T> enm) {
             if (enm.Empty()) {
-                throw new InvalidEnumArgumentException("Перечисление пустое.");
+                throw new ArgumentException("Перечисление пустое.");
             }
 
             var width = func(enm.First());
