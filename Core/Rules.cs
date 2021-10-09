@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Game.BasicTypesLibrary.Extensions;
 
 namespace Game.Core {
     public sealed class Rules {
@@ -17,7 +14,7 @@ namespace Game.Core {
         public ICollection<Projectile> Projectiles { get; set; }
         public ICollection<Weapon> Weapons { get; set; }
         public ICollection<NamedRoute> Routes { get; set; }
-        // FEATURE: комманды заполняются рандомно; можно задать функцию первой команды.
+        // FEATURE: команды заполняются рандомно; можно задать функцию первой команды.
         public IList<Team> Teams { get; set; }
 
 

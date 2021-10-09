@@ -47,28 +47,23 @@
   <ItemGroup>
     <Compile Include="BasicTypesLibrary\Extensions\CollectionsExtensions.cs" />
     <Compile Include="BasicTypesLibrary\ReadOnlyDoubleDemensionArray.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Configuration\ColoredCharsControl.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringsMenuControl\MulticoloredStringsMenuControl.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringsMenuControl\ColoredCharsMenuOption.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringsMenuControl\IColoredCharsMenuControl.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\SingleCharPicture.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\StringsPicture.cs" />
     <Compile Include="ColoredCharsEngine\Types\MulticoloredString.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuOption.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePictureControl\ConsolePictureControl.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleList.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\ConsoleListColoredString.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleMenuControl\ConsoleMenuControl.cs" />
     <Compile Include="ColoredCharsEngine\StaticMethods\GraphicsModificate.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\VoidPictureControl\ConsoleVoidControl.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleColoredCharsPicture.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleMulticoloredStringsPicture.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsolePicture.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\IConsoleDrawable.cs" />
-    <Compile Include="ConsoleDrawingEngine\StaticMethods\Geometry.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\ConsoleContainer.cs" />
+    <Compile Include="ConsoleControlsEngine\Controls\ConsoleColoredCharsPictureControl.cs" />
+    <Compile Include="ConsoleControlsEngine\Controls\ConsoleMulticoloredStringsPictureControl.cs" />
+    <Compile Include="ConsoleControlsEngine\Controls\ConsoleControl.cs" />
+    <Compile Include="ConsoleControlsEngine\StaticMethods\Geometry.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\MulticoloredStringsPicture\Exceptions\MulticoloredStringsPictureException.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\MulticoloredStringsPicture\Exceptions\MuticoloredStringsPictureArgumentException.cs" />
     <Compile Include="ColoredCharsEngine\Pictures\MulticoloredStringsPicture\MulticoloredStringsPicture.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\ConsoleControl.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleSingleCharPicture.cs" />
-    <Compile Include="ConsoleDrawingEngine\Types\Pictures\ConsoleStringsPicture.cs" />
+    <Compile Include="ConsoleControlsEngine\Controls\ConsoleSingleCharPictureControl.cs" />
+    <Compile Include="ConsoleControlsEngine\Controls\ConsoleStringsPictureControl.cs" />
     <Compile Include="Core\LandMap.cs" />
     <Compile Include="Core\Route\RouteException.cs" />
     <Compile Include="Core\Route\RouteInvalidArgumentException.cs" />
@@ -77,20 +72,17 @@
     <Compile Include="ColoredCharsEngine\Pictures\ColoredCharsPicture.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredChar.cs" />
     <Compile Include="ColoredCharsEngine\ExtensionMethods\TypesExtensions.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\ConsoleTextboxControl.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxException.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsoleTextBoxControl\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringstBoxControl\ConsoleTextboxControl.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringstBoxControl\Exceptions\ConsoleTextBoxException.cs" />
+    <Compile Include="ColoredCharsControlsLibrary\Controls\MulticoloredStringstBoxControl\Exceptions\ConsoleTextBoxInvalidArgumentException.cs" />
     <Compile Include="ColoredCharsEngine\Types\ColoredString.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\Exceptions\ConsolePanelException.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\Exceptions\ConsolePanelInvalidArgumentException.cs" />
     <Compile Include="Core\Body.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleControls\ConsolePanel\ConsolePanel.cs" />
     <Compile Include="Core\Chassis.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleDrawing.cs" />
+    <Compile Include="ConsoleControlsEngine\ConsoleDrawing.cs" />
     <Compile Include="BasicTypesLibrary\Extensions\ConsoleExtensionMethods.cs" />
-    <Compile Include="ColoredCharsEngine\Types\Picture.cs" />
+    <Compile Include="ColoredCharsEngine\Configuration\Picture.cs" />
     <Compile Include="Other\Dumb.cs" />
-    <Compile Include="ConsoleDrawingEngine\ConsoleScreen.cs" />
+    <Compile Include="ConsoleControlsEngine\ConsoleScreen.cs" />
     <Compile Include="Core\Engine.cs" />
     <Compile Include="BasicTypesLibrary\Extensions\BasicTypesExtensions.cs" />
     <Compile Include="Parser\IniParser.cs" />
@@ -122,11 +114,10 @@
   <ItemGroup>
     <None Include=".editorconfig" />
     <None Include="App.config" />
-    <Compile Include="ConsoleDrawingEngine\ExtensionMethods\SystemDrawingExtensionMethods.cs" />
+    <Compile Include="ConsoleControlsEngine\ExtensionMethods\SystemDrawingExtensionMethods.cs" />
     <None Include="Other\readme.md" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ConsoleDrawingEngine\ConsoleControls\ConsoleList\Exceptions\" />
     <Folder Include="Core\StaticMethods\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

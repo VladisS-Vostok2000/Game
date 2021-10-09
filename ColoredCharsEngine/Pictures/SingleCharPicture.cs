@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace Game.ColoredCharsEngine.Pictures {
+using Game.ColoredCharsEngine;
+
+namespace Game.ColoredCharsEngine {
     // REFACTORING: переименовать в PlanePicture. SingleChar будет 1х1.
     public class SingleCharPicture : Picture {
         public char Char { get; }

@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Game.BasicTypesLibrary.Extensions {
+namespace Game.BasicTypesLibrary {
     public static class CollectionsExtensions {
 
         #region String[]

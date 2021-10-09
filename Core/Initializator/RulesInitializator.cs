@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.IO;
 using System.Drawing;
-using Game.ConsoleDrawingEngine;
-using Game.BasicTypesLibrary.Extensions;
+
 using Game.Parser;
+using Game.BasicTypesLibrary;
 
 namespace Game.Core {
     /// <summary>
